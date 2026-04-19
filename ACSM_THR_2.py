@@ -5,56 +5,37 @@ def calculate_risk(is_active, has_disease, has_symptoms):
     """Calculates exercise risk based on 2015 ACSM Algorithm."""
     if not is_active:
         if has_symptoms:
-            return "高風險: 在開始任何運動前建議尋求醫療許可。", "high" # Translated
+            return "高風險: 在開始任何運動前建議尋求醫療許可。", "high" 
         elif has_disease:
-            return "中等風險: 在開始運動前建議尋求醫療許可。獲批後，從輕度至中等強度開始。", "moderate" # Translated
+            return "中等風險: 在開始運動前建議尋求醫療許可。獲批後，從輕度至中等強度開始。", "moderate" 
         else:
-            return "低風險: 無需醫療許可。您可以從輕度至中等強度運動開始。", "low" # Translated
+            return "低風險: 無需醫療許可。您可以從輕度至中等強度運動開始。", "low" 
     else:
         if has_symptoms:
-            return "高風險: 停止運動，並在恢復前尋求醫療許可。", "high" # Translated
+            return "高風險: 停止運動，並在恢復前尋求醫療許可。", "high" 
         elif has_disease:
-            return "中等風險: 中等強度運動無需醫療許可，但建議在進行劇烈運動前尋求醫生建議。", "moderate" # Translated
+            return "中等風險: 中等強度運動無需醫療許可，但建議在進行劇烈運動前尋求醫生建議。", "moderate" 
         else:
-            return "低風險: 無需醫療許可。您可以繼續中等或劇烈強度運動。", "low" # Translated
+            return "低風險: 無需醫療許可。您可以繼續中等或劇烈強度運動。", "low" 
 
 def calculate_thr(age, rhr, risk_level_str):
     """Calculates Target Heart Rate (THR) range using Karvonen Formula."""
     mhr = 220 - age 
     if rhr >= mhr: 
-        return None, "靜息心率不能大於或等於估計最大心率 (220 - 年齡)。請檢查您的輸入。" # Translated
+        return None, "靜息心率不能大於或等於估計最大心率 (220 - 年齡)。請檢查您的輸入。" 
 
     hrr = mhr - rhr 
     
     # Set intensity percentages based on risk level (as % of HRR)
     if risk_level_str == "low":
         lower_percent, upper_percent = 0.50, 0.85 
-        advice = "對於**低風險**人士，中等至高強度範圍通常是合適的。請從較低強度開始，逐步增加。" # Translated
+        advice = "對於**低風險**人士，中等至高強度範圍通常是合適的。請從較低強度開始，逐步增加。" 
     elif risk_level_str == "moderate":
         lower_percent, upper_percent = 0.40, 0.60 
-        advice = "對於**中等風險**人士，建議從輕度到中等強度開始，尤其是在初期或未經醫生批准進行劇烈運動之前。" # Translated
+        advice = "對於**中等風險**人士，建議從輕度到中等強度開始，尤其是在初期或未經醫生批准進行劇烈運動之前。" 
     elif risk_level_str == "high":
-        lower_percent, upper_percent = 0.30, 0.39 # Upper limit < 40% HRR
-        advice = "對於**高風險**人士，**任何運動都必須在徹底的醫療許可後才能進行**。如果獲得許可，建議將運動強度保持在最高心率限制以下，進行非常輕度到輕度的運動（低於 40% HRR）。" # Translated and adjusted advice
-    else:
-        return None, "風險等級尚未確定。" # Translated
-
-    # Apply Karvonen Formula
-    lower_bound = int((hrr * lower_percent) + rhr) # Calculated, but not always displayed as a range
-    upper_bound = int((hrr * upper_percent) + rhr)
-
-    # Conditional output string for high risk (emphasizing max, not a range)
-    if risk_level_str == "high":
-        thr_zone_display = f"您的建議目標心率 (THR) 應為 **最高 {upper_bound} bpm**。" # Translated
-    else:
-        thr_zone_display = f"建議的目標心率 (THR) 區間為 **{lower_bound} - {upper_bound} bpm**。" # Translated
-
-    output = f"您的估計最大心率 (MHR) 為 **{mhr} bpm**。\n" \
-             f"您的靜息心率 (RHR) 為 **{rhr} bpm**。\n" \
-             f"您的心率儲備 (HRR) 為 **{hrr} bpm**。\n\n" \
-             f"{thr_zone_display}\n\n" \
-             f"{advice}"
-    return output, None
+        # Adjusted: upper limit now 39% HRR to be strictly "less than 40% HRR".
+        # Low
 
 # --- Streamlit App Layout ---
 st.set_page_config(page_title="運動準備度和風險評估", layout="centered") 
@@ -141,8 +122,7 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
-
-# ==========================================
+            # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS
 # ==========================================
 with tab2:
@@ -156,32 +136,23 @@ with tab2:
     st.markdown("---")
     st.header("1. 體徵和症狀") 
     st.write("在過去 12 個月內，您是否經歷過以下任何情況？") 
-    col1, col2 = st.columns(2)
-
-with col1:
-    symptom_chest_pain = st.checkbox("因心臟缺血而引致的胸口、頸、下顎、上臂或其他部位痛楚或不適")
-    symptom_shortness_breath = st.checkbox("靜止或輕鬆活動時感到氣喘")
-    symptom_dizziness = st.checkbox("暈眩或失去知覺")
-    symptom_orthopnea = st.checkbox("平臥時或晚間不時氣喘")
-with col2:
-    symptom_fatigue = st.checkbox("一般活動感到不尋常的疲倦或氣喘")
-    symptom_palpitations = st.checkbox("心悸或心跳過快")
-    symptom_swelling = st.checkbox("足踝腫")
-    symptom_heartmurmur = st.checkbox("心雜音")
-    symptom_claudication = st.checkbox("間歇肌肉疼痛、抽筋")
-
+    # Checkboxes for symptoms - now in a single column
+    symptom_chest_pain = st.checkbox("因心臟缺血而引致的胸口、頸、下顎、上臂或其他部位痛楚或不適", key="s_chest_pain") 
+    symptom_shortness_breath = st.checkbox("靜止時或輕微活動時呼吸急促", key="s_short_breath") 
+    symptom_dizziness = st.checkbox("頭暈或頭昏眼花", key="s_dizziness") 
+    symptom_fatigue = st.checkbox("異常疲勞", key="s_fatigue") 
+    symptom_palpitations = st.checkbox("心悸（心跳不規律）", key="s_palpitations") 
+    symptom_swelling = st.checkbox("腿部、腳踝或足部腫脹", key="s_swelling") 
 
     has_symptoms = any([symptom_chest_pain, symptom_shortness_breath, symptom_dizziness, symptom_fatigue, symptom_palpitations, symptom_swelling])
 
     st.markdown("---")
     st.header("2. 已知醫療狀況") 
     st.write("您是否有以下任何已知醫療狀況？") 
-    col1, col2 = st.columns(2)
-    with col1:
-        disease_cardiovascular = st.checkbox("已知心血管疾病 (例如：心臟病發作、中風)", key="d_cardio") 
-        disease_metabolic = st.checkbox("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", key="d_metabolic") 
-    with col2:
-        disease_renal = st.checkbox("已知腎臟（腎）疾病", key="d_renal") 
+    # Checkboxes for medical conditions - now in a single column
+    disease_cardiovascular = st.checkbox("已知心血管疾病 (例如：心臟病發作、中風)", key="d_cardio") 
+    disease_metabolic = st.checkbox("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", key="d_metabolic") 
+    disease_renal = st.checkbox("已知腎臟（腎）疾病", key="d_renal") 
 
     has_disease = any([disease_cardiovascular, disease_metabolic, disease_renal])
 
@@ -222,3 +193,4 @@ with col2:
 # This is completely un-indented, so it shows up at the bottom of the whole page, outside the tabs.
 st.markdown("---")
 st.caption("免責聲明：此工具僅供參考，不能替代專業醫療建議。") 
+
