@@ -5,18 +5,18 @@ def calculate_risk(is_active, has_disease, has_symptoms):
     """Calculates exercise risk based on 2015 ACSM Algorithm."""
     if not is_active:
         if has_symptoms:
-            return "高風險 - Class III: 在開始任何運動前建議尋求醫療許可。", "high" 
+            return "高風險: 在開始任何運動前建議尋求醫療許可。", "high" 
         elif has_disease:
-            return "中等風險 - Class II: 在開始運動前建議尋求醫療許可。獲批後，從輕度至中等強度開始。", "moderate" 
+            return "中等風險: 在開始運動前建議尋求醫療許可。獲批後，從輕度至中等強度開始。", "moderate" 
         else:
-            return "低風險 - Class I: 無需醫療許可。您可以從輕度至中等強度運動開始。", "low" 
+            return "低風險: 無需醫療許可。您可以從輕度至中等強度運動開始。", "low" 
     else:
         if has_symptoms:
-            return "高風險 - Class III: 停止運動，並在恢復前尋求醫療許可。", "high" 
+            return "高風險: 停止運動，並在恢復前尋求醫療許可。", "high" 
         elif has_disease:
-            return "中等風險 - Class II: 中等強度運動無需醫療許可，但建議在進行劇烈運動前尋求醫生建議。", "moderate" 
+            return "中等風險: 中等強度運動無需醫療許可，但建議在進行劇烈運動前尋求醫生建議。", "moderate" 
         else:
-            return "低風險 - Class I: 無需醫療許可。您可以繼續中等或劇烈強度運動。", "low" 
+            return "低風險: 無需醫療許可。您可以繼續中等或劇烈強度運動。", "low" 
 
 def calculate_thr(age, rhr, risk_level_str):
     """Calculates Target Heart Rate (THR) range using Karvonen Formula."""
@@ -229,11 +229,11 @@ with tab2:
         recommendation, risk_level_str = calculate_risk(is_active, has_disease, has_symptoms)
         st.subheader("您的運動風險評估：") 
         if risk_level_str == "low":
-            st.success(f"**風險類別：低風險**\n\n{recommendation}") 
+            st.success(f"**風險類別：低風險 - Class I**\n\n{recommendation}") 
         elif risk_level_str == "moderate":
-            st.warning(f"**風險類別：中等風險**\n\n{recommendation}") 
+            st.warning(f"**風險類別：中等風險 - Class II**\n\n{recommendation}") 
         else: 
-            st.error(f"**風險類別：高風險**\n\n{recommendation}") 
+            st.error(f"**風險類別：高風險 - Class III **\n\n{recommendation}") 
 
         st.markdown("---")
         
