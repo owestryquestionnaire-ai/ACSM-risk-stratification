@@ -59,59 +59,93 @@ def calculate_thr(age, rhr, risk_level_str):
 # --- Streamlit App Layout ---
 st.set_page_config(page_title="運動準備度和風險評估", layout="centered") 
 
+import streamlit as st
+
+# --- Helper Functions (The Logic) ---
+# ... (your calculate_risk and calculate_thr functions here, they don't change) ...
+
+# --- Streamlit App Layout ---
+st.set_page_config(page_title="運動準備度和風險評估", layout="centered") 
+
 # --- Custom CSS for larger font size ---
 st.markdown("""
 <style>
-    /* General text size for ALL text: paragraphs, labels, st.write, etc. */
-    p, label, .stMarkdown, .stCheckbox > label, .stRadio > label, .stCaption {
-        font-size: 3rem; /* Significantly larger general text */
-        line-height: 3;  /* Improve readability with larger text */
+    /* General paragraph text (like from st.write), and other markdown elements */
+    p, .stMarkdown {
+        font-size: 1.4rem !important; /* Force larger general text */
+        line-height: 1.6 !important;
     }
     
-    /* Headers - also making these larger */
+    /* Headers */
     h1 {
-        font-size: 3rem; /* Larger for main title */
+        font-size: 3rem !important; /* Larger for main title */
     }
     h2 {
-        font-size: 3rem;   /* Larger for section headers */
+        font-size: 2.5rem !important; /* Larger for section headers */
     }
     h3 {
-        font-size: 3rem; /* Larger for subheaders */
+        font-size: 2rem !important; /* Larger for subheaders */
     }
 
-    /* Input fields (number_input) - labels and actual text */
-    .stNumberInput > label {
-        font-size: 2rem; /* Label for number input */
+    /* Target LABELS for all input elements (checkbox, radio, number_input, etc.) */
+    label { 
+        font-size: 1.4rem !important; /* Force larger for ALL labels */
+        line-height: 1.6 !important;
     }
+    
+    /* More specific targeting for checkbox/radio text content */
+    /* This targets the div that typically contains the actual text description within checkbox/radio labels.
+       Streamlit often wraps the actual text content in a div or span inside the label. */
+    .stCheckbox > label > div, 
+    .stRadio > label > div {
+        font-size: 1.4rem !important;
+        line-height: 1.6 !important;
+    }
+    
+    /* Further specific targeting in case the text is in a 'p' tag within that div */
+    .stCheckbox > label > div > p,
+    .stRadio > label > div > p {
+        font-size: 1.4rem !important;
+        line-height: 1.6 !important;
+    }
+
+
+    /* Input fields (number_input) - actual input text */
     .stNumberInput input {
-        font-size: 2rem; /* The actual input text */
+        font-size: 1.4rem !important;
     }
     
     /* Buttons */
     div.stButton > button {
-        font-size: 2rem; /* Larger button text */
-        height: auto; /* Allow height to adjust with text */
-        padding: 0.8em 3em; /* Adjust padding */
+        font-size: 1.4rem !important;
+        height: auto !important;
+        padding: 0.8em 1.5em !important;
     }
 
     /* Success, Warning, Error boxes */
     .stAlert p {
-        font-size: 3rem; /* Alert text, slightly smaller than main text for contrast */
+        font-size: 1.3rem !important;
     }
 
     /* Info boxes */
     .stAlert.info p {
-        font-size: 3rem; /* Info text */
+        font-size: 1.25rem !important;
     }
 
     /* Tab labels */
     .stTabs [data-baseweb="tab"] {
-        font-size: 3rem; /* Larger tab labels */
+        font-size: 1.4rem !important;
+    }
+
+    /* Caption text (for the disclaimer) */
+    .stCaption {
+        font-size: 1.4rem !important;
     }
 
 </style>
 """, unsafe_allow_html=True)
 # --- End Custom CSS ---
+
 
 st.title("🏃‍♂️ 運動準備度和風險評估") 
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
