@@ -81,32 +81,32 @@ st.markdown("""
 
     /* Input fields (number_input) - labels and actual text */
     .stNumberInput > label {
-        font-size: 1.4rem; /* Label for number input */
+        font-size: 4rem; /* Label for number input */
     }
     .stNumberInput input {
-        font-size: 1.4rem; /* The actual input text */
+        font-size: 4rem; /* The actual input text */
     }
     
     /* Buttons */
     div.stButton > button {
-        font-size: 1.4rem; /* Larger button text */
+        font-size: 4rem; /* Larger button text */
         height: auto; /* Allow height to adjust with text */
-        padding: 0.8em 1.5em; /* Adjust padding */
+        padding: 0.8em 4em; /* Adjust padding */
     }
 
     /* Success, Warning, Error boxes */
     .stAlert p {
-        font-size: 1.3rem; /* Alert text, slightly smaller than main text for contrast */
+        font-size: 4rem; /* Alert text, slightly smaller than main text for contrast */
     }
 
     /* Info boxes */
     .stAlert.info p {
-        font-size: 1.25rem; /* Info text */
+        font-size: 4rem; /* Info text */
     }
 
     /* Tab labels */
     .stTabs [data-baseweb="tab"] {
-        font-size: 1.4rem; /* Larger tab labels */
+        font-size: 4rem; /* Larger tab labels */
     }
 
 </style>
