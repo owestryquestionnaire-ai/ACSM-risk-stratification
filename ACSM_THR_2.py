@@ -157,6 +157,7 @@ with tab2:
     st.header("1. 體徵和症狀") 
     st.write("在過去 12 個月內，您是否經歷過以下任何情況？") 
     col1, col2 = st.columns(2)
+
 with col1:
     symptom_chest_pain = st.checkbox("因心臟缺血而引致的胸口、頸、下顎、上臂或其他部位痛楚或不適")
     symptom_shortness_breath = st.checkbox("靜止或輕鬆活動時感到氣喘")
@@ -175,11 +176,11 @@ with col2:
     st.markdown("---")
     st.header("2. 已知醫療狀況") 
     st.write("您是否有以下任何已知醫療狀況？") 
-    col3, col4 = st.columns(2)
-    with col3:
+    col1, col2 = st.columns(2)
+    with col1:
         disease_cardiovascular = st.checkbox("已知心血管疾病 (例如：心臟病發作、中風)", key="d_cardio") 
         disease_metabolic = st.checkbox("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", key="d_metabolic") 
-    with col4:
+    with col2:
         disease_renal = st.checkbox("已知腎臟（腎）疾病", key="d_renal") 
 
     has_disease = any([disease_cardiovascular, disease_metabolic, disease_renal])
