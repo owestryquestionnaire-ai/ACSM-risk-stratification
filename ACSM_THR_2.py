@@ -80,32 +80,32 @@ st.markdown("""
 
     /* Input fields (number_input) - these might need specific targeting depending on Streamlit's internal structure */
     .stNumberInput > label {
-        font-size: 1.15rem; /* Label for number input */
+        font-size: 2rem; /* Label for number input */
     }
     .stNumberInput input {
-        font-size: 1.2rem; /* The actual input text */
+        font-size: 2rem; /* The actual input text */
     }
     
     /* Buttons */
     div.stButton > button {
-        font-size: 1.2rem; /* Larger button text */
+        font-size: 2rem; /* Larger button text */
         height: auto; /* Allow height to adjust with text */
         padding: 0.7em 1.2em; /* Adjust padding */
     }
 
     /* Success, Warning, Error boxes */
     .stAlert p {
-        font-size: 1.15rem;
+        font-size: 2rem;
     }
 
     /* Info boxes */
     .stAlert.info p {
-        font-size: 1.05rem; /* Slightly smaller for info */
+        font-size: 2rem; /* Slightly smaller for info */
     }
 
     /* Tab labels */
     .stTabs [data-baseweb="tab"] {
-        font-size: 1.2rem;
+        font-size: 2rem;
     }
 
 </style>
