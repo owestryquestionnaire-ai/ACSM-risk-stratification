@@ -64,7 +64,7 @@ st.markdown("""
 <style>
     /* General text size (for st.write, paragraph text, checkbox/radio labels) */
     p, label, .stMarkdown, .stCheckbox > label, .stRadio > label {
-        font-size: 1.15rem; /* Slightly larger than default, adjust as needed */
+        font-size: 2rem; /* Slightly larger than default, adjust as needed */
     }
     
     /* Headers */
