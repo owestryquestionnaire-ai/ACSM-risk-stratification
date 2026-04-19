@@ -167,7 +167,7 @@ with tab2:
     symptom_murmur = st.checkbox("心雜音", key="s_murmur") 
     symptom_claudication = st.checkbox("歇肌肉疼痛、抽筋", key="s_claudication") 
 
-    has_symptoms = any([symptom_chest_pain, symptom_shortness_breath, symptom_dizziness, symptom_fatigue, symptom_palpitations, symptom_swelling])
+    has_symptoms = any([symptom_chest_pain, symptom_shortness_breath, symptom_dizziness, symptom_orthopnea, symptom_fatigue, symptom_palpitations, symptom_swelling, symptom_murmur, symptom_claudications])
 
     st.markdown("---")
     st.header("2. 已知醫療狀況") 
