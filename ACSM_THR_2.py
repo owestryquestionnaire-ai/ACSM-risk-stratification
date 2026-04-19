@@ -34,8 +34,27 @@ def calculate_thr(age, rhr, risk_level_str):
         lower_percent, upper_percent = 0.40, 0.60 
         advice = "對於**中等風險**人士，建議從輕度到中等強度開始，尤其是在初期或未經醫生批准進行劇烈運動之前。" 
     elif risk_level_str == "high":
-        # Adjusted: upper limit now 39% HRR to be strictly "less than 40% HRR".
-        # Low
+        lower_percent, upper_percent = 0.30, 0.39 # Upper limit < 40% HRR
+        advice = "對於**高風險**人士，**任何運動都必須在徹底的醫療許可後才能進行**。如果獲得許可，建議將運動強度保持在最高心率限制以下，進行非常輕度到輕度的運動（低於 40% HRR）。" 
+    else:
+        return None, "風險等級尚未確定。" 
+
+    # Apply Karvonen Formula
+    lower_bound = int((hrr * lower_percent) + rhr) # Calculated, but not always displayed as a range
+    upper_bound = int((hrr * upper_percent) + rhr)
+
+    # Conditional output string for high risk (emphasizing max, not a range)
+    if risk_level_str == "high":
+        thr_zone_display = f"您的建議目標心率 (THR) 應為 **最高 {upper_bound} bpm**。" 
+    else:
+        thr_zone_display = f"建議的目標心率 (THR) 區間為 **{lower_bound} - {upper_bound} bpm**。" 
+
+    output = f"您的估計最大心率 (MHR) 為 **{mhr} bpm**。\n" \
+             f"您的靜息心率 (RHR) 為 **{rhr} bpm**。\n" \
+             f"您的心率儲備 (HRR) 為 **{hrr} bpm**。\n\n" \
+             f"{thr_zone_display}\n\n" \
+             f"{advice}"
+    return output, None
 
 # --- Streamlit App Layout ---
 st.set_page_config(page_title="運動準備度和風險評估", layout="centered") 
@@ -122,7 +141,8 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
-            # ==========================================
+
+# ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS
 # ==========================================
 with tab2:
@@ -159,6 +179,7 @@ with tab2:
     st.markdown("---")
     st.header("3. 當前運動習慣") 
     is_active = st.radio("您目前是否定期進行體能活動？ (過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)", ("是", "否"), key="is_active_radio") == "是" 
+
 # ==========================================
 # TAB 2: ACSM & Heart Rate - RESULTS
 # ==========================================
@@ -193,4 +214,3 @@ with tab2:
 # This is completely un-indented, so it shows up at the bottom of the whole page, outside the tabs.
 st.markdown("---")
 st.caption("免責聲明：此工具僅供參考，不能替代專業醫療建議。") 
-
