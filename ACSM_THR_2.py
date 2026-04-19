@@ -141,7 +141,6 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
-
 # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS
 # ==========================================
@@ -165,9 +164,11 @@ with tab2:
     symptom_palpitations = st.checkbox("心悸或心跳過快", key="s_palpitations") 
     symptom_swelling = st.checkbox("足踝腫", key="s_swelling") 
     symptom_murmur = st.checkbox("心雜音", key="s_murmur") 
-    symptom_claudication = st.checkbox("歇肌肉疼痛、抽筋", key="s_claudication") 
+    symptom_claudications = st.checkbox("活動時下肢間歇性疼痛、抽筋（間歇性跛行）", key="s_claudications") 
 
-    has_symptoms = any([symptom_chest_pain, symptom_shortness_breath, symptom_dizziness, symptom_orthopnea, symptom_fatigue, symptom_palpitations, symptom_swelling, symptom_murmur, symptom_claudications])
+    has_symptoms = any([symptom_chest_pain, symptom_shortness_breath, symptom_dizziness, 
+                        symptom_orthopnea, symptom_fatigue, symptom_palpitations, 
+                        symptom_swelling, symptom_murmur, symptom_claudications])
 
     st.markdown("---")
     st.header("2. 已知醫療狀況") 
