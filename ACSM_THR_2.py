@@ -62,50 +62,51 @@ st.set_page_config(page_title="運動準備度和風險評估", layout="centered
 # --- Custom CSS for larger font size ---
 st.markdown("""
 <style>
-    /* General text size (for st.write, paragraph text, checkbox/radio labels) */
-    p, label, .stMarkdown, .stCheckbox > label, .stRadio > label {
-        font-size: 2rem; /* Slightly larger than default, adjust as needed */
+    /* General text size for ALL text: paragraphs, labels, st.write, etc. */
+    p, label, .stMarkdown, .stCheckbox > label, .stRadio > label, .stCaption {
+        font-size: 1.4rem; /* Significantly larger general text */
+        line-height: 1.6;  /* Improve readability with larger text */
     }
     
-    /* Headers */
+    /* Headers - also making these larger */
     h1 {
-        font-size: 2.5rem; /* Larger for main title */
+        font-size: 3rem; /* Larger for main title */
     }
     h2 {
-        font-size: 2rem;   /* Larger for section headers */
+        font-size: 2.5rem;   /* Larger for section headers */
     }
     h3 {
         font-size: 2rem; /* Larger for subheaders */
     }
 
-    /* Input fields (number_input) - these might need specific targeting depending on Streamlit's internal structure */
+    /* Input fields (number_input) - labels and actual text */
     .stNumberInput > label {
-        font-size: 2rem; /* Label for number input */
+        font-size: 1.4rem; /* Label for number input */
     }
     .stNumberInput input {
-        font-size: 2rem; /* The actual input text */
+        font-size: 1.4rem; /* The actual input text */
     }
     
     /* Buttons */
     div.stButton > button {
-        font-size: 2rem; /* Larger button text */
+        font-size: 1.4rem; /* Larger button text */
         height: auto; /* Allow height to adjust with text */
-        padding: 0.7em 1.2em; /* Adjust padding */
+        padding: 0.8em 1.5em; /* Adjust padding */
     }
 
     /* Success, Warning, Error boxes */
     .stAlert p {
-        font-size: 2rem;
+        font-size: 1.3rem; /* Alert text, slightly smaller than main text for contrast */
     }
 
     /* Info boxes */
     .stAlert.info p {
-        font-size: 2rem; /* Slightly smaller for info */
+        font-size: 1.25rem; /* Info text */
     }
 
     /* Tab labels */
     .stTabs [data-baseweb="tab"] {
-        font-size: 2rem;
+        font-size: 1.4rem; /* Larger tab labels */
     }
 
 </style>
