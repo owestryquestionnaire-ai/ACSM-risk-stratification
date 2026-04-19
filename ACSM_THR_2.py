@@ -75,7 +75,7 @@ st.markdown("""
         font-size: 2rem;   /* Larger for section headers */
     }
     h3 {
-        font-size: 1.5rem; /* Larger for subheaders */
+        font-size: 2rem; /* Larger for subheaders */
     }
 
     /* Input fields (number_input) - these might need specific targeting depending on Streamlit's internal structure */
