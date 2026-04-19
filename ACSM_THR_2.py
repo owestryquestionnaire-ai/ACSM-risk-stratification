@@ -65,7 +65,7 @@ st.markdown("""
     /* General text size for ALL text: paragraphs, labels, st.write, etc. */
     p, label, .stMarkdown, .stCheckbox > label, .stRadio > label, .stCaption {
         font-size: 3rem; /* Significantly larger general text */
-        line-height: 1.6;  /* Improve readability with larger text */
+        line-height: 3;  /* Improve readability with larger text */
     }
     
     /* Headers - also making these larger */
@@ -73,40 +73,40 @@ st.markdown("""
         font-size: 3rem; /* Larger for main title */
     }
     h2 {
-        font-size: 2.5rem;   /* Larger for section headers */
+        font-size: 3rem;   /* Larger for section headers */
     }
     h3 {
-        font-size: 2rem; /* Larger for subheaders */
+        font-size: 3rem; /* Larger for subheaders */
     }
 
     /* Input fields (number_input) - labels and actual text */
     .stNumberInput > label {
-        font-size: 4rem; /* Label for number input */
+        font-size: 2rem; /* Label for number input */
     }
     .stNumberInput input {
-        font-size: 4rem; /* The actual input text */
+        font-size: 2rem; /* The actual input text */
     }
     
     /* Buttons */
     div.stButton > button {
-        font-size: 4rem; /* Larger button text */
+        font-size: 2rem; /* Larger button text */
         height: auto; /* Allow height to adjust with text */
-        padding: 0.8em 4em; /* Adjust padding */
+        padding: 0.8em 3em; /* Adjust padding */
     }
 
     /* Success, Warning, Error boxes */
     .stAlert p {
-        font-size: 4rem; /* Alert text, slightly smaller than main text for contrast */
+        font-size: 3rem; /* Alert text, slightly smaller than main text for contrast */
     }
 
     /* Info boxes */
     .stAlert.info p {
-        font-size: 4rem; /* Info text */
+        font-size: 3rem; /* Info text */
     }
 
     /* Tab labels */
     .stTabs [data-baseweb="tab"] {
-        font-size: 4rem; /* Larger tab labels */
+        font-size: 3rem; /* Larger tab labels */
     }
 
 </style>
