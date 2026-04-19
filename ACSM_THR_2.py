@@ -159,10 +159,13 @@ with tab2:
     # Checkboxes for symptoms - now in a single column
     symptom_chest_pain = st.checkbox("因心臟缺血而引致的胸口、頸、下顎、上臂或其他部位痛楚或不適", key="s_chest_pain") 
     symptom_shortness_breath = st.checkbox("靜止時或輕微活動時呼吸急促", key="s_short_breath") 
-    symptom_dizziness = st.checkbox("頭暈或頭昏眼花", key="s_dizziness") 
-    symptom_fatigue = st.checkbox("異常疲勞", key="s_fatigue") 
-    symptom_palpitations = st.checkbox("心悸（心跳不規律）", key="s_palpitations") 
-    symptom_swelling = st.checkbox("腿部、腳踝或足部腫脹", key="s_swelling") 
+    symptom_dizziness = st.checkbox("暈眩或失去知覺", key="s_dizziness") 
+    symptom_orthopnea = st.checkbox("平臥時或晚間不時氣喘", key="s_orthopnea")
+    symptom_fatigue = st.checkbox("一般活動感到不尋常的疲倦或氣喘", key="s_fatigue") 
+    symptom_palpitations = st.checkbox("心悸或心跳過快", key="s_palpitations") 
+    symptom_swelling = st.checkbox("足踝腫", key="s_swelling") 
+    symptom_murmur = st.checkbox("心雜音", key="s_murmur") 
+    symptom_claudication = st.checkbox("歇肌肉疼痛、抽筋", key="s_claudication") 
 
     has_symptoms = any([symptom_chest_pain, symptom_shortness_breath, symptom_dizziness, symptom_fatigue, symptom_palpitations, symptom_swelling])
 
