@@ -64,7 +64,7 @@ st.markdown("""
 <style>
     /* General text size for ALL text: paragraphs, labels, st.write, etc. */
     p, label, .stMarkdown, .stCheckbox > label, .stRadio > label, .stCaption {
-        font-size: 1.4rem; /* Significantly larger general text */
+        font-size: 3rem; /* Significantly larger general text */
         line-height: 1.6;  /* Improve readability with larger text */
     }
     
