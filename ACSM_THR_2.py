@@ -227,7 +227,7 @@ with tab2:
         
         # 1. Show ACSM Risk Level
         recommendation, risk_level_str = calculate_risk(is_active, has_disease, has_symptoms)
-        st.subheader("您的運動風險評估：") 
+        st.subheader("Class Stratification for Cardiopulmonary Fitness Training:") 
         if risk_level_str == "low":
             st.success(f"**Class I**\n\n{recommendation}") 
         elif risk_level_str == "moderate":
@@ -239,7 +239,7 @@ with tab2:
         
         # 2. Show Target Heart Rate (Only if age and rhr are filled out)
         if age is not None and rhr is not None:
-            st.subheader("目標心率區間估計：") 
+            st.subheader("Training Heart Rate:") 
             thr_output, thr_error = calculate_thr(age, rhr, risk_level_str) 
             
             if thr_error:
