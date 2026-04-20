@@ -5,18 +5,18 @@ def calculate_risk(is_active, has_disease, has_symptoms):
     """Calculates exercise risk based on 2015 ACSM Algorithm."""
     if not is_active:
         if has_symptoms:
-            return "Class III. Seek medical clearance prior to exercise. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
-        elif has_disease:
-            return "Class II. Continue with Moderate Intensity Exercise.", "moderate" 
-        else:
-            return "Class I. Continue Moderate or Vigorous Intensity Exercise.", "low" 
-    else:
-        if has_symptoms:
-            return "Class III. Seek medical clearance prior to exercise. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
+            return "Class III. Seek medical clearance prior to exercise. Following Medical Clearance, Light Intensity Exercise Recommended. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
         elif has_disease:
             return "Class II. Following Medical Clearance, Light to Moderate Intensity Exercise Recommended.", "moderate" 
         else:
             return "Class I. Light to Moderate Intensity Exercise Recommended. May Gradually Progress to Vigorous Intensity Exercise Following ACSM Guidelines.", "low" 
+    else:
+        if has_symptoms:
+            return "Class III. Seek medical clearance prior to exercise. Following Medical Clearance, Light Intensity Exercise Recommended. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
+        elif has_disease:
+            return "Class II. Continue with Moderate Intensity Exercise. Medical Clearance recommended before engaging in Vigorous Intensity Exercise", "moderate" 
+        else:
+            return "Class I. Continue with Moderate or Vigorous Intensity Exercise.", "low" 
 
 def calculate_thr(age, rhr, risk_level_str):
     """Calculates Target Heart Rate (THR) range using Karvonen Formula."""
