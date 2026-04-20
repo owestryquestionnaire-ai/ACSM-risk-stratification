@@ -16,7 +16,7 @@ def calculate_risk(is_active, has_disease, has_symptoms):
         elif has_disease:
             return "Class II. Following Medical Clearance, Light to Moderate Intensity Exercise Recommended.", "moderate" 
         else:
-            return "Light to Moderate Intensity Exercise Recommended. May Gradually Progress to Vigorous Intensity Exercise Following ACSM Guidelines.", "low" 
+            return "Class I. Light to Moderate Intensity Exercise Recommended. May Gradually Progress to Vigorous Intensity Exercise Following ACSM Guidelines.", "low" 
 
 def calculate_thr(age, rhr, risk_level_str):
     """Calculates Target Heart Rate (THR) range using Karvonen Formula."""
