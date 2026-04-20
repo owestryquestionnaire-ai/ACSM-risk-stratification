@@ -49,9 +49,9 @@ def calculate_thr(age, rhr, risk_level_str):
     else:
         thr_zone_display = f"建議的目標心率 (THR) 區間為 **{lower_bound} - {upper_bound} bpm**。" 
 
-    output = f"您的估計最大心率 (MHR) 為 **{mhr} bpm**。\n" \
-             f"您的靜息心率 (RHR) 為 **{rhr} bpm**。\n" \
-             f"您的心率儲備 (HRR) 為 **{hrr} bpm**。\n\n" \
+    output = f"Maximum Heart Rate= **{mhr} bpm**。\n" \
+             f"Resting Heart Rate= **{rhr} bpm**。\n" \
+             f"Heart Rate Reserve= **{hrr} bpm**。\n\n" \
              f"{thr_zone_display}\n\n" \
              f"{advice}"
     return output, None
