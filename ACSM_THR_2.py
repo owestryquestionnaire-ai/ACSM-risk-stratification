@@ -29,13 +29,13 @@ def calculate_thr(age, rhr, risk_level_str):
     # Set intensity percentages based on risk level (as % of HRR)
     if risk_level_str == "low":
         lower_percent, upper_percent = 0.30, 0.84 
-        advice = "**Class I**Safe Exercise Zone: 30-84%HRR. RPE <17." 
+        advice = "**Class I** - Safe Exercise Zone: 30-84%HRR. RPE <17." 
     elif risk_level_str == "moderate":
         lower_percent, upper_percent = 0.30, 0.59
-        advice = "**Class II**Safe Exercise Zone: 30-59%HRR. RPE <14." 
+        advice = "**Class II** - Safe Exercise Zone: 30-59%HRR. RPE <14." 
     elif risk_level_str == "high":
         lower_percent, upper_percent = 0.30, 0.39 # Upper limit < 40% HRR
-        advice = "**Class III**，**Recommend medical clearance prior to exercise.** Safe Exercise Zone: <40% HRR. RPE <12." 
+        advice = "**Class III** - **Recommend medical clearance prior to exercise.** Safe Exercise Zone: <40% HRR. RPE <12." 
     else:
         return None, "風險等級尚未確定。" 
 
