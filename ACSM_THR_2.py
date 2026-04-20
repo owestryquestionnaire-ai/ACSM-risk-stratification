@@ -151,7 +151,7 @@ st.title("🏃‍♂️ 運動準備度和風險評估")
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
 # Create two tabs for the two different questionnaires
-tab1, tab2 = st.tabs(["1. PAR-Q 評估", "2. ACSM 風險與心率"]) 
+tab1, tab2 = st.tabs(["1.體能活動適應力問卷（PAR-Q）", "2.ACSM運動風險評估"]) 
 
 # ==========================================
 # TAB 1: PAR-Q
