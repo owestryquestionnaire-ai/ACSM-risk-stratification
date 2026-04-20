@@ -195,12 +195,12 @@ with tab2:
     symptom_shortness_breath = st.checkbox("靜止時或輕微活動時呼吸急促", key="s_short_breath") 
     symptom_dizziness = st.checkbox("暈眩或失去知覺", key="s_dizziness") 
     symptom_orthopnea = st.checkbox("平臥時或晚間不時氣喘", key="s_orthopnea")
-    symptom_fatigue = st.checkbox("一般活動感到不尋常的疲倦或氣喘", key="s_fatigue") 
-    symptom_palpitations = st.checkbox("心悸或心跳過快", key="s_palpitations") 
     symptom_swelling = st.checkbox("足踝腫", key="s_swelling") 
-    symptom_murmur = st.checkbox("心雜音", key="s_murmur") 
-    symptom_claudications = st.checkbox("活動時下肢間歇性疼痛、抽筋（間歇性跛行）", key="s_claudications") 
-
+    symptom_palpitations = st.checkbox("心悸或心跳過快", key="s_palpitations") 
+    symptom_claudications = st.checkbox("間歇肌肉疼痛、抽筋", key="s_claudications") 
+    symptom_murmur = st.checkbox("心雜音", key="s_murmur")
+    symptom_fatigue = st.checkbox("一般活動感到不尋常的疲倦或氣喘", key="s_fatigue") 
+    
     has_symptoms = any([symptom_chest_pain, symptom_shortness_breath, symptom_dizziness, 
                         symptom_orthopnea, symptom_fatigue, symptom_palpitations, 
                         symptom_swelling, symptom_murmur, symptom_claudications])
