@@ -29,13 +29,13 @@ def calculate_thr(age, rhr, risk_level_str):
     # Set intensity percentages based on risk level (as % of HRR)
     if risk_level_str == "low":
         lower_percent, upper_percent = 0.30, 0.84 
-        advice = "對於**低風險**人士，中等至高強度範圍通常是合適的。請從較低強度開始，逐步增加。" 
+        advice = "**Class I**Safe Exercise Zone: 30-84%HRR. RPE <17." 
     elif risk_level_str == "moderate":
         lower_percent, upper_percent = 0.30, 0.59
-        advice = "對於**中等風險**人士，建議從輕度到中等強度開始，尤其是在初期或未經醫生批准進行劇烈運動之前。" 
+        advice = "**Class II**Safe Exercise Zone: 30-59%HRR. RPE <14." 
     elif risk_level_str == "high":
         lower_percent, upper_percent = 0.30, 0.39 # Upper limit < 40% HRR
-        advice = "對於**高風險**人士，**任何運動都必須在徹底的醫療許可後才能進行**。如果獲得許可，建議將運動強度保持在最高心率限制以下，進行非常輕度到輕度的運動（低於 40% HRR）。" 
+        advice = "**Class III**，**Recommend medical clearance prior to exercise.** Safe Exercise Zone: <40% HRR. RPE <12." 
     else:
         return None, "風險等級尚未確定。" 
 
@@ -45,13 +45,13 @@ def calculate_thr(age, rhr, risk_level_str):
 
     # Conditional output string for high risk (emphasizing max, not a range)
     if risk_level_str == "high":
-        thr_zone_display = f"您的建議目標心率 (THR) 應為 **最高 {upper_bound} bpm**。" 
+        thr_zone_display = f"Targe Heart Rate **最高 {upper_bound} bpm**." 
     else:
-        thr_zone_display = f"建議的目標心率 (THR) 區間為 **{lower_bound} - {upper_bound} bpm**。" 
+        thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
 
-    output = f"Maximum Heart Rate= **{mhr} bpm**。\n" \
-             f"Resting Heart Rate= **{rhr} bpm**。\n" \
-             f"Heart Rate Reserve= **{hrr} bpm**。\n\n" \
+    output = f"Maximum Heart Rate= **{mhr} bpm**.\n" \
+             f"Resting Heart Rate= **{rhr} bpm**.\n" \
+             f"Heart Rate Reserve= **{hrr} bpm**.\n\n" \
              f"{thr_zone_display}\n\n" \
              f"{advice}"
     return output, None
