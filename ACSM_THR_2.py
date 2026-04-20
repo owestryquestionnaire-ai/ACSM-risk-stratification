@@ -28,10 +28,10 @@ def calculate_thr(age, rhr, risk_level_str):
     
     # Set intensity percentages based on risk level (as % of HRR)
     if risk_level_str == "low":
-        lower_percent, upper_percent = 0.50, 0.85 
+        lower_percent, upper_percent = 0.30, 0.84 
         advice = "對於**低風險**人士，中等至高強度範圍通常是合適的。請從較低強度開始，逐步增加。" 
     elif risk_level_str == "moderate":
-        lower_percent, upper_percent = 0.40, 0.60 
+        lower_percent, upper_percent = 0.30, 0.59
         advice = "對於**中等風險**人士，建議從輕度到中等強度開始，尤其是在初期或未經醫生批准進行劇烈運動之前。" 
     elif risk_level_str == "high":
         lower_percent, upper_percent = 0.30, 0.39 # Upper limit < 40% HRR
