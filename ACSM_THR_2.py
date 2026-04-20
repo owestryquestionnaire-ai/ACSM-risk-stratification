@@ -5,18 +5,18 @@ def calculate_risk(is_active, has_disease, has_symptoms):
     """Calculates exercise risk based on 2015 ACSM Algorithm."""
     if not is_active:
         if has_symptoms:
-            return "Class III. Seek medical clearance prior to exercise. Following Medical Clearance, Light Intensity Exercise Recommended. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
+            return "Class III. Seek medical clearance prior to exercise. Following medical clearance, light intensity exercise recommended. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
         elif has_disease:
-            return "Class II. Following Medical Clearance, Light to Moderate Intensity Exercise Recommended.", "moderate" 
+            return "Class II. Following medical clearance, light to moderate intensity exercise recommended.", "moderate" 
         else:
-            return "Class I. Light to Moderate Intensity Exercise Recommended. May Gradually Progress to Vigorous Intensity Exercise Following ACSM Guidelines.", "low" 
+            return "Class I. Light to moderate intensity exercise recommended. May gradually progress to vigorous intensity exercise following ACSM guidelines.", "low" 
     else:
         if has_symptoms:
-            return "Class III. Seek medical clearance prior to exercise. Following Medical Clearance, Light Intensity Exercise Recommended. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
+            return "Class III. Seek medical clearance prior to exercise. Following medical clearance, light intensity exercise recommended. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
         elif has_disease:
-            return "Class II. Continue with Moderate Intensity Exercise. Medical Clearance recommended before engaging in Vigorous Intensity Exercise", "moderate" 
+            return "Class II. Continue with moderate intensity exercise. Medical clearance recommended before engaging in vigorous intensity exercise", "moderate" 
         else:
-            return "Class I. Continue with Moderate or Vigorous Intensity Exercise.", "low" 
+            return "Class I. Continue with moderate or vigorous intensity exercise.", "low" 
 
 def calculate_thr(age, rhr, risk_level_str):
     """Calculates Target Heart Rate (THR) range using Karvonen Formula."""
