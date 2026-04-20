@@ -223,7 +223,7 @@ with tab2:
 # TAB 2: ACSM & Heart Rate - RESULTS
 # ==========================================
     st.markdown("---")
-    if st.button("Class Stratification for Cardiopulmonary Fitness Training.", key="calculate_acsm_button"): 
+    if st.button("Calculate Exercise Risk", key="calculate_acsm_button"): 
         
         # 1. Show ACSM Risk Level
         recommendation, risk_level_str = calculate_risk(is_active, has_disease, has_symptoms)
