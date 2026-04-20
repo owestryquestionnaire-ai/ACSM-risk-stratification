@@ -252,4 +252,4 @@ with tab2:
 
 # This is completely un-indented, so it shows up at the bottom of the whole page, outside the tabs.
 st.markdown("---")
-st.caption("免責聲明：此工具僅供參考，不能替代專業醫療建議。") 
+st.caption("Disclaimer: This tool is for reference purpose and cannot replace professional medical advice. Adjustment to target HR zone should also be made on individual basis.") 
