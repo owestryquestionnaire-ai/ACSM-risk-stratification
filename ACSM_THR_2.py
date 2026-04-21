@@ -19,7 +19,6 @@ def calculate_risk(is_active, has_disease, form_a_score, form_b_score):
         return "Class II. Continue with moderate intensity exercise. Medical clearance recommended before engaging in vigorous intensity exercise.", "moderate" 
     
     # Also assign to Class II if they failed PAR-Q (Form A > 0) but have no known disease and Form B = 0 
-    # (Since Class I STRICTLY requires Form A = 0)
     if not has_disease and form_a_score > 0 and form_b_score == 0:
         return "Class II. You answered 'Yes' to PAR-Q question(s). Following medical clearance, light to moderate intensity exercise recommended.", "moderate"
 
@@ -92,7 +91,8 @@ st.markdown("""
 st.title("🏃‍♂️ 運動準備度和風險評估") 
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
-tab1, tab2 = st.tabs(["1.體能活動適應力問卷（PAR-Q）", "2.ACSM運動風險評估"]) 
+# ---> CHANGED: Added tab3 here <---
+tab1, tab2, tab3 = st.tabs(["1.體能活動適應力問卷（PAR-Q）", "2.ACSM運動風險評估", "3.目標心率計算器"]) 
 
 # ==========================================
 # TAB 1: PAR-Q (FORM A)
@@ -120,7 +120,6 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
-
 # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS (FORM B & Disease)
 # ==========================================
@@ -129,8 +128,8 @@ with tab2:
     st.write("根據 2015 年 ACSM 算法，確定您的詳細運動風險類別。") 
     
     st.subheader("選填：目標心率計算器") 
-    age = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input") 
-    rhr = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input") 
+    age = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab2") # Unique key
+    rhr = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab2") # Unique key
 
     st.markdown("---")
     st.header("Form B: 體徵和症狀") 
@@ -163,12 +162,11 @@ with tab2:
     st.markdown("---")
     st.header("當前運動習慣") 
     is_active = st.radio("您目前是否定期進行體能活動？ (過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)", ("是", "否"), key="is_active_radio") == "是" 
-
 # ==========================================
 # TAB 2: ACSM & Heart Rate - RESULTS
 # ==========================================
     st.markdown("---")
-    if st.button("Calculate Exercise Risk", key="calculate_acsm_button"): 
+    if st.button("計算 ACSM 風險", key="calculate_acsm_button"): 
         
         # Calculate Risk passing the specific scores
         recommendation, risk_level_str = calculate_risk(is_active, has_disease, form_a_score, form_b_score)
@@ -195,7 +193,43 @@ with tab2:
         else:
             st.info("💡 *由於年齡或靜息心率留空，因此未計算目標心率。*") 
 
+
+# ==========================================
+# TAB 3: Direct THR Calculator
+# ==========================================
+with tab3:
+    st.header("目標心率計算器 (直接輸入分類)")
+    st.write("如果您已經知道您的 ACSM 運動風險分類，可以直接在此輸入，並計算您的目標心率。")
+
+    selected_class = st.radio(
+        "請選擇您的運動風險分類：",
+        ["Class I", "Class II", "Class III"],
+        horizontal=True,
+        key="direct_thr_class_select"
+    )
+
+    age_tab3 = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab3")
+    rhr_tab3 = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab3")
+
+    st.markdown("---")
+
+    if st.button("計算目標心率", key="calculate_thr_tab3_button"):
+        if age_tab3 is None or rhr_tab3 is None:
+            st.error("請輸入年齡和靜息心率以計算目標心率。")
+        else:
+            # Map selected Class string to risk_level_str used by calculate_thr
+            risk_map = {"Class I": "low", "Class II": "moderate", "Class III": "high"}
+            risk_level_for_thr = risk_map[selected_class]
+
+            st.subheader(f"根據 {selected_class} 的目標心率：")
+            thr_output, thr_error = calculate_thr(age_tab3, rhr_tab3, risk_level_for_thr)
+
+            if thr_error:
+                st.error(thr_error)
+            else:
+                st.markdown(thr_output)
+
+
 # --- Footer (Un-indented, applies to whole page) ---
 st.markdown("---")
-st.caption("Disclaimer: This tool is for reference purpose and cannot replace professional medical advice. Adjustment to target HR zone should also be made on individual basis.") 
-
+st.caption("Disclaimer: This tool is for reference purpose and cannot replace professional medical advice. Adjustment to target HR zone should also be made on individual basis.")
