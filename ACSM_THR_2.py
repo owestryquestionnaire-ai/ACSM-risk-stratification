@@ -42,8 +42,8 @@ def calculate_thr(age, rhr, risk_level_str):
     hrr = mhr - rhr 
     
     if risk_level_str == "low":
-        lower_percent, upper_percent = 0.30, 0.84 
-        advice = "**Class I** - Safe Exercise Zone: 30-84%HRR. RPE <17." 
+        lower_percent, upper_percent = 0.30, 0.84 # Keep upper_percent for calculation consistency
+        advice = "**Class I** - Safe Exercise Zone: ≥ 84%HRR. RPE <17." 
     elif risk_level_str == "moderate":
         lower_percent, upper_percent = 0.30, 0.59
         advice = "**Class II** - Safe Exercise Zone: 30-59%HRR. RPE <14." 
@@ -56,9 +56,12 @@ def calculate_thr(age, rhr, risk_level_str):
     lower_bound = int((hrr * lower_percent) + rhr) 
     upper_bound = int((hrr * upper_percent) + rhr)
 
+    # --- MODIFIED THR DISPLAY LOGIC ---
     if risk_level_str == "high":
         thr_zone_display = f"Target Heart Rate **最高 {upper_bound} bpm**." 
-    else:
+    elif risk_level_str == "low": # New condition for Class I
+        thr_zone_display = f"Target Heart Rate **≥ {upper_bound} bpm**." 
+    else: # For Class II
         thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
 
     output = f"Maximum Heart Rate= **{mhr} bpm**.\n" \
@@ -87,11 +90,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 # --- End Custom CSS ---
-
 st.title("🏃‍♂️ 運動準備度和風險評估") 
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
-# ---> CHANGED: Added tab3 here <---
+# Create three tabs for the three different questionnaires
 tab1, tab2, tab3 = st.tabs(["1.體能活動適應力問卷（PAR-Q）", "2.ACSM運動風險評估", "3.目標心率計算器"]) 
 
 # ==========================================
@@ -102,12 +104,12 @@ with tab1:
     st.write("請回答以下 7 個一般健康問題：") 
     
     q1 = st.radio("1. 醫生是否曾說過您有心臟疾病，並且只能在醫生建議下進行體能活動？", ("否", "是"), horizontal=True, key="parq_q1")
-    q2 = st.radio("2. 當你做運動時有否感覺胸口痛？", ("否", "是"), horizontal=True, key="parq_q2")
-    q3 = st.radio("3. 在過去數個月內，你有否在不做運動時也感到胸口痛？", ("否", "是"), horizontal=True, key="parq_q3")
-    q4 = st.radio("4. 你有否因頭暈而跌倒或失去知覺？", ("否", "是"), horizontal=True, key="parq_q4")
-    q5 = st.radio("5. 做運動有否加重你骨骼或關節的痛楚？", ("否", "是"), horizontal=True, key="parq_q5")
-    q6 = st.radio("6. 醫生有否開藥給你的血壓或心臟病？", ("否", "是"), horizontal=True, key="parq_q6")
-    q7 = st.radio("7. 有否其他原因令你不能做運動？", ("否", "是"), horizontal=True, key="parq_q7")
+    q2 = st.radio("2. 當您進行體能活動時，胸部會感到疼痛嗎？", ("否", "是"), horizontal=True, key="parq_q2")
+    q3 = st.radio("3. 在過去一個月內，當您沒有進行體能活動時，是否曾感到胸痛？", ("否", "是"), horizontal=True, key="parq_q3")
+    q4 = st.radio("4. 您是否會因頭暈而失去平衡，或者曾經失去知覺？", ("否", "是"), horizontal=True, key="parq_q4")
+    q5 = st.radio("5. 你的骨骼或關節（例如脊骨、膝蓋或髖關節）是否有毛病，且會因改變體能活動而惡化？", ("否", "是"), horizontal=True, key="parq_q5")
+    q6 = st.radio("6. 您的醫生目前是否正在為您的血壓或心臟疾病開處方藥物（例如利尿劑）？", ("否", "是"), horizontal=True, key="parq_q6")
+    q7 = st.radio("7. 您是否知道有任何其他原因導致您不應該進行體能活動？", ("否", "是"), horizontal=True, key="parq_q7")
 
     # Score calculation for Form A
     parq_answers = [q1, q2, q3, q4, q5, q6, q7]
@@ -116,10 +118,13 @@ with tab1:
     st.markdown("---")
     if st.button("評估 PAR-Q", key="evaluate_parq_button"): 
         if form_a_score > 0: 
-            st.error("🛑 **停止：需要醫療許可。**\n\n在開始增加運動量或進行體能評估前，請先致電或親身與醫生商談，告知醫生這份問卷，以及你回答「是」的問題。") 
+            st.error("""🛑 **停止：需要醫療許可。**
+因為您回答了一個或多個問題為「是」，在開始增加運動量或進行體能評估前，請先致電或親身與醫生商談，告知醫生這份問卷，以及您回答「是」。
+""")
         else:
-            st.success("✅ **已獲准運動。**\n\n開始增加運動量──開始時慢慢進行，然後逐漸增加，這是最安全和最容易的方法。") 
+            st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
+
 # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS (FORM B & Disease)
 # ==========================================
@@ -128,8 +133,9 @@ with tab2:
     st.write("根據 2015 年 ACSM 算法，確定您的詳細運動風險類別。") 
     
     st.subheader("選填：目標心率計算器") 
-    age = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab2") 
-    rhr = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab2") 
+    # Unique keys for age and RHR inputs in Tab 2
+    age_tab2 = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab2") 
+    rhr_tab2 = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab2") 
 
     st.markdown("---")
     st.header("Form B: 體徵和症狀") 
@@ -153,24 +159,22 @@ with tab2:
     st.header("已知醫療狀況") 
     st.write("您是否有以下任何已知醫療狀況？") 
     
-    # --- UPDATED LINE WITH MORE EXAMPLES ---
     disease_cardiovascular = st.checkbox("已知心血管疾病 (例如：冠心病、心臟病發作、中風、心臟衰竭)", key="d_cardio") 
     disease_metabolic = st.checkbox("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", key="d_metabolic") 
-    disease_renal = st.checkbox("已知腎臟疾病", key="d_renal") 
+    disease_renal = st.checkbox("已知腎臟（腎）疾病", key="d_renal") 
 
     has_disease = any([disease_cardiovascular, disease_metabolic, disease_renal])
 
     st.markdown("---")
     st.header("當前運動習慣") 
     is_active = st.radio("您目前是否定期進行體能活動？ (過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)", ("是", "否"), key="is_active_radio") == "是" 
-
 # ==========================================
 # TAB 2: ACSM & Heart Rate - RESULTS
 # ==========================================
     st.markdown("---")
-    if st.button("計算 ACSM 風險", key="calculate_acsm_button"): 
+    if st.button("Calculate Exercise Risk", key="calculate_acsm_button"): 
         
-        # Calculate Risk passing the specific scores
+        # Calculate Risk passing the specific scores (from Form A in tab1, and Form B/disease from tab2)
         recommendation, risk_level_str = calculate_risk(is_active, has_disease, form_a_score, form_b_score)
         
         st.subheader("Class Stratification for Cardiopulmonary Fitness Training:") 
@@ -183,9 +187,10 @@ with tab2:
 
         st.markdown("---")
         
-        if age is not None and rhr is not None:
+        # Only show THR if age and rhr are filled out in Tab 2's optional inputs
+        if age_tab2 is not None and rhr_tab2 is not None: # Use tab2's age/rhr here
             st.subheader("Training Heart Rate:") 
-            thr_output, thr_error = calculate_thr(age, rhr, risk_level_str) 
+            thr_output, thr_error = calculate_thr(age_tab2, rhr_tab2, risk_level_str) 
             
             if thr_error:
                 st.error(thr_error)
@@ -210,6 +215,7 @@ with tab3:
         key="direct_thr_class_select"
     )
 
+    # Unique keys for age and RHR inputs in Tab 3
     age_tab3 = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab3")
     rhr_tab3 = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab3")
 
@@ -235,3 +241,4 @@ with tab3:
 # --- Footer (Un-indented, applies to whole page) ---
 st.markdown("---")
 st.caption("Disclaimer: This tool is for reference purpose and cannot replace professional medical advice. Adjustment to target HR zone should also be made on individual basis.")
+
