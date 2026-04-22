@@ -58,9 +58,9 @@ def calculate_thr(age, rhr, risk_level_str):
 
     # --- MODIFIED THR DISPLAY LOGIC ---
     if risk_level_str == "high":
-        thr_zone_display = f"Target Heart Rate **最高 {upper_bound} bpm**." 
+        thr_zone_display = f"Target Heart Rate **≤ {upper_bound} bpm**." 
     elif risk_level_str == "low": # For Class I: "up to" or "not exceeding"
-        thr_zone_display = f"Target Heart Rate **不超過 {upper_bound} bpm** (即 ≤ {upper_bound} bpm)。" 
+        thr_zone_display = f"Target Heart Rate **≤ {upper_bound} bpm**" 
     else: # For Class II
         thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
 
