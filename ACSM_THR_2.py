@@ -43,7 +43,7 @@ def calculate_thr(age, rhr, risk_level_str):
     
     if risk_level_str == "low":
         lower_percent, upper_percent = 0.30, 0.84 # Keep upper_percent for calculation consistency
-        advice = "**Class I** - Safe Exercise Zone: 30-84%HRR. RPE <17." 
+        advice = "**Class I** - Safe Exercise Zone: ≤84%HRR. RPE <17." 
     elif risk_level_str == "moderate":
         lower_percent, upper_percent = 0.30, 0.59
         advice = "**Class II** - Safe Exercise Zone: 30-59%HRR. RPE <14." 
