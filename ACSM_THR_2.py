@@ -43,7 +43,7 @@ def calculate_thr(age, rhr, risk_level_str):
     
     if risk_level_str == "low":
         lower_percent, upper_percent = 0.30, 0.84 # Keep upper_percent for calculation consistency
-        advice = "**Class I** - Safe Exercise Zone: ≥ 84%HRR. RPE <17." 
+        advice = "**Class I** - Safe Exercise Zone: 30-84%HRR. RPE <17." 
     elif risk_level_str == "moderate":
         lower_percent, upper_percent = 0.30, 0.59
         advice = "**Class II** - Safe Exercise Zone: 30-59%HRR. RPE <14." 
@@ -59,8 +59,8 @@ def calculate_thr(age, rhr, risk_level_str):
     # --- MODIFIED THR DISPLAY LOGIC ---
     if risk_level_str == "high":
         thr_zone_display = f"Target Heart Rate **最高 {upper_bound} bpm**." 
-    elif risk_level_str == "low": # New condition for Class I
-        thr_zone_display = f"Target Heart Rate **≥ {upper_bound} bpm**." 
+    elif risk_level_str == "low": # Display as a range for Class I, with 84% HRR as upper limit
+        thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
     else: # For Class II
         thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
 
@@ -90,6 +90,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 # --- End Custom CSS ---
+
 st.title("🏃‍♂️ 運動準備度和風險評估") 
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
@@ -215,7 +216,6 @@ with tab3:
         key="direct_thr_class_select"
     )
 
-    # Unique keys for age and RHR inputs in Tab 3
     age_tab3 = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab3")
     rhr_tab3 = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab3")
 
@@ -241,4 +241,3 @@ with tab3:
 # --- Footer (Un-indented, applies to whole page) ---
 st.markdown("---")
 st.caption("Disclaimer: This tool is for reference purpose and cannot replace professional medical advice. Adjustment to target HR zone should also be made on individual basis.")
-
