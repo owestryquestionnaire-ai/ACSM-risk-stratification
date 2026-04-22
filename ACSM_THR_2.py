@@ -59,8 +59,8 @@ def calculate_thr(age, rhr, risk_level_str):
     # --- MODIFIED THR DISPLAY LOGIC ---
     if risk_level_str == "high":
         thr_zone_display = f"Target Heart Rate **最高 {upper_bound} bpm**." 
-    elif risk_level_str == "low": # Display as a range for Class I, with 84% HRR as upper limit
-        thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
+    elif risk_level_str == "low": # For Class I: "up to" or "not exceeding"
+        thr_zone_display = f"Target Heart Rate **不超過 {upper_bound} bpm** (即 ≤ {upper_bound} bpm)。" 
     else: # For Class II
         thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
 
@@ -125,7 +125,6 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
-
 # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS (FORM B & Disease)
 # ==========================================
