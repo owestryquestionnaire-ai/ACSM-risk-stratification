@@ -128,8 +128,8 @@ with tab2:
     st.write("根據 2015 年 ACSM 算法，確定您的詳細運動風險類別。") 
     
     st.subheader("選填：目標心率計算器") 
-    age = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab2") # Unique key
-    rhr = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab2") # Unique key
+    age = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab2") 
+    rhr = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab2") 
 
     st.markdown("---")
     st.header("Form B: 體徵和症狀") 
@@ -153,15 +153,17 @@ with tab2:
     st.header("已知醫療狀況") 
     st.write("您是否有以下任何已知醫療狀況？") 
     
-    d_1 = st.checkbox("已知心血管疾病 (例如：心臟病發作、中風)", key="d_cardio") 
-    d_2 = st.checkbox("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", key="d_metabolic") 
-    d_3 = st.checkbox("已知腎臟（腎）疾病", key="d_renal") 
+    # --- UPDATED LINE WITH MORE EXAMPLES ---
+    disease_cardiovascular = st.checkbox("已知心血管疾病 (例如：冠心病、心臟病發作、中風、心臟衰竭)", key="d_cardio") 
+    disease_metabolic = st.checkbox("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", key="d_metabolic") 
+    disease_renal = st.checkbox("已知腎臟疾病", key="d_renal") 
 
-    has_disease = any([d_1, d_2, d_3])
+    has_disease = any([disease_cardiovascular, disease_metabolic, disease_renal])
 
     st.markdown("---")
     st.header("當前運動習慣") 
     is_active = st.radio("您目前是否定期進行體能活動？ (過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)", ("是", "否"), key="is_active_radio") == "是" 
+
 # ==========================================
 # TAB 2: ACSM & Heart Rate - RESULTS
 # ==========================================
