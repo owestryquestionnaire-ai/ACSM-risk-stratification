@@ -151,7 +151,7 @@ with tab2:
     
     disease_cardiovascular = st.checkbox("已知心血管疾病 (例如：冠心病、心臟病發作、中風、心臟衰竭)", key="d_cardio") 
     disease_metabolic = st.checkbox("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", key="d_metabolic") 
-    disease_renal = st.checkbox("已知腎臟（腎）疾病", key="d_renal") 
+    disease_renal = st.checkbox("已知腎臟疾病", key="d_renal") 
 
     has_disease = any([disease_cardiovascular, disease_metabolic, disease_renal])
 
