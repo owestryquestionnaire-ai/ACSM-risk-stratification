@@ -8,61 +8,52 @@ def calculate_risk(is_active, has_disease, form_a_score, form_b_score):
     """Calculates exercise risk based strictly on the provided Form A, Form B, and disease/activity rules."""
     
     # Class III Logic:
-    # 1. Known disease WITHOUT regular exercise (Form B >= 0)
-    # 2. Or if they have ANY signs/symptoms (Form B > 0), they automatically fall into Class III for safety.
     if (has_disease and not is_active) or (form_b_score > 0):
         return "Class III. Seek medical clearance prior to exercise. Following medical clearance, light intensity exercise recommended. Continuous heart rate and RPE monitoring together with close supervision.", "high" 
     
     # Class II Logic:
-    # Known disease WITH regular exercise AND Form B = 0
     if has_disease and is_active and form_b_score == 0:
         return "Class II. Continue with moderate intensity exercise. Medical clearance recommended before engaging in vigorous intensity exercise.", "moderate" 
     
-    # Also assign to Class II if they failed PAR-Q (Form A > 0) but have no known disease and Form B = 0 
     if not has_disease and form_a_score > 0 and form_b_score == 0:
         return "Class II. You answered 'Yes' to PAR-Q question(s). Following medical clearance, light to moderate intensity exercise recommended.", "moderate"
 
     # Class I Logic:
-    # No known disease AND Form A = 0 AND Form B = 0
     if not has_disease and form_a_score == 0 and form_b_score == 0:
         if not is_active:
             return "Class I. Light to moderate intensity exercise recommended. May gradually progress to vigorous intensity exercise following ACSM guidelines.", "low" 
         else:
             return "Class I. Continue with moderate or vigorous intensity exercise.", "low" 
             
-    # Fallback just in case
+    # Fallback
     return "Class III. Seek medical clearance prior to exercise.", "high"
 
 def calculate_thr(age, rhr, risk_level_str):
-    """Calculates Target Heart Rate (THR) range using Karvonen Formula."""
+    """Calculates Target Heart Rate (THR) upper limits using Karvonen Formula."""
     mhr = 220 - age 
     if rhr >= mhr: 
         return None, "靜息心率不能大於或等於估計最大心率 (220 - 年齡)。請檢查您的輸入。" 
 
     hrr = mhr - rhr 
     
+    # Set intensity limits based on risk level
     if risk_level_str == "low":
-        lower_percent, upper_percent = 0.30, 0.84 # Keep upper_percent for calculation consistency
-        advice = "**Class I** - Safe Exercise Zone: ≤84%HRR. RPE <17." 
+        upper_bound = int((hrr * 0.84) + rhr)
+        advice = "**Class I** - Safe Exercise Zone: ≤ 84% HRR. RPE <17." 
+        thr_zone_display = f"Target Heart Rate **≤ {upper_bound} bpm**." 
+        
     elif risk_level_str == "moderate":
-        lower_percent, upper_percent = 0.30, 0.59
-        advice = "**Class II** - Safe Exercise Zone: 30-59%HRR. RPE <14." 
+        upper_bound = int((hrr * 0.60) + rhr)
+        advice = "**Class II** - Safe Exercise Zone: < 60% HRR. RPE <14." 
+        thr_zone_display = f"Target Heart Rate **< {upper_bound} bpm**." 
+        
     elif risk_level_str == "high":
-        lower_percent, upper_percent = 0.30, 0.39 
-        advice = "**Class III** - **Recommend medical clearance prior to exercise.** Safe Exercise Zone: <40% HRR. RPE <12." 
+        upper_bound = int((hrr * 0.40) + rhr)
+        advice = "**Class III** - **Recommend medical clearance prior to exercise.** Safe Exercise Zone: < 40% HRR. RPE <12." 
+        thr_zone_display = f"Target Heart Rate **< {upper_bound} bpm**." 
+        
     else:
         return None, "風險等級尚未確定。" 
-
-    lower_bound = int((hrr * lower_percent) + rhr) 
-    upper_bound = int((hrr * upper_percent) + rhr)
-
-    # --- MODIFIED THR DISPLAY LOGIC ---
-    if risk_level_str == "high":
-        thr_zone_display = f"Target Heart Rate **≤ {upper_bound} bpm**." 
-    elif risk_level_str == "low": # For Class I: "up to" or "not exceeding"
-        thr_zone_display = f"Target Heart Rate **≤ {upper_bound} bpm**" 
-    else: # For Class II
-        thr_zone_display = f"Target Heart Rate **{lower_bound} - {upper_bound} bpm**." 
 
     output = f"Maximum Heart Rate= **{mhr} bpm**.\n" \
              f"Resting Heart Rate= **{rhr} bpm**.\n" \
@@ -90,11 +81,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 # --- End Custom CSS ---
-
 st.title("🏃‍♂️ 運動準備度和風險評估") 
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
-# Create three tabs for the three different questionnaires
+# Create three tabs
 tab1, tab2, tab3 = st.tabs(["1.體能活動適應力問卷（PAR-Q）", "2.ACSM運動風險評估", "3.目標心率計算器"]) 
 
 # ==========================================
@@ -125,6 +115,7 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
+
 # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS (FORM B & Disease)
 # ==========================================
@@ -133,7 +124,6 @@ with tab2:
     st.write("根據 2015 年 ACSM 算法，確定您的詳細運動風險類別。") 
     
     st.subheader("選填：目標心率計算器") 
-    # Unique keys for age and RHR inputs in Tab 2
     age_tab2 = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab2") 
     rhr_tab2 = st.number_input("輸入您的靜息心率（bpm）：", min_value=30, max_value=120, value=None, placeholder="例如：60", key="rhr_input_tab2") 
 
@@ -168,13 +158,14 @@ with tab2:
     st.markdown("---")
     st.header("當前運動習慣") 
     is_active = st.radio("您目前是否定期進行體能活動？ (過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)", ("是", "否"), key="is_active_radio") == "是" 
+
 # ==========================================
 # TAB 2: ACSM & Heart Rate - RESULTS
 # ==========================================
     st.markdown("---")
     if st.button("Calculate Exercise Risk", key="calculate_acsm_button"): 
         
-        # Calculate Risk passing the specific scores (from Form A in tab1, and Form B/disease from tab2)
+        # Calculate Risk passing the specific scores
         recommendation, risk_level_str = calculate_risk(is_active, has_disease, form_a_score, form_b_score)
         
         st.subheader("Class Stratification for Cardiopulmonary Fitness Training:") 
@@ -187,8 +178,7 @@ with tab2:
 
         st.markdown("---")
         
-        # Only show THR if age and rhr are filled out in Tab 2's optional inputs
-        if age_tab2 is not None and rhr_tab2 is not None: # Use tab2's age/rhr here
+        if age_tab2 is not None and rhr_tab2 is not None:
             st.subheader("Training Heart Rate:") 
             thr_output, thr_error = calculate_thr(age_tab2, rhr_tab2, risk_level_str) 
             
