@@ -55,12 +55,12 @@ def calculate_thr(age, rhr, risk_level_str):
         thr_zone_display = f"Target Heart Rate **< {upper_bound} bpm**." 
         advice = (
             "<u>**Class II**</u>\n\n"
-            "Safe Exercise Zone: < 60% HRR  \n"
-            "RPE: <14  \n"
-            "Recommended Exercise Intensity: Light to Moderate Intensity  \n"
-            "Medical Clearance: Recommended before engaging in vigorous intensity exercise  \n"
-            "Supervision: Not strictly required  \n"
-            "Monitoring: Recommended to monitor HR and RPE"
+            "**Safe Exercise Zone:** < 60% HRR  \n"
+            "**RPE:** <14  \n"
+            "**Recommended Exercise Intensity:** Light to Moderate Intensity ✔️ \n"
+            "**Medical Clearance:** Recommended before engaging in vigorous intensity exercise  \n"
+            "**Supervision:** Not strictly required (unless patient working for vigorous exercise) \n"
+            "**Monitoring:** Continuous HR / RPE monitoring"
         )
         
     elif risk_level_str == "high":
@@ -68,12 +68,12 @@ def calculate_thr(age, rhr, risk_level_str):
         thr_zone_display = f"Target Heart Rate **< {upper_bound} bpm**." 
         advice = (
             "<u>**Class III**</u>\n\n"
-            "Safe Exercise Zone: < 40% HRR  \n"
-            "RPE: <12  \n"
-            "Recommended Exercise Intensity: Light Intensity  \n"
-            "Medical Clearance: **Required prior to exercise 🛑**  \n"
-            "Supervision: Close supervision required  \n"
-            "Monitoring: Continuous heart rate and RPE monitoring"
+            "**Safe Exercise Zone:** < 40% HRR  \n"
+            "**RPE:** <12  \n"
+            "**Recommended Exercise Intensity:** Light Intensity ✔️ \n"
+            "**Medical Clearance:** Recommended \n"
+            "**Supervision:** Required (for both moderate and vigorous exercise)  \n"
+            "**Monitoring:** Continuous heart rate and RPE monitoring with close supervision"
         )
         
     else:
