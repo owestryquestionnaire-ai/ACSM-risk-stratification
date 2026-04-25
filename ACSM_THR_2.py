@@ -42,12 +42,12 @@ def calculate_thr(age, rhr, risk_level_str):
         thr_zone_display = f"Target Heart Rate **≤ {upper_bound} bpm**." 
         advice = (
             "<u>**Class I**</u>\n\n"
-            "Safe Exercise Zone: ≤ 84% HRR\n\n" # Used \n\n here
-            "RPE: <17\n\n" # Used \n\n here
-            "Recommended Exercise Intensity: Moderate to Vigorous Intensity ✔️\n\n" # Used \n\n here
-            "Medical Clearance: Not necessary\n\n" # Used \n\n here
-            "Supervision: Not required\n\n" # Used \n\n here
-            "Monitoring: Monitor HR in first session (to facilitate teaching but it is not compulsory)"
+            "**Safe Exercise Zone:** ≤ 84% HRR\n\n" # Used \n\n here
+            "**RPE:** <17\n\n" # Used \n\n here
+            "**Recommended Exercise Intensity:** Moderate to Vigorous Intensity ✔️\n\n" # Used \n\n here
+            "**Medical Clearance:** Not necessary\n\n" # Used \n\n here
+            "**Supervision:** Not required\n\n" # Used \n\n here
+            "**Monitoring:** Monitor HR in first session (to facilitate teaching but it is not compulsory)"
         )
         
     elif risk_level_str == "moderate":
