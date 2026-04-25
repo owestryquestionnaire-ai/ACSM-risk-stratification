@@ -114,7 +114,7 @@ st.title("🏃‍♂️ 運動準備度和風險評估")
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
 # Create three tabs
-tab1, tab2, tab3 = st.tabs(["1.體能活動適應力問卷（PAR-Q）", "2.ACSM運動風險評估", "3.目標心率計算器"]) 
+tab1, tab2, tab3 = st.tabs(["1.體能活動適應力問卷（PAR-Q）", "2.運動風險評估", "3.目標心率計算器"]) 
 
 # ==========================================
 # TAB 1: PAR-Q (FORM A)
@@ -149,8 +149,8 @@ with tab1:
 # TAB 2: ACSM & Heart Rate - INPUTS & RESULTS
 # ==========================================
 with tab2:
-    st.header("ACSM 運動風險評估") 
-    st.write("根據 2015 年 ACSM 算法，確定您的詳細運動風險類別。") 
+    st.header("運動風險評估") 
+    st.write("Calculated based on ACSM Preparticipation Screening Algorithm 2015") 
     
     st.subheader("選填：目標心率計算器") 
     age_tab2 = st.number_input("輸入您的年齡（歲）：", min_value=1, max_value=120, value=None, placeholder="例如：30", key="age_input_tab2") 
