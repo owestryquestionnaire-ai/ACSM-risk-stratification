@@ -36,17 +36,17 @@ def calculate_thr(age, rhr, risk_level_str):
 
     hrr = mhr - rhr 
     
-    # Double spaces at the end of lines force a single line break in Markdown
+    # Using \n\n for separate paragraph lines for clearer vertical spacing
     if risk_level_str == "low":
         upper_bound = int((hrr * 0.84) + rhr)
         thr_zone_display = f"Target Heart Rate **≤ {upper_bound} bpm**." 
         advice = (
             "<u>**Class I**</u>\n\n"
-            "Safe Exercise Zone: ≤ 84% HRR  \n"
-            "RPE: <17  \n"
-            "Recommended Exercise Intensity: Moderate to Vigorous Intensity ✔️  \n"
-            "Medical Clearance: Not necessary  \n"
-            "Supervision: Not required  \n"
+            "Safe Exercise Zone: ≤ 84% HRR\n\n" # Used \n\n here
+            "RPE: <17\n\n" # Used \n\n here
+            "Recommended Exercise Intensity: Moderate to Vigorous Intensity ✔️\n\n" # Used \n\n here
+            "Medical Clearance: Not necessary\n\n" # Used \n\n here
+            "Supervision: Not required\n\n" # Used \n\n here
             "Monitoring: Monitor HR in first session (to facilitate teaching but it is not compulsory)"
         )
         
@@ -55,11 +55,11 @@ def calculate_thr(age, rhr, risk_level_str):
         thr_zone_display = f"Target Heart Rate **< {upper_bound} bpm**." 
         advice = (
             "<u>**Class II**</u>\n\n"
-            "**Safe Exercise Zone:** < 60% HRR  \n"
-            "**RPE:** <14  \n"
-            "**Recommended Exercise Intensity:** Light to Moderate Intensity ✔️ \n"
-            "**Medical Clearance:** Recommended before engaging in vigorous intensity exercise  \n"
-            "**Supervision:** Not strictly required (unless patient working for vigorous exercise) \n"
+            "**Safe Exercise Zone:** < 60% HRR\n\n" # Used \n\n here
+            "**RPE:** <14\n\n" # Used \n\n here
+            "**Recommended Exercise Intensity:** Light to Moderate Intensity ✔️\n\n" # Used \n\n here
+            "**Medical Clearance:** Recommended before engaging in vigorous intensity exercise\n\n" # Used \n\n here
+            "**Supervision:** Not strictly required (unless patient working for vigorous exercise)\n\n" # Used \n\n here
             "**Monitoring:** Continuous HR / RPE monitoring"
         )
         
@@ -68,22 +68,22 @@ def calculate_thr(age, rhr, risk_level_str):
         thr_zone_display = f"Target Heart Rate **< {upper_bound} bpm**." 
         advice = (
             "<u>**Class III**</u>\n\n"
-            "**Safe Exercise Zone:** < 40% HRR  \n"
-            "**RPE:** <12  \n"
-            "**Recommended Exercise Intensity:** Light Intensity ✔️ \n"
-            "**Medical Clearance:** Recommended \n"
-            "**Supervision:** Required (for both moderate and vigorous exercise)  \n"
+            "**Safe Exercise Zone:** < 40% HRR\n\n" # Used \n\n here
+            "**RPE:** <12\n\n" # Used \n\n here
+            "**Recommended Exercise Intensity:** Light Intensity ✔️\n\n" # Used \n\n here
+            "**Medical Clearance:** Required\n\n" # Used \n\n here
+            "**Supervision:** Required (for both moderate and vigorous exercise)\n\n" # Used \n\n here
             "**Monitoring:** Continuous heart rate and RPE monitoring with close supervision"
         )
         
     else:
         return None, "風險等級尚未確定。" 
 
-    # Final formatted output block (Removed bolding from MHR, RHR, HRR)
+    # Final formatted output block
     output = (
-        f"Maximum Heart Rate= {mhr} bpm.  \n"
-        f"Resting Heart Rate= {rhr} bpm.  \n"
-        f"Heart Rate Reserve= {hrr} bpm.  \n\n"
+        f"Maximum Heart Rate= {mhr} bpm.  \n" # Two spaces at end for single line break
+        f"Resting Heart Rate= {rhr} bpm.  \n" # Two spaces at end for single line break
+        f"Heart Rate Reserve= {hrr} bpm.  \n\n" # Two spaces + newline for paragraph break
         f"{thr_zone_display}\n\n"
         f"{advice}"
     )
@@ -109,6 +109,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 # --- End Custom CSS ---
+
 st.title("🏃‍♂️ 運動準備度和風險評估") 
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
@@ -143,6 +144,7 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
+
 # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS & RESULTS
 # ==========================================
