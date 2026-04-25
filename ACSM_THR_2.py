@@ -94,13 +94,13 @@ with tab1:
     st.header("Form A: 體能活動準備問卷 (PAR-Q)") 
     st.write("請回答以下 7 個一般健康問題：") 
     
-    q1 = st.radio("1. 醫生是否曾說過您有心臟疾病，並且只能在醫生建議下進行體能活動？", ("否", "是"), horizontal=True, key="parq_q1")
-    q2 = st.radio("2. 當您進行體能活動時，胸部會感到疼痛嗎？", ("否", "是"), horizontal=True, key="parq_q2")
-    q3 = st.radio("3. 在過去一個月內，當您沒有進行體能活動時，是否曾感到胸痛？", ("否", "是"), horizontal=True, key="parq_q3")
-    q4 = st.radio("4. 您是否會因頭暈而失去平衡，或者曾經失去知覺？", ("否", "是"), horizontal=True, key="parq_q4")
-    q5 = st.radio("5. 你的骨骼或關節（例如脊骨、膝蓋或髖關節）是否有毛病，且會因改變體能活動而惡化？", ("否", "是"), horizontal=True, key="parq_q5")
-    q6 = st.radio("6. 您的醫生目前是否正在為您的血壓或心臟疾病開處方藥物（例如利尿劑）？", ("否", "是"), horizontal=True, key="parq_q6")
-    q7 = st.radio("7. 您是否知道有任何其他原因導致您不應該進行體能活動？", ("否", "是"), horizontal=True, key="parq_q7")
+    q1 = st.radio("1. 過往醫生有否說你有心臟病或高血壓?", ("否", "是"), horizontal=True, key="parq_q1")
+    q2 = st.radio("2. 當你靜止或做運動時有否感覺胸口痛？", ("否", "是"), horizontal=True, key="parq_q2")
+    q3 = st.radio("3. 在過去十二個月內，你有否因頭暈而跌倒或失去知覺？", ("否", "是"), horizontal=True, key="parq_q3")
+    q4 = st.radio("4. 您是否曾被診斷出患有慢性疾病？", ("否", "是"), horizontal=True, key="parq_q4")
+    q5 = st.radio("5. 你是否正在服用治療慢性疾病的處方藥？", ("否", "是"), horizontal=True, key="parq_q5")
+    q6 = st.radio("6. 做運動有否可能加重你骨骼，關節或軟組織的痛楚？", ("否", "是"), horizontal=True, key="parq_q6")
+    q7 = st.radio("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", ("否", "是"), horizontal=True, key="parq_q7")
 
     # Score calculation for Form A
     parq_answers = [q1, q2, q3, q4, q5, q6, q7]
