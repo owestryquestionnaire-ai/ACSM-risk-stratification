@@ -79,11 +79,11 @@ def calculate_thr(age, rhr, risk_level_str):
     else:
         return None, "風險等級尚未確定。" 
 
-    # Final formatted output block
+    # Final formatted output block (Removed bolding from MHR, RHR, HRR)
     output = (
-        f"Maximum Heart Rate= **{mhr} bpm**.  \n"
-        f"Resting Heart Rate= **{rhr} bpm**.  \n"
-        f"Heart Rate Reserve= **{hrr} bpm**.  \n\n"
+        f"Maximum Heart Rate= {mhr} bpm.  \n"
+        f"Resting Heart Rate= {rhr} bpm.  \n"
+        f"Heart Rate Reserve= {hrr} bpm.  \n\n"
         f"{thr_zone_display}\n\n"
         f"{advice}"
     )
@@ -109,7 +109,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 # --- End Custom CSS ---
-
 st.title("🏃‍♂️ 運動準備度和風險評估") 
 st.write("請填寫以下問卷以評估您的體能活動準備度。") 
 
@@ -144,7 +143,6 @@ with tab1:
         else:
             st.success("✅ **已獲准運動。**\n\n因為您回答所有問題為「否」，您可以合理地確定開始增加體能活動是安全的。請慢慢開始，逐步增加。") 
             st.info("👉 *現在，請前往第二個分頁 (ACSM 風險與心率) 進行更詳細的風險分層。*") 
-
 # ==========================================
 # TAB 2: ACSM & Heart Rate - INPUTS & RESULTS
 # ==========================================
@@ -215,7 +213,6 @@ with tab2:
             st.markdown("---")
         else:
             st.info("💡 *由於年齡或靜息心率留空，因此未計算目標心率。*") 
-
 # ==========================================
 # TAB 3: Direct THR Calculator
 # ==========================================
