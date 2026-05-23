@@ -128,7 +128,6 @@ def inject_custom_css():
     )
 
 def init_session_states():
-    # 將所有預設值設為 None，讓畫面一開始沒有任何選項被選取
     if "data" not in st.session_state:
         st.session_state.data = {}
         for i in range(1, 10): st.session_state.data[f"s_{i}"] = None
@@ -150,6 +149,11 @@ init_session_states()
 
 # ---------- 2. Logic Functions ----------
 def evaluate_b_only():
+    # 檢查表格 B 是否所有題目都已作答
+    b_keys = [f"s_{i}" for i in range(1, 10)] + ["d_cardio", "d_metabolic", "d_renal", "is_active"]
+    if any(st.session_state.data.get(k) is None for k in b_keys):
+        return "Pending"
+
     symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
     has_disease = any([
         st.session_state.data.get("d_cardio") == "有", 
@@ -167,9 +171,15 @@ def evaluate_b_only():
 def calculate_current_class():
     b_class = evaluate_b_only()
     
-    if b_class in ["Class III", "Class II"]:
+    # 如果表格 B 已經是 II, III，或者是 Pending（未完成），直接返回
+    if b_class in ["Class III", "Class II", "Pending"]:
         return b_class
         
+    # 如果表格 B 是 Class I，則繼續檢查表格 A 是否已作答完成
+    a_keys = [f"parq_{i}" for i in range(1, 8)]
+    if any(st.session_state.data.get(k) is None for k in a_keys):
+        return "Pending"
+
     parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
     if parq_score > 0:
         return "Class II"
@@ -210,10 +220,8 @@ def render_inline_question(label, key, options=("否", "有")):
     with col1:
         st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
-        # 如果資料庫裡的值是 None（也就是病患還沒選），就設定 index 為 None
         saved_val = st.session_state.data.get(key)
         idx = options.index(saved_val) if saved_val in options else None
-        
         st.radio("", options, key=key, index=idx, horizontal=True, label_visibility="collapsed", on_change=update_val, args=(key,))
 
 
@@ -300,6 +308,7 @@ def tab_d_thr(current_class):
     st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
     
     options = ["Class I", "Class II", "Class III"]
+    # 如果 current_class 是 Pending，預設選取選項第一個 (Class I)
     default_idx = options.index(current_class) if current_class in options else 0
     selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
     
@@ -375,25 +384,30 @@ def main():
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
     
+    # 根據不同狀態設定顏色
     class_colors = {
+        "Pending": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"}, # 灰色未完成狀態
         "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
         "Class II": {"bg": "#fff3e0", "border": "#ef6c00", "text": "#e65100"},
         "Class III": {"bg": "#ffebee", "border": "#c62828", "text": "#b71c1c"}
     }
     theme = class_colors[current_class]
     
+    # 移除了中文字樣，只顯示 Incomplete
+    display_text = "Incomplete" if current_class == "Pending" else current_class
+    
     st.title("🏃‍♂️ Risk Class stratification for cardiopulmonary fitness training")
     
     st.markdown(f"""
     <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 15px;">
-        <span style="margin: 0; color: {theme['text']}; font-size: 26px; font-weight: bold;">Risk Stratification: {current_class}</span>
+        <span style="margin: 0; color: {theme['text']}; font-size: 26px; font-weight: bold;">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
     
-    # 決定當前可用的分頁名稱 (修改了 Tab 3 的名稱)
+    # 決定當前可用的分頁名稱
     if should_hide_a:
         available_tabs = ["1. 運動風險評估 (表格 B)", "3. Target HR & Clinical Guidelines"]
     else:
