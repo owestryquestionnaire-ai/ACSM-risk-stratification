@@ -195,11 +195,11 @@ def calculate_thr(age, rhr, risk_level):
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
-        thr_main = f"Training HR: < {limit} bpm"
+        thr_main = f"Training HR: &lt; {limit} bpm"
         return thr_main + details_html, None
     elif risk_level == "Class II":
         limit = int((hrr * 0.60) + rhr)
-        thr_main = f"Training HR: < {limit} bpm"
+        thr_main = f"Training HR: &lt; {limit} bpm"
         return thr_main + details_html, None
     else:
         upper = int((hrr * 0.84) + rhr)
@@ -265,7 +265,6 @@ def tab_b_acsm(b_class, show_all_tabs):
             
             c1, c2 = st.columns(2)
             with c1:
-                # 病患完成畫面 - 提示交給治療師
                 st.button("✅ 問卷完成 (請交給物理治療師)", type="primary", use_container_width=True, on_click=go_to_tab, args=("3. Target HR & Clinical Guidelines",))
             with c2:
                 st.button("📝 顯示隱藏的表單 (前往表格 A)", use_container_width=True, on_click=enable_all_tabs_and_go)
@@ -296,7 +295,6 @@ def tab_a_parq():
     render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7")
 
     st.markdown("---")
-    # 病患完成畫面 - 提示交給治療師
     st.button("✅ 問卷完成 (請交給物理治療師)", type="primary", use_container_width=True, on_click=go_to_tab, args=("3. Target HR & Clinical Guidelines",))
 
 
@@ -326,27 +324,28 @@ def tab_d_thr(current_class):
             thr_string, err = calculate_thr(int(age), int(rhr), selected_class)
             
             if not err:
+                # 使用 HTML safe escape 來避免字元被吃掉
                 recs = {
                     "Class I": {
                         "intensity": "Moderate: ✔️ Vigorous: ✔️",
-                        "hrr": "</= 84%HRR",
-                        "rpe": "<17",
+                        "hrr": "≤ 84% HRR",
+                        "rpe": "&lt; 17",
                         "medical": "Not necessary",
                         "supervision": "Not required",
                         "monitor": "Monitor HR in First session (to facilitate teaching but it is not compulsory)"
                     },
                     "Class II": {
                         "intensity": "Moderate: ✔️ Vigorous: ❌",
-                        "hrr": "< 60 %HRR",
-                        "rpe": "< 14",
+                        "hrr": "&lt; 60% HRR",
+                        "rpe": "&lt; 14",
                         "medical": "Recommended for vigorous intensity exercise",
                         "supervision": "Not required (unless patient is working for vigorous exercise)",
                         "monitor": "Continuous HR or RPE monitoring"
                     },
                     "Class III": {
                         "intensity": "Moderate: ❌ Vigorous: ❌",
-                        "hrr": "< 40%HRR",
-                        "rpe": "<12",
+                        "hrr": "&lt; 40% HRR",
+                        "rpe": "&lt; 12",
                         "medical": "Recommended",
                         "supervision": "Required (for both moderate and vigorous exercise)",
                         "monitor": "Continuous HR and RPE monitoring together with close supervision"
@@ -393,7 +392,6 @@ def main():
     }
     theme = class_colors[current_class]
     
-    # 移除了中文字樣，只顯示 Incomplete
     display_text = "Incomplete" if current_class == "Pending" else current_class
     
     st.title("🏃‍♂️ Risk Class stratification for cardiopulmonary fitness training")
