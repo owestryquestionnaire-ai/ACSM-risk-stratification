@@ -18,7 +18,6 @@ def inject_custom_css():
         }
 
         /* --- SAFE SPACING (Fixing Overlaps) --- */
-        /* Slightly relaxed block gap to prevent elements from crushing each other */
         div[data-testid="stVerticalBlock"] {
             gap: 0.5rem !important; 
         }
@@ -34,7 +33,6 @@ def inject_custom_css():
         /* Headers - BOLD (Added Safe Bottom Margins) */
         h1 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
 
-        /* 修正重疊的核心：增加 padding 和 margin */
         h2 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 8px !important; line-height: 1.4 !important; margin-top: 10px !important; margin-bottom: 15px !important;}
 
         h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
@@ -59,7 +57,7 @@ def inject_custom_css():
             color: #000000 !important;
             font-weight: 400 !important;
             line-height: 1.4 !important; 
-            margin-bottom: 10px !important; /* 避免壓到下方的選擇題 */
+            margin-bottom: 10px !important; 
         }
 
         /* Input Box Labels - BOLD */
@@ -132,7 +130,6 @@ def inject_custom_css():
 
 
 def init_session_states():
-    # 建立永久資料庫 (Persistent Storage)
     if "data" not in st.session_state:
         st.session_state.data = {}
         for i in range(1, 10): st.session_state.data[f"s_{i}"] = "否"
@@ -147,7 +144,6 @@ def init_session_states():
         st.session_state["current_tab"] = "1. 運動風險評估 (表格 B)"
 
 
-# 即時更新資料庫的 Callback 函式
 def update_val(key):
     st.session_state.data[key] = st.session_state[key]
 
@@ -157,7 +153,6 @@ init_session_states()
 
 # ---------- 2. Logic Functions ----------
 def evaluate_b_only():
-    # 改從永久資料庫 (.data) 讀取，防止切換分頁後資料遺失
     symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
     has_disease = any([
         st.session_state.data.get("d_cardio") == "有",
@@ -222,11 +217,8 @@ def render_inline_question(label, key, options=("否", "有")):
     with col1:
         st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
-        # 從資料庫抓取先前的選項狀態
         saved_val = st.session_state.data.get(key, options[0])
         idx = options.index(saved_val) if saved_val in options else 0
-
-        # 綁定 on_change，選項一有變動就立刻存進資料庫
         st.radio("", options, key=key, index=idx, horizontal=True, label_visibility="collapsed", on_change=update_val,
                  args=(key,))
 
@@ -271,8 +263,9 @@ def tab_b_acsm(b_class, show_all_tabs):
 
             c1, c2 = st.columns(2)
             with c1:
-                st.button("➡️ 儲存並前往「3. 心率與臨床建議」", type="primary", use_container_width=True,
-                          on_click=go_to_tab, args=("3. 心率與臨床建議",))
+                # 病患完成畫面 - 提示交給治療師
+                st.button("✅ 問卷完成 (請交給物理治療師)", type="primary", use_container_width=True, on_click=go_to_tab,
+                          args=("3. Target HR & Clinical Guidelines",))
             with c2:
                 st.button("📝 顯示隱藏的表單 (前往表格 A)", use_container_width=True, on_click=enable_all_tabs_and_go)
         else:
@@ -306,31 +299,33 @@ def tab_a_parq():
     render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7")
 
     st.markdown("---")
-    st.button("➡️ 儲存並前往「3. 心率與臨床建議」", type="primary", use_container_width=True, on_click=go_to_tab,
-              args=("3. 心率與臨床建議",))
+    # 病患完成畫面 - 提示交給治療師
+    st.button("✅ 問卷完成 (請交給物理治療師)", type="primary", use_container_width=True, on_click=go_to_tab,
+              args=("3. Target HR & Clinical Guidelines",))
 
 
 def tab_d_thr(current_class):
-    st.header("目標心率與臨床運動建議")
+    # Tab 3 完全英文化 (For Therapist)
+    st.header("Target Heart Rate & Clinical Recommendations")
 
-    st.subheader("⚙️ 選擇運動分級 (Select Risk Class)")
-    st.markdown(f"💡 系統表單目前判定為 **{current_class}**。若已知分級，您可直接在下方手動更改：")
+    st.subheader("⚙️ Select Risk Class")
+    st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
 
     options = ["Class I", "Class II", "Class III"]
     default_idx = options.index(current_class) if current_class in options else 0
-    selected_class = st.radio("手動選擇分級", options, index=default_idx, horizontal=True, label_visibility="collapsed")
+    selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True,
+                              label_visibility="collapsed")
 
     result_container = st.container()
 
     st.markdown("---")
-    st.subheader("🎯 輸入數據 (Input Data)")
+    st.subheader("🎯 Input Data")
 
     c1, c2 = st.columns(2)
-    age = c1.number_input("年齡 (Age)", min_value=10, max_value=120, value=None, step=1, key="thr_age")
-    rhr = c2.number_input("站立靜息心率 (Standing HR at rest)", min_value=30, max_value=220, value=None, step=1,
-                          key="thr_rhr")
+    age = c1.number_input("Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
+    rhr = c2.number_input("Standing Resting HR", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
 
-    if st.button("計算 (Calculate)", type="primary", use_container_width=True):
+    if st.button("Calculate", type="primary", use_container_width=True):
         if age is not None and rhr is not None:
             thr_string, err = calculate_thr(int(age), int(rhr), selected_class)
 
@@ -382,10 +377,10 @@ def tab_d_thr(current_class):
             else:
                 result_container.error(err)
         else:
-            result_container.warning("⚠️ 請先在下方輸入有效的年齡與站立靜息心率數值，再按下「計算」。")
+            result_container.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
     else:
         result_container.info(
-            "💡 請在下方輸入您的 **年齡 (Age)** 與 **站立靜息心率 (Standing HR at rest)**，並按下「計算 (Calculate)」以產生報告。")
+            "💡 Please input the patient's **Age** and **Standing Resting HR** above, then click 'Calculate' to generate the report.")
 
 
 def main():
@@ -412,13 +407,13 @@ def main():
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
 
-    # 決定當前可用的分頁
+    # 決定當前可用的分頁名稱 (修改了 Tab 3 的名稱)
     if should_hide_a:
-        available_tabs = ["1. 運動風險評估 (表格 B)", "3. 心率與臨床建議"]
+        available_tabs = ["1. 運動風險評估 (表格 B)", "3. Target HR & Clinical Guidelines"]
     else:
-        available_tabs = ["1. 運動風險評估 (表格 B)", "2. 體能活動準備問卷 (表格 A)", "3. 心率與臨床建議"]
+        available_tabs = ["1. 運動風險評估 (表格 B)", "2. 體能活動準備問卷 (表格 A)",
+                          "3. Target HR & Clinical Guidelines"]
 
-    # 安全檢查：如果當前 tab 被隱藏了，自動退回第一頁
     if st.session_state["current_tab"] not in available_tabs:
         st.session_state["current_tab"] = available_tabs[0]
 
@@ -435,7 +430,7 @@ def main():
         tab_b_acsm(b_class_only, show_all_tabs)
     elif st.session_state["current_tab"] == "2. 體能活動準備問卷 (表格 A)":
         tab_a_parq()
-    elif st.session_state["current_tab"] == "3. 心率與臨床建議":
+    elif st.session_state["current_tab"] == "3. Target HR & Clinical Guidelines":
         tab_d_thr(current_class)
 
     st.markdown("---")
