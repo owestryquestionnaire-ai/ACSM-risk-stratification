@@ -14,35 +14,52 @@ def inject_custom_css():
             font-size: 20px !important; 
             color: #000000 !important;
             font-weight: 400 !important;
-            line-height: 1.2 !important; /* Tighter line spacing */
+            line-height: 1.4 !important; 
         }
 
-        /* Headers - BOLD */
-        h1 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
-        h2 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 3px; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
-        h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
-        h4 { font-size: 22px !important; color: #444 !important; font-weight: bold !important; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
+        /* --- SAFE SPACING (Fixing Overlaps) --- */
+        /* Slightly relaxed block gap to prevent elements from crushing each other */
+        div[data-testid="stVerticalBlock"] {
+            gap: 0.5rem !important; 
+        }
+        .element-container {
+            margin-bottom: 0px !important;
+        }
+        hr {
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+            padding: 0px !important;
+        }
 
-        /* Radio Buttons & Checkbox Labels - REGULAR and NARROW SPACING */
+        /* Headers - BOLD (Added Safe Bottom Margins) */
+        h1 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
+
+        /* 修正重疊的核心：增加 padding 和 margin */
+        h2 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 8px !important; line-height: 1.4 !important; margin-top: 10px !important; margin-bottom: 15px !important;}
+
+        h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
+        h4 { font-size: 22px !important; color: #444 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
+
+        /* Radio Buttons & Checkbox Labels - REGULAR */
         div[data-testid="stRadio"] label p, 
         div[data-testid="stCheckbox"] label p {
             font-size: 22px !important; 
             font-weight: 400 !important;
             color: #000000 !important;
-            line-height: 1.2 !important; /* Tighter line spacing */
+            line-height: 1.4 !important; 
         }
 
-        /* Reduce gap between radio button items */
-        .stRadio > div { gap: 0.2rem !important; } /* Tighter gap */
-        .stCheckbox > div { margin-bottom: 0.1rem !important; }
+        /* Reduce gap between radio button items (Keeps options tight) */
+        .stRadio > div { gap: 0rem !important; } 
+        .stCheckbox > div { margin-bottom: 0rem !important; }
 
-        /* Standard Text - REGULAR and NARROW SPACING */
+        /* Standard Text - REGULAR */
         .stMarkdown p {
             font-size: 20px !important; 
             color: #000000 !important;
             font-weight: 400 !important;
-            line-height: 1.2 !important; /* Tighter line spacing */
-            margin-bottom: 0.3rem !important; /* Tighter margin */
+            line-height: 1.4 !important; 
+            margin-bottom: 10px !important; /* 避免壓到下方的選擇題 */
         }
 
         /* Input Box Labels - BOLD */
@@ -50,8 +67,8 @@ def inject_custom_css():
             font-size: 22px !important; 
             font-weight: bold !important;
             color: #000000 !important;
-            line-height: 1.2 !important;
-            margin-bottom: 0.2rem !important;
+            line-height: 1.4 !important;
+            margin-bottom: 5px !important;
         }
 
         /* Combined Result Box Styling */
@@ -60,52 +77,53 @@ def inject_custom_css():
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 15px !important;
         }
         .final-thr-part {
             font-size: 32px !important; 
             color: #000000 !important;
             font-weight: bold !important;
-            line-height: 1.2 !important;
-            padding: 10px 20px; /* Tighter padding */
+            line-height: 1.4 !important;
+            padding: 15px 20px !important; 
             background-color: #ffffff;
         }
         .final-rec-part {
             background-color: #f8f9fa;
-            padding: 10px 20px; /* Tighter padding */
+            padding: 15px 20px !important; 
             border-top: 3px dashed #000000;
         }
         .final-rec-part p {
-            margin-bottom: 2px !important; /* Extremely tight margin */
-            line-height: 1.2 !important; 
+            margin-bottom: 5px !important; 
+            line-height: 1.4 !important; 
         }
 
         /* Vertical alignment for side-by-side columns */
         .question-text {
-            margin-top: 5px; 
+            margin-top: 0px !important; 
             font-size: 22px !important; 
-            line-height: 1.2;
+            line-height: 1.4 !important; 
         }
 
         /* ----- CUSTOM RED BUTTON STYLING ----- */
-        /* Primary button (Active Tab & Next buttons) */
         button[kind="primary"], [data-testid="baseButton-primary"] {
-            background-color: #ef5350 !important; /* Lighter Red */
+            background-color: #ef5350 !important; 
             color: white !important;
-            border-color: #ef5350 !important; /* Lighter Red */
+            border-color: #ef5350 !important; 
             font-size: 22px !important;
-            padding: 8px 20px !important; /* Tighter padding */
+            padding: 8px 16px !important; 
             font-weight: bold !important;
+            line-height: 1.4 !important;
         }
         button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover {
-            background-color: #e53935 !important; /* Slightly darker on hover */
+            background-color: #e53935 !important; 
             border-color: #e53935 !important;
             color: white !important;
         }
-        /* Secondary button (Inactive Tabs) */
         button[kind="secondary"], [data-testid="baseButton-secondary"] {
             font-size: 22px !important;
-            padding: 8px 20px !important; /* Tighter padding */
+            padding: 8px 16px !important; 
             font-weight: bold !important;
+            line-height: 1.4 !important;
         }
         </style>
         """,
@@ -172,7 +190,7 @@ def calculate_thr(age, rhr, risk_level):
     if rhr >= mhr: return None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    details_html = f'<div style="font-size: 18px; font-weight: normal; margin-top: 10px; color: #444;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
+    details_html = f'<div style="font-size: 18px; font-weight: normal; margin-top: 5px; color: #444;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
@@ -237,7 +255,6 @@ def tab_b_acsm(b_class, show_all_tabs):
     st.subheader("當前運動習慣")
     activity_question = "您目前是否定期進行體能活動？<br><span style='font-size: 18px; color: #555;'>(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)</span>"
 
-    # 修正重點：明確設定選項為 ("否", "是")
     render_inline_question(activity_question, "is_active", options=("否", "是"))
 
     st.markdown("---")
@@ -245,7 +262,6 @@ def tab_b_acsm(b_class, show_all_tabs):
         if not show_all_tabs:
             st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。系統已自動隱藏表格 A。")
 
-            # --- Bottom Navigation Buttons ---
             c1, c2 = st.columns(2)
             with c1:
                 st.button("➡️ 儲存並前往「3. 心率與臨床建議」", type="primary", use_container_width=True,
@@ -305,7 +321,6 @@ def tab_d_thr(current_class):
     rhr = c2.number_input("站立靜息心率 (Standing HR at rest)", min_value=30, max_value=220, value=None, step=1,
                           key="thr_rhr")
 
-    # This button calculates, it doesn't navigate
     if st.button("計算 (Calculate)", type="primary", use_container_width=True):
         if age is not None and rhr is not None:
             thr_string, err = calculate_thr(int(age), int(rhr), selected_class)
@@ -340,7 +355,7 @@ def tab_d_thr(current_class):
                 rec = recs[selected_class]
 
                 result_container.markdown(f"""
-                <div class="final-result-box" style="margin-bottom: 20px;">
+                <div class="final-result-box">
                     <div class="final-thr-part">
                         {thr_string}
                     </div>
@@ -388,20 +403,16 @@ def main():
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
 
-    # 決定當前可用的分頁
     if should_hide_a:
         available_tabs = ["1. 運動風險評估 (表格 B)", "3. 心率與臨床建議"]
     else:
         available_tabs = ["1. 運動風險評估 (表格 B)", "2. 體能活動準備問卷 (表格 A)", "3. 心率與臨床建議"]
 
-    # 安全檢查：如果當前 tab 被隱藏了，自動退回第一頁
     if st.session_state["current_tab"] not in available_tabs:
         st.session_state["current_tab"] = available_tabs[0]
 
-    # --- Custom Top Navigation Bar (Acts exactly like tabs but is stable) ---
     cols = st.columns(len(available_tabs))
     for i, tab_name in enumerate(available_tabs):
-        # 所在頁面的按鈕會變成紅色 (Primary)，其他為灰色 (Secondary)
         btn_type = "primary" if st.session_state["current_tab"] == tab_name else "secondary"
         if cols[i].button(tab_name, type=btn_type, key=f"nav_{i}", use_container_width=True):
             st.session_state["current_tab"] = tab_name
@@ -409,7 +420,6 @@ def main():
 
     st.markdown("---")
 
-    # 渲染對應的頁面內容
     if st.session_state["current_tab"] == "1. 運動風險評估 (表格 B)":
         tab_b_acsm(b_class_only, show_all_tabs)
     elif st.session_state["current_tab"] == "2. 體能活動準備問卷 (表格 A)":
