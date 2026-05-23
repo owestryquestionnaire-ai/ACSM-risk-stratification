@@ -4,7 +4,6 @@ import streamlit as st
 # 設定 layout="wide" 以使用全螢幕寬度
 st.set_page_config(page_title="運動準備度和風險評估", layout="wide")
 
-
 def inject_custom_css():
     st.markdown(
         """
@@ -14,14 +13,14 @@ def inject_custom_css():
             font-size: 20px !important; 
             color: #000000 !important;
             font-weight: 400 !important;
-            line-height: 1.3 !important; 
+            line-height: 1.2 !important; /* Tighter line spacing */
         }
 
         /* Headers - BOLD */
-        h1 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.2 !important; margin-bottom: 0.5rem !important;}
-        h2 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 5px; line-height: 1.2 !important; margin-bottom: 0.5rem !important;}
-        h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.2 !important; margin-bottom: 0.5rem !important;}
-        h4 { font-size: 22px !important; color: #444 !important; font-weight: bold !important; line-height: 1.2 !important; margin-bottom: 0.5rem !important;}
+        h1 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
+        h2 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 3px; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
+        h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
+        h4 { font-size: 22px !important; color: #444 !important; font-weight: bold !important; line-height: 1.15 !important; margin-bottom: 0.3rem !important;}
 
         /* Radio Buttons & Checkbox Labels - REGULAR and NARROW SPACING */
         div[data-testid="stRadio"] label p, 
@@ -29,20 +28,20 @@ def inject_custom_css():
             font-size: 22px !important; 
             font-weight: 400 !important;
             color: #000000 !important;
-            line-height: 1.3 !important; 
+            line-height: 1.2 !important; /* Tighter line spacing */
         }
-
+        
         /* Reduce gap between radio button items */
-        .stRadio > div { gap: 0.5rem !important; }
-        .stCheckbox > div { margin-bottom: 0.2rem !important; }
+        .stRadio > div { gap: 0.2rem !important; } /* Tighter gap */
+        .stCheckbox > div { margin-bottom: 0.1rem !important; }
 
         /* Standard Text - REGULAR and NARROW SPACING */
         .stMarkdown p {
             font-size: 20px !important; 
             color: #000000 !important;
             font-weight: 400 !important;
-            line-height: 1.3 !important; 
-            margin-bottom: 0.5rem !important; 
+            line-height: 1.2 !important; /* Tighter line spacing */
+            margin-bottom: 0.3rem !important; /* Tighter margin */
         }
 
         /* Input Box Labels - BOLD */
@@ -50,8 +49,8 @@ def inject_custom_css():
             font-size: 22px !important; 
             font-weight: bold !important;
             color: #000000 !important;
-            line-height: 1.3 !important;
-            margin-bottom: 0.3rem !important;
+            line-height: 1.2 !important;
+            margin-bottom: 0.2rem !important;
         }
 
         /* Combined Result Box Styling */
@@ -65,53 +64,52 @@ def inject_custom_css():
             font-size: 32px !important; 
             color: #000000 !important;
             font-weight: bold !important;
-            line-height: 1.3 !important;
-            padding: 15px 25px; 
+            line-height: 1.2 !important;
+            padding: 10px 20px; /* Tighter padding */
             background-color: #ffffff;
         }
         .final-rec-part {
             background-color: #f8f9fa;
-            padding: 15px 25px; 
+            padding: 10px 20px; /* Tighter padding */
             border-top: 3px dashed #000000;
         }
         .final-rec-part p {
-            margin-bottom: 5px !important; 
-            line-height: 1.3 !important; 
+            margin-bottom: 2px !important; /* Extremely tight margin */
+            line-height: 1.2 !important; 
         }
-
+        
         /* Vertical alignment for side-by-side columns */
         .question-text {
-            margin-top: 6px; 
+            margin-top: 5px; 
             font-size: 22px !important; 
-            line-height: 1.3;
+            line-height: 1.2;
         }
 
         /* ----- CUSTOM RED BUTTON STYLING ----- */
         /* Primary button (Active Tab & Next buttons) */
         button[kind="primary"], [data-testid="baseButton-primary"] {
-            background-color: #d32f2f !important;
+            background-color: #ef5350 !important; /* Lighter Red */
             color: white !important;
-            border-color: #d32f2f !important;
+            border-color: #ef5350 !important; /* Lighter Red */
             font-size: 22px !important;
-            padding: 10px 24px !important;
+            padding: 8px 20px !important; /* Tighter padding */
             font-weight: bold !important;
         }
         button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover {
-            background-color: #b71c1c !important;
-            border-color: #b71c1c !important;
+            background-color: #e53935 !important; /* Slightly darker on hover */
+            border-color: #e53935 !important;
             color: white !important;
         }
         /* Secondary button (Inactive Tabs) */
         button[kind="secondary"], [data-testid="baseButton-secondary"] {
             font-size: 22px !important;
-            padding: 10px 24px !important;
+            padding: 8px 20px !important; /* Tighter padding */
             font-weight: bold !important;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
-
 
 def init_session_states():
     # Form B (ACSM Risk / Symptoms)
@@ -120,19 +118,18 @@ def init_session_states():
     for k in ["d_cardio", "d_metabolic", "d_renal"]:
         if k not in st.session_state: st.session_state[k] = "否"
     if "is_active" not in st.session_state: st.session_state["is_active"] = "否"
-
+    
     # Form A
     for i in range(1, 8):
         if f"parq_{i}" not in st.session_state: st.session_state[f"parq_{i}"] = "否"
     if "parq_4_text" not in st.session_state: st.session_state["parq_4_text"] = ""
     if "parq_5_text" not in st.session_state: st.session_state["parq_5_text"] = ""
-
+        
     # Tab Control & Custom Navigation
     if "force_show_all" not in st.session_state:
         st.session_state["force_show_all"] = False
     if "current_tab" not in st.session_state:
         st.session_state["current_tab"] = "1. 運動風險評估 (表格 B)"
-
 
 init_session_states()
 
@@ -141,38 +138,36 @@ init_session_states()
 def evaluate_b_only():
     symptoms = sum(1 for i in range(1, 10) if st.session_state.get(f"s_{i}") == "有")
     has_disease = any([
-        st.session_state.get("d_cardio") == "有",
-        st.session_state.get("d_metabolic") == "有",
+        st.session_state.get("d_cardio") == "有", 
+        st.session_state.get("d_metabolic") == "有", 
         st.session_state.get("d_renal") == "有"
     ])
     is_active = st.session_state.get("is_active") == "是"
-
+    
     if (has_disease and not is_active) or (symptoms > 0):
         return "Class III"
     if has_disease and is_active and symptoms == 0:
         return "Class II"
     return "Class I"
 
-
 def calculate_current_class():
     b_class = evaluate_b_only()
-
+    
     if b_class in ["Class III", "Class II"]:
         return b_class
-
+        
     parq_score = sum(1 for i in range(1, 8) if st.session_state.get(f"parq_{i}") == "有")
     if parq_score > 0:
         return "Class II"
-
+        
     return "Class I"
-
 
 def calculate_thr(age, rhr, risk_level):
     mhr = 220 - age
     if rhr >= mhr: return None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    details_html = f'<div style="font-size: 18px; font-weight: normal; margin-top: 10px; color: #444;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
+    details_html = f'<div style="font-size: 18px; font-weight: normal; margin-top: 5px; color: #444;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
@@ -192,14 +187,12 @@ def calculate_thr(age, rhr, risk_level):
 def go_to_tab(tab_name):
     st.session_state["current_tab"] = tab_name
 
-
 def enable_all_tabs_and_go():
     st.session_state["force_show_all"] = True
     st.session_state["current_tab"] = "2. 體能活動準備問卷 (表格 A)"
 
-
 def render_inline_question(label, key, options=("否", "有")):
-    col1, col2 = st.columns([7, 3])
+    col1, col2 = st.columns([7, 3]) 
     with col1:
         st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
@@ -210,7 +203,7 @@ def render_inline_question(label, key, options=("否", "有")):
 def tab_b_acsm(b_class, show_all_tabs):
     st.header("表格 B：心血管、呼吸系統及代謝性疾病之主要徵狀")
     st.write("請在合適選擇上選擇「有」或「否」：")
-
+    
     s_items = [
         "1. 因心臟缺血而引致的胸口、頸、下顎、上臂 或其他部位痛楚或不適",
         "2. 靜止或輕鬆活動時感到氣喘",
@@ -224,9 +217,9 @@ def tab_b_acsm(b_class, show_all_tabs):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}")
-
+        
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
-
+    
     st.markdown("---")
     st.subheader("已知醫療狀況 (Known Diseases)")
     render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio")
@@ -242,73 +235,67 @@ def tab_b_acsm(b_class, show_all_tabs):
     if b_class in ["Class II", "Class III"]:
         if not show_all_tabs:
             st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。系統已自動隱藏表格 A。")
-
+            
             # --- Bottom Navigation Buttons ---
             c1, c2 = st.columns(2)
             with c1:
-                st.button("➡️ 儲存並前往「3. 心率與臨床建議」", type="primary", use_container_width=True,
-                          on_click=go_to_tab, args=("3. 心率與臨床建議",))
+                st.button("➡️ 儲存並前往「3. 心率與臨床建議」", type="primary", use_container_width=True, on_click=go_to_tab, args=("3. 心率與臨床建議",))
             with c2:
                 st.button("📝 顯示隱藏的表單 (前往表格 A)", use_container_width=True, on_click=enable_all_tabs_and_go)
         else:
             st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。您選擇繼續填寫表格 A。")
-            st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True,
-                      on_click=go_to_tab, args=("2. 體能活動準備問卷 (表格 A)",))
+            st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=go_to_tab, args=("2. 體能活動準備問卷 (表格 A)",))
     else:
         st.success("✅ 表格 B 完成！")
-        st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=go_to_tab,
-                  args=("2. 體能活動準備問卷 (表格 A)",))
+        st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=go_to_tab, args=("2. 體能活動準備問卷 (表格 A)",))
 
 
 def tab_a_parq():
     st.header("表格 A：體能活動適應能力問卷")
     st.write("請在合適選擇上選擇「有」或「否」：")
-
+    
     render_inline_question("1. 過往醫生有否說你有心臟病或高血壓?", "parq_1")
     render_inline_question("2. 當你靜止或做運動時有否感覺胸口痛？", "parq_2")
     render_inline_question("3. 在過去十二個月內，你有否因頭暈而跌倒或失去知覺？", "parq_3")
-
+    
     render_inline_question("4. 您是否曾被診斷出患有慢性疾病？", "parq_4")
     if st.session_state.parq_4 == "有":
         st.text_input("如有，請列出：", key="parq_4_text")
-
+        
     render_inline_question("5. 你是否正在服用治療慢性疾病的處方藥？", "parq_5")
     if st.session_state.parq_5 == "有":
         st.text_input("如有，請列出：", key="parq_5_text")
-
+        
     render_inline_question("6. 做運動有否可能加重你骨骼，關節或軟組織的痛楚？", "parq_6")
     render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7")
 
     st.markdown("---")
-    st.button("➡️ 儲存並前往「3. 心率與臨床建議」", type="primary", use_container_width=True, on_click=go_to_tab,
-              args=("3. 心率與臨床建議",))
+    st.button("➡️ 儲存並前往「3. 心率與臨床建議」", type="primary", use_container_width=True, on_click=go_to_tab, args=("3. 心率與臨床建議",))
 
 
 def tab_d_thr(current_class):
     st.header("目標心率與臨床運動建議")
-
+    
     st.subheader("⚙️ 選擇運動分級 (Select Risk Class)")
     st.markdown(f"💡 系統表單目前判定為 **{current_class}**。若已知分級，您可直接在下方手動更改：")
-
+    
     options = ["Class I", "Class II", "Class III"]
     default_idx = options.index(current_class) if current_class in options else 0
     selected_class = st.radio("手動選擇分級", options, index=default_idx, horizontal=True, label_visibility="collapsed")
-
+    
     result_container = st.container()
-
+    
     st.markdown("---")
     st.subheader("🎯 輸入數據 (Input Data)")
 
     c1, c2 = st.columns(2)
     age = c1.number_input("年齡 (Age)", min_value=10, max_value=120, value=None, step=1, key="thr_age")
-    rhr = c2.number_input("站立靜息心率 (Standing HR at rest)", min_value=30, max_value=220, value=None, step=1,
-                          key="thr_rhr")
+    rhr = c2.number_input("站立靜息心率 (Standing HR at rest)", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
 
-    # This button calculates, it doesn't navigate
     if st.button("計算 (Calculate)", type="primary", use_container_width=True):
         if age is not None and rhr is not None:
             thr_string, err = calculate_thr(int(age), int(rhr), selected_class)
-
+            
             if not err:
                 recs = {
                     "Class I": {
@@ -337,7 +324,7 @@ def tab_d_thr(current_class):
                     }
                 }
                 rec = recs[selected_class]
-
+                
                 result_container.markdown(f"""
                 <div class="final-result-box" style="margin-bottom: 20px;">
                     <div class="final-thr-part">
@@ -359,44 +346,43 @@ def tab_d_thr(current_class):
         else:
             result_container.warning("⚠️ 請先在上方輸入有效的年齡與站立靜息心率數值，再按下「計算」。")
     else:
-        result_container.info(
-            "💡 請在上方輸入您的 **年齡 (Age)** 與 **站立靜息心率 (Standing HR at rest)**，並按下「計算 (Calculate)」以產生報告。")
+        result_container.info("💡 請在上方輸入您的 **年齡 (Age)** 與 **站立靜息心率 (Standing HR at rest)**，並按下「計算 (Calculate)」以產生報告。")
 
 
 def main():
     inject_custom_css()
-
+    
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
-
+    
     class_colors = {
         "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
         "Class II": {"bg": "#fff3e0", "border": "#ef6c00", "text": "#e65100"},
         "Class III": {"bg": "#ffebee", "border": "#c62828", "text": "#b71c1c"}
     }
     theme = class_colors[current_class]
-
+    
     st.title("🏃‍♂️ Risk Class stratification for cardiopulmonary fitness training")
-
+    
     st.markdown(f"""
     <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 15px;">
         <span style="margin: 0; color: {theme['text']}; font-size: 26px; font-weight: bold;">Risk Stratification: {current_class}</span>
     </div>
     """, unsafe_allow_html=True)
-
+    
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
-
+    
     # 決定當前可用的分頁
     if should_hide_a:
         available_tabs = ["1. 運動風險評估 (表格 B)", "3. 心率與臨床建議"]
     else:
         available_tabs = ["1. 運動風險評估 (表格 B)", "2. 體能活動準備問卷 (表格 A)", "3. 心率與臨床建議"]
-
+        
     # 安全檢查：如果當前 tab 被隱藏了，自動退回第一頁
     if st.session_state["current_tab"] not in available_tabs:
         st.session_state["current_tab"] = available_tabs[0]
-
+        
     # --- Custom Top Navigation Bar (Acts exactly like tabs but is stable) ---
     cols = st.columns(len(available_tabs))
     for i, tab_name in enumerate(available_tabs):
@@ -415,11 +401,9 @@ def main():
         tab_a_parq()
     elif st.session_state["current_tab"] == "3. 心率與臨床建議":
         tab_d_thr(current_class)
-
+        
     st.markdown("---")
-    st.caption(
-        "#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
-
+    st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
 
 if __name__ == "__main__":
     main()
