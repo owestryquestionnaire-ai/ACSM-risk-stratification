@@ -132,24 +132,24 @@ def inject_custom_css():
 
 
 def init_session_states():
-    # Form B (ACSM Risk / Symptoms)
-    for i in range(1, 10):
-        if f"s_{i}" not in st.session_state: st.session_state[f"s_{i}"] = "否"
-    for k in ["d_cardio", "d_metabolic", "d_renal"]:
-        if k not in st.session_state: st.session_state[k] = "否"
-    if "is_active" not in st.session_state: st.session_state["is_active"] = "否"
+    # 建立永久資料庫 (Persistent Storage)
+    if "data" not in st.session_state:
+        st.session_state.data = {}
+        for i in range(1, 10): st.session_state.data[f"s_{i}"] = "否"
+        for k in ["d_cardio", "d_metabolic", "d_renal", "is_active"]: st.session_state.data[k] = "否"
+        for i in range(1, 8): st.session_state.data[f"parq_{i}"] = "否"
+        st.session_state.data["parq_4_text"] = ""
+        st.session_state.data["parq_5_text"] = ""
 
-    # Form A
-    for i in range(1, 8):
-        if f"parq_{i}" not in st.session_state: st.session_state[f"parq_{i}"] = "否"
-    if "parq_4_text" not in st.session_state: st.session_state["parq_4_text"] = ""
-    if "parq_5_text" not in st.session_state: st.session_state["parq_5_text"] = ""
-
-    # Tab Control & Custom Navigation
     if "force_show_all" not in st.session_state:
         st.session_state["force_show_all"] = False
     if "current_tab" not in st.session_state:
         st.session_state["current_tab"] = "1. 運動風險評估 (表格 B)"
+
+
+# 即時更新資料庫的 Callback 函式
+def update_val(key):
+    st.session_state.data[key] = st.session_state[key]
 
 
 init_session_states()
@@ -157,13 +157,14 @@ init_session_states()
 
 # ---------- 2. Logic Functions ----------
 def evaluate_b_only():
-    symptoms = sum(1 for i in range(1, 10) if st.session_state.get(f"s_{i}") == "有")
+    # 改從永久資料庫 (.data) 讀取，防止切換分頁後資料遺失
+    symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
     has_disease = any([
-        st.session_state.get("d_cardio") == "有",
-        st.session_state.get("d_metabolic") == "有",
-        st.session_state.get("d_renal") == "有"
+        st.session_state.data.get("d_cardio") == "有",
+        st.session_state.data.get("d_metabolic") == "有",
+        st.session_state.data.get("d_renal") == "有"
     ])
-    is_active = st.session_state.get("is_active") == "是"
+    is_active = st.session_state.data.get("is_active") == "是"
 
     if (has_disease and not is_active) or (symptoms > 0):
         return "Class III"
@@ -178,7 +179,7 @@ def calculate_current_class():
     if b_class in ["Class III", "Class II"]:
         return b_class
 
-    parq_score = sum(1 for i in range(1, 8) if st.session_state.get(f"parq_{i}") == "有")
+    parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
     if parq_score > 0:
         return "Class II"
 
@@ -221,7 +222,13 @@ def render_inline_question(label, key, options=("否", "有")):
     with col1:
         st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
-        st.radio("", options, key=key, horizontal=True, label_visibility="collapsed")
+        # 從資料庫抓取先前的選項狀態
+        saved_val = st.session_state.data.get(key, options[0])
+        idx = options.index(saved_val) if saved_val in options else 0
+
+        # 綁定 on_change，選項一有變動就立刻存進資料庫
+        st.radio("", options, key=key, index=idx, horizontal=True, label_visibility="collapsed", on_change=update_val,
+                 args=(key,))
 
 
 # ---------- 4. Tab Functions ----------
@@ -286,12 +293,14 @@ def tab_a_parq():
     render_inline_question("3. 在過去十二個月內，你有否因頭暈而跌倒或失去知覺？", "parq_3")
 
     render_inline_question("4. 您是否曾被診斷出患有慢性疾病？", "parq_4")
-    if st.session_state.parq_4 == "有":
-        st.text_input("如有，請列出：", key="parq_4_text")
+    if st.session_state.data.get("parq_4") == "有":
+        st.text_input("如有，請列出：", value=st.session_state.data.get("parq_4_text", ""), key="parq_4_text",
+                      on_change=update_val, args=("parq_4_text",))
 
     render_inline_question("5. 你是否正在服用治療慢性疾病的處方藥？", "parq_5")
-    if st.session_state.parq_5 == "有":
-        st.text_input("如有，請列出：", key="parq_5_text")
+    if st.session_state.data.get("parq_5") == "有":
+        st.text_input("如有，請列出：", value=st.session_state.data.get("parq_5_text", ""), key="parq_5_text",
+                      on_change=update_val, args=("parq_5_text",))
 
     render_inline_question("6. 做運動有否可能加重你骨骼，關節或軟組織的痛楚？", "parq_6")
     render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7")
@@ -403,11 +412,13 @@ def main():
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
 
+    # 決定當前可用的分頁
     if should_hide_a:
         available_tabs = ["1. 運動風險評估 (表格 B)", "3. 心率與臨床建議"]
     else:
         available_tabs = ["1. 運動風險評估 (表格 B)", "2. 體能活動準備問卷 (表格 A)", "3. 心率與臨床建議"]
 
+    # 安全檢查：如果當前 tab 被隱藏了，自動退回第一頁
     if st.session_state["current_tab"] not in available_tabs:
         st.session_state["current_tab"] = available_tabs[0]
 
