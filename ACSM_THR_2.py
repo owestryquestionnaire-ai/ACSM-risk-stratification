@@ -153,7 +153,6 @@ init_session_states()
 
 # ---------- 2. Logic Functions ----------
 
-# Mapping keys to display names for error messages
 b_key_names = {
     "s_1": "徵狀 1 (胸口/頸/下顎痛楚)", "s_2": "徵狀 2 (靜止氣喘)", "s_3": "徵狀 3 (暈眩)",
     "s_4": "徵狀 4 (平臥氣喘)", "s_5": "徵狀 5 (足踝腫)", "s_6": "徵狀 6 (心悸)",
@@ -239,6 +238,7 @@ def calculate_thr(age, rhr, risk_level):
 # ---------- 3. Callbacks & Helpers ----------
 def go_to_tab(tab_name):
     st.session_state["current_tab"] = tab_name
+    # 切換分頁時自動清除錯誤標示
     st.session_state["show_b_errors"] = False
     st.session_state["show_a_errors"] = False
 
@@ -262,10 +262,17 @@ def try_complete_a(target_tab):
         st.session_state["show_a_errors"] = False
         go_to_tab(target_tab)
 
-def render_inline_question(label, key, options=("否", "有")):
+# 加入了 check_error 判斷，用來動態高光漏填的題目
+def render_inline_question(label, key, options=("否", "有"), check_error=False):
+    is_missing = check_error and st.session_state.data.get(key) is None
+    
     col1, col2 = st.columns([7, 3]) 
     with col1:
-        st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
+        if is_missing:
+            # 漏填時顯示紅色警示
+            st.markdown(f'<div class="question-text" style="color: #c62828; font-weight: bold; background-color: #ffebee; border-left: 4px solid #c62828; padding-left: 8px;">❌ {label}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
         saved_val = st.session_state.data.get(key)
         idx = options.index(saved_val) if saved_val in options else None
@@ -274,6 +281,8 @@ def render_inline_question(label, key, options=("否", "有")):
 
 # ---------- 4. Tab Functions ----------
 def tab_b_acsm(b_class, show_all_tabs):
+    check_err = st.session_state.get("show_b_errors", False)
+    
     st.header("表格 B：心血管、呼吸系統及代謝性疾病之主要徵狀")
     st.write("請在合適選擇上選擇「有」或「否」：")
     
@@ -289,29 +298,29 @@ def tab_b_acsm(b_class, show_all_tabs):
         "9. 一般活動感到不尋常的疲倦或氣喘"
     ]
     for i, q in enumerate(s_items, 1):
-        render_inline_question(q, f"s_{i}")
+        render_inline_question(q, f"s_{i}", check_error=check_err)
         
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
     
     st.markdown("---")
     st.subheader("已知醫療狀況 (Known Diseases)")
-    render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio")
-    render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic")
-    render_inline_question("已知腎臟疾病", "d_renal")
+    render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio", check_error=check_err)
+    render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic", check_error=check_err)
+    render_inline_question("已知腎臟疾病", "d_renal", check_error=check_err)
 
     st.markdown("---")
     st.subheader("當前運動習慣")
     activity_question = "您目前是否定期進行體能活動？<br><span style='font-size: 18px; color: #555;'>(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)</span>"
     
-    render_inline_question(activity_question, "is_active", options=("否", "是"))
+    render_inline_question(activity_question, "is_active", options=("否", "是"), check_error=check_err)
 
     st.markdown("---")
     
-    # Error Message Display
-    if st.session_state.get("show_b_errors"):
+    # 底部統一錯誤提示
+    if check_err:
         missing = get_missing_b()
         if missing:
-            st.error(f"⚠️ 請回答以下尚未填寫的問題：\n\n" + ", ".join(missing))
+            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為 ❌ 的項目。")
 
     if b_class == "Pending":
         st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR & Clinical Guidelines",))
@@ -331,36 +340,38 @@ def tab_b_acsm(b_class, show_all_tabs):
 
 
 def tab_a_parq():
+    check_err = st.session_state.get("show_a_errors", False)
+    
     st.header("表格 A：體能活動適應能力問卷")
     st.write("請在合適選擇上選擇「有」或「否」：")
     
-    render_inline_question("1. 過往醫生有否說你有心臟病或高血壓?", "parq_1")
-    render_inline_question("2. 當你靜止或做運動時有否感覺胸口痛？", "parq_2")
-    render_inline_question("3. 在過去十二個月內，你有否因頭暈而跌倒或失去知覺？", "parq_3")
+    render_inline_question("1. 過往醫生有否說你有心臟病或高血壓?", "parq_1", check_error=check_err)
+    render_inline_question("2. 當你靜止或做運動時有否感覺胸口痛？", "parq_2", check_error=check_err)
+    render_inline_question("3. 在過去十二個月內，你有否因頭暈而跌倒或失去知覺？", "parq_3", check_error=check_err)
     
-    render_inline_question("4. 您是否曾被診斷出患有慢性疾病？", "parq_4")
+    render_inline_question("4. 您是否曾被診斷出患有慢性疾病？", "parq_4", check_error=check_err)
     if st.session_state.data.get("parq_4") == "有":
         st.text_input("如有，請列出：", value=st.session_state.data.get("parq_4_text", ""), key="parq_4_text", on_change=update_val, args=("parq_4_text",))
         
-    render_inline_question("5. 你是否正在服用治療慢性疾病的處方藥？", "parq_5")
+    render_inline_question("5. 你是否正在服用治療慢性疾病的處方藥？", "parq_5", check_error=check_err)
     if st.session_state.data.get("parq_5") == "有":
         st.text_input("如有，請列出：", value=st.session_state.data.get("parq_5_text", ""), key="parq_5_text", on_change=update_val, args=("parq_5_text",))
         
-    render_inline_question("6. 做運動有否可能加重你骨骼，關節或軟組織的痛楚？", "parq_6")
-    render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7")
+    render_inline_question("6. 做運動有否可能加重你骨骼，關節或軟組織的痛楚？", "parq_6", check_error=check_err)
+    render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7", check_error=check_err)
 
     st.markdown("---")
     
-    # Error Message Display
-    if st.session_state.get("show_a_errors"):
+    if check_err:
         missing = get_missing_a()
         if missing:
-            st.error(f"⚠️ 請回答以下尚未填寫的問題：\n\n" + ", ".join(missing))
+            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為 ❌ 的項目。")
 
     st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_a, args=("3. Target HR & Clinical Guidelines",))
 
 
 def tab_d_thr(current_class):
+    # Tab 3 完全英文化 (For Therapist/Staff)
     st.header("Target Heart Rate & Clinical Recommendations")
     
     st.subheader("⚙️ Select Risk Class")
