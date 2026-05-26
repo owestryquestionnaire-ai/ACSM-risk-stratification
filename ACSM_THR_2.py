@@ -140,6 +140,10 @@ def init_session_states():
         st.session_state["force_show_all"] = False
     if "current_tab" not in st.session_state:
         st.session_state["current_tab"] = "1. 運動風險評估 (表格 B)"
+    if "show_b_errors" not in st.session_state:
+        st.session_state["show_b_errors"] = False
+    if "show_a_errors" not in st.session_state:
+        st.session_state["show_a_errors"] = False
 
 def update_val(key):
     st.session_state.data[key] = st.session_state[key]
@@ -148,9 +152,37 @@ init_session_states()
 
 
 # ---------- 2. Logic Functions ----------
+
+# Mapping keys to display names for error messages
+b_key_names = {
+    "s_1": "徵狀 1 (胸口/頸/下顎痛楚)", "s_2": "徵狀 2 (靜止氣喘)", "s_3": "徵狀 3 (暈眩)",
+    "s_4": "徵狀 4 (平臥氣喘)", "s_5": "徵狀 5 (足踝腫)", "s_6": "徵狀 6 (心悸)",
+    "s_7": "徵狀 7 (肌肉疼痛/抽筋)", "s_8": "徵狀 8 (心雜音)", "s_9": "徵狀 9 (不尋常疲倦)",
+    "d_cardio": "已知心血管疾病", "d_metabolic": "已知代謝疾病", "d_renal": "已知腎臟疾病",
+    "is_active": "當前運動習慣"
+}
+
+a_key_names = {
+    f"parq_{i}": f"問題 {i}" for i in range(1, 8)
+}
+
+def get_missing_b():
+    missing = []
+    for k, name in b_key_names.items():
+        if st.session_state.data.get(k) is None:
+            missing.append(name)
+    return missing
+
+def get_missing_a():
+    missing = []
+    for k, name in a_key_names.items():
+        if st.session_state.data.get(k) is None:
+            missing.append(name)
+    return missing
+
 def evaluate_b_only():
-    b_keys = [f"s_{i}" for i in range(1, 10)] + ["d_cardio", "d_metabolic", "d_renal", "is_active"]
-    if any(st.session_state.data.get(k) is None for k in b_keys):
+    missing_b = get_missing_b()
+    if missing_b:
         return "Pending"
 
     symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
@@ -173,8 +205,8 @@ def calculate_current_class():
     if b_class in ["Class III", "Class II", "Pending"]:
         return b_class
         
-    a_keys = [f"parq_{i}" for i in range(1, 8)]
-    if any(st.session_state.data.get(k) is None for k in a_keys):
+    missing_a = get_missing_a()
+    if missing_a:
         return "Pending"
 
     parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
@@ -207,10 +239,28 @@ def calculate_thr(age, rhr, risk_level):
 # ---------- 3. Callbacks & Helpers ----------
 def go_to_tab(tab_name):
     st.session_state["current_tab"] = tab_name
+    st.session_state["show_b_errors"] = False
+    st.session_state["show_a_errors"] = False
 
 def enable_all_tabs_and_go():
     st.session_state["force_show_all"] = True
-    st.session_state["current_tab"] = "2. 體能活動準備問卷 (表格 A)"
+    go_to_tab("2. 體能活動準備問卷 (表格 A)")
+
+def try_complete_b(target_tab):
+    missing = get_missing_b()
+    if missing:
+        st.session_state["show_b_errors"] = True
+    else:
+        st.session_state["show_b_errors"] = False
+        go_to_tab(target_tab)
+
+def try_complete_a(target_tab):
+    missing = get_missing_a()
+    if missing:
+        st.session_state["show_a_errors"] = True
+    else:
+        st.session_state["show_a_errors"] = False
+        go_to_tab(target_tab)
 
 def render_inline_question(label, key, options=("否", "有")):
     col1, col2 = st.columns([7, 3]) 
@@ -256,20 +306,28 @@ def tab_b_acsm(b_class, show_all_tabs):
     render_inline_question(activity_question, "is_active", options=("否", "是"))
 
     st.markdown("---")
-    if b_class in ["Class II", "Class III"]:
+    
+    # Error Message Display
+    if st.session_state.get("show_b_errors"):
+        missing = get_missing_b()
+        if missing:
+            st.error(f"⚠️ 請回答以下尚未填寫的問題：\n\n" + ", ".join(missing))
+
+    if b_class == "Pending":
+        st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR & Clinical Guidelines",))
+    elif b_class in ["Class II", "Class III"]:
         if not show_all_tabs:
             st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。系統已自動隱藏表格 A。")
-            
             c1, c2 = st.columns(2)
             with c1:
-                st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=go_to_tab, args=("3. Target HR & Clinical Guidelines",))
+                st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR & Clinical Guidelines",))
             with c2:
                 st.button("📝 顯示隱藏的表單 (前往表格 A)", use_container_width=True, on_click=enable_all_tabs_and_go)
         else:
             st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。您選擇繼續填寫表格 A。")
-            st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=go_to_tab, args=("2. 體能活動準備問卷 (表格 A)",))
+            st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動準備問卷 (表格 A)",))
     else:
-        st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=go_to_tab, args=("2. 體能活動準備問卷 (表格 A)",))
+        st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動準備問卷 (表格 A)",))
 
 
 def tab_a_parq():
@@ -292,24 +350,27 @@ def tab_a_parq():
     render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7")
 
     st.markdown("---")
-    st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=go_to_tab, args=("3. Target HR & Clinical Guidelines",))
+    
+    # Error Message Display
+    if st.session_state.get("show_a_errors"):
+        missing = get_missing_a()
+        if missing:
+            st.error(f"⚠️ 請回答以下尚未填寫的問題：\n\n" + ", ".join(missing))
+
+    st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_a, args=("3. Target HR & Clinical Guidelines",))
 
 
 def tab_d_thr(current_class):
-    # Tab 3 完全英文化 (For Therapist/Staff)
     st.header("Target Heart Rate & Clinical Recommendations")
     
     st.subheader("⚙️ Select Risk Class")
     
-    # 臨床安全機制：若表單未完成，提示切換，且不提供預設選項
     if current_class == "Pending":
         st.markdown("💡 The system evaluation is currently **Incomplete**. Please manually select the Risk Class below:")
     else:
         st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
     
     options = ["Class I", "Class II", "Class III"]
-    
-    # 修正重點：未完成時強制 index=None
     default_idx = options.index(current_class) if current_class in options else None
     selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
     
@@ -323,7 +384,6 @@ def tab_d_thr(current_class):
     rhr = c2.number_input("Standing Resting HR", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
 
     if st.button("Calculate", type="primary", use_container_width=True):
-        # 修正重點：加入防呆機制，若治療師未選取分級則擋下計算
         if selected_class is None:
             result_container.warning("⚠️ Please select a Risk Class before calculating.")
         elif age is not None and rhr is not None:
@@ -421,7 +481,7 @@ def main():
     for i, tab_name in enumerate(available_tabs):
         btn_type = "primary" if st.session_state["current_tab"] == tab_name else "secondary"
         if cols[i].button(tab_name, type=btn_type, key=f"nav_{i}", use_container_width=True):
-            st.session_state["current_tab"] = tab_name
+            go_to_tab(tab_name)
             st.rerun()
 
     st.markdown("---")
