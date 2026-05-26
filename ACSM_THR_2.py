@@ -329,4 +329,112 @@ def tab_d_thr(current_class):
         elif age is not None and rhr is not None:
             thr_string, err = calculate_thr(int(age), int(rhr), selected_class)
             
-            if
+            if not err:
+                recs = {
+                    "Class I": {
+                        "intensity": "Moderate: ✔️ Vigorous: ✔️",
+                        "hrr": "≤ 84% HRR",
+                        "rpe": "&lt; 17",
+                        "medical": "Not necessary",
+                        "supervision": "Not required",
+                        "monitor": "Monitor HR in First session (to facilitate teaching but it is not compulsory)"
+                    },
+                    "Class II": {
+                        "intensity": "Moderate: ✔️ Vigorous: ❌",
+                        "hrr": "&lt; 60% HRR",
+                        "rpe": "&lt; 14",
+                        "medical": "Recommended for vigorous intensity exercise",
+                        "supervision": "Not required (unless patient is working for vigorous exercise)",
+                        "monitor": "Continuous HR or RPE monitoring"
+                    },
+                    "Class III": {
+                        "intensity": "Moderate: ❌ Vigorous: ❌",
+                        "hrr": "&lt; 40% HRR",
+                        "rpe": "&lt; 12",
+                        "medical": "Recommended",
+                        "supervision": "Required (for both moderate and vigorous exercise)",
+                        "monitor": "Continuous HR and RPE monitoring together with close supervision"
+                    }
+                }
+                rec = recs[selected_class]
+                
+                result_container.markdown(f"""
+                <div class="final-result-box">
+                    <div class="final-thr-part">
+                        {thr_string}
+                    </div>
+                    <div class="final-rec-part">
+                        <h3 style="margin-top: 0; border-bottom: 2px solid #ccc; padding-bottom: 10px;">📋 {selected_class} Clinical Guidelines</h3>
+                        <p><b>Recommended Exercise Intensity:</b><br>{rec['intensity']}</p>
+                        <p><b>Safe exercise zone:</b> {rec['hrr']}</p>
+                        <p><b>RPE during Exercise:</b> {rec['rpe']}</p>
+                        <p><b>Medical Clearance:</b><br>{rec['medical']}</p>
+                        <p><b>Supervision:</b><br>{rec['supervision']}</p>
+                        <p><b>Monitoring:</b><br>{rec['monitor']}</p>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                result_container.error(err)
+        else:
+            result_container.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
+    else:
+        result_container.info("💡 Please input the patient's **Age** and **Standing Resting HR** above, then click 'Calculate' to generate the report.")
+
+
+def main():
+    inject_custom_css()
+    
+    current_class = calculate_current_class()
+    b_class_only = evaluate_b_only()
+    
+    class_colors = {
+        "Pending": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
+        "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
+        "Class II": {"bg": "#fff3e0", "border": "#ef6c00", "text": "#e65100"},
+        "Class III": {"bg": "#ffebee", "border": "#c62828", "text": "#b71c1c"}
+    }
+    theme = class_colors[current_class]
+    
+    display_text = "Incomplete" if current_class == "Pending" else current_class
+    
+    st.title("🏃‍♂️ Risk Class stratification for cardiopulmonary fitness training")
+    
+    st.markdown(f"""
+    <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 15px;">
+        <span style="margin: 0; color: {theme['text']}; font-size: 26px; font-weight: bold;">Risk Stratification: {display_text}</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    show_all_tabs = st.session_state.get("force_show_all", False)
+    should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
+    
+    if should_hide_a:
+        available_tabs = ["1. 運動風險評估 (表格 B)", "3. Target HR & Clinical Guidelines"]
+    else:
+        available_tabs = ["1. 運動風險評估 (表格 B)", "2. 體能活動準備問卷 (表格 A)", "3. Target HR & Clinical Guidelines"]
+        
+    if st.session_state["current_tab"] not in available_tabs:
+        st.session_state["current_tab"] = available_tabs[0]
+        
+    cols = st.columns(len(available_tabs))
+    for i, tab_name in enumerate(available_tabs):
+        btn_type = "primary" if st.session_state["current_tab"] == tab_name else "secondary"
+        if cols[i].button(tab_name, type=btn_type, key=f"nav_{i}", use_container_width=True):
+            st.session_state["current_tab"] = tab_name
+            st.rerun()
+
+    st.markdown("---")
+
+    if st.session_state["current_tab"] == "1. 運動風險評估 (表格 B)":
+        tab_b_acsm(b_class_only, show_all_tabs)
+    elif st.session_state["current_tab"] == "2. 體能活動準備問卷 (表格 A)":
+        tab_a_parq()
+    elif st.session_state["current_tab"] == "3. Target HR & Clinical Guidelines":
+        tab_d_thr(current_class)
+        
+    st.markdown("---")
+    st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
+
+if __name__ == "__main__":
+    main()
