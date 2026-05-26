@@ -238,7 +238,6 @@ def calculate_thr(age, rhr, risk_level):
 # ---------- 3. Callbacks & Helpers ----------
 def go_to_tab(tab_name):
     st.session_state["current_tab"] = tab_name
-    # 切換分頁時自動清除錯誤標示
     st.session_state["show_b_errors"] = False
     st.session_state["show_a_errors"] = False
 
@@ -262,15 +261,14 @@ def try_complete_a(target_tab):
         st.session_state["show_a_errors"] = False
         go_to_tab(target_tab)
 
-# 加入了 check_error 判斷，用來動態高光漏填的題目
 def render_inline_question(label, key, options=("否", "有"), check_error=False):
     is_missing = check_error and st.session_state.data.get(key) is None
     
     col1, col2 = st.columns([7, 3]) 
     with col1:
         if is_missing:
-            # 漏填時顯示紅色警示
-            st.markdown(f'<div class="question-text" style="color: #c62828; font-weight: bold; background-color: #ffebee; border-left: 4px solid #c62828; padding-left: 8px;">❌ {label}</div>', unsafe_allow_html=True)
+            # 移除了 ❌ 符號，保留紅色粗體與背景高光
+            st.markdown(f'<div class="question-text" style="color: #c62828; font-weight: bold; background-color: #ffebee; border-left: 4px solid #c62828; padding-left: 8px;">{label}</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
@@ -316,11 +314,10 @@ def tab_b_acsm(b_class, show_all_tabs):
 
     st.markdown("---")
     
-    # 底部統一錯誤提示
     if check_err:
         missing = get_missing_b()
         if missing:
-            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為 ❌ 的項目。")
+            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
 
     if b_class == "Pending":
         st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR & Clinical Guidelines",))
@@ -365,13 +362,12 @@ def tab_a_parq():
     if check_err:
         missing = get_missing_a()
         if missing:
-            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為 ❌ 的項目。")
+            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
 
     st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_a, args=("3. Target HR & Clinical Guidelines",))
 
 
 def tab_d_thr(current_class):
-    # Tab 3 完全英文化 (For Therapist/Staff)
     st.header("Target Heart Rate & Clinical Recommendations")
     
     st.subheader("⚙️ Select Risk Class")
