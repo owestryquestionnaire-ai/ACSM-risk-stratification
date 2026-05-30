@@ -2,7 +2,7 @@ import streamlit as st
 
 # ---------- 1. Initialization & Config ----------
 # 設定 layout="wide" 以使用全螢幕寬度
-st.set_page_config(page_title="運動準備度和風險評估", layout="wide")
+st.set_page_config(page_title="運動風險評估", layout="wide")
 
 def inject_custom_css():
     st.markdown(
@@ -12,10 +12,10 @@ def inject_custom_css():
            🖥️ DESKTOP & iPAD VIEW (長者友善大字體排版)
            ========================================================= */
         html, body, [data-testid="stMarkdownContainer"] {
-            font-size: 24px !important; /* 基本字體放大 */
+            font-size: 24px !important; 
             color: #000000 !important;
             font-weight: 400 !important;
-            line-height: 1.45 !important; /* 稍微放寬行距防止大字體重疊 */
+            line-height: 1.45 !important; 
         }
 
         /* --- SAFE SPACING --- */
@@ -76,8 +76,7 @@ def inject_custom_css():
         /* =========================================================
            📱 MOBILE RESPONSIVE PATCH (iPhone 專屬長者大字版)
            ========================================================= */
-        @media (max-width: 600px) {
-            /* 1. Scale down slightly for mobile, but keep it larger than before */
+        @media (max-width: 767px) {
             html, body, [data-testid="stMarkdownContainer"] { font-size: 20px !important; }
             h1 { font-size: 30px !important; }
             h2 { font-size: 26px !important; }
@@ -87,11 +86,9 @@ def inject_custom_css():
             .stMarkdown p { font-size: 20px !important; margin-bottom: 8px !important;}
             .question-text { font-size: 22px !important; margin-bottom: 8px !important; }
             
-            /* 2. Stacked elements margin */
             [data-testid="column"] { margin-bottom: 12px !important; }
             .element-container { margin-bottom: 12px !important; }
             
-            /* 3. Fat Finger Friendly Options */
             div[data-testid="stRadio"] label p, div[data-testid="stCheckbox"] label p {
                 font-size: 22px !important; 
             }
@@ -100,7 +97,6 @@ def inject_custom_css():
                 padding-bottom: 15px !important;
             } 
             
-            /* 4. Mobile Buttons (Taller and wrapped) */
             button[kind="primary"], [data-testid="baseButton-primary"], button[kind="secondary"], [data-testid="baseButton-secondary"] {
                 font-size: 22px !important;
                 padding: 14px 12px !important; 
@@ -108,7 +104,6 @@ def inject_custom_css():
                 height: auto !important;
             }
             
-            /* 5. Result Box scaling */
             .final-thr-part { font-size: 28px !important; padding: 12px 15px !important; }
             .final-rec-part { padding: 12px 15px !important; }
         }
@@ -453,11 +448,11 @@ def main():
     
     display_text = "Incomplete" if current_class == "Pending" else current_class
     
-    st.title("🏃‍♂️ Risk Class stratification for cardiopulmonary fitness training")
+    st.title("🏃‍♂️ 運動風險評估")
     
     st.markdown(f"""
     <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 15px;">
-        <span style="margin: 0; color: {theme['text']}; font-size: 28px; font-weight: bold;">Risk Stratification: {display_text}</span>
+        <span style="margin: 0; color: {theme['text']}; font-size: 28px; font-weight: bold;">運動風險評估: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
