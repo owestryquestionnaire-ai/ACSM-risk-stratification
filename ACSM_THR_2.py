@@ -8,152 +8,108 @@ def inject_custom_css():
     st.markdown(
         """
         <style>
-        /* Global Base Font and Black Color (Desktop/iPad) */
+        /* =========================================================
+           🖥️ DESKTOP & iPAD VIEW (長者友善大字體排版)
+           ========================================================= */
         html, body, [data-testid="stMarkdownContainer"] {
-            font-size: 20px !important; 
+            font-size: 24px !important; /* 基本字體放大 */
             color: #000000 !important;
             font-weight: 400 !important;
-            line-height: 1.4 !important; 
+            line-height: 1.45 !important; /* 稍微放寬行距防止大字體重疊 */
         }
 
-        /* --- SAFE SPACING (Desktop/iPad) --- */
-        div[data-testid="stVerticalBlock"] {
-            gap: 0.5rem !important; 
-        }
-        .element-container {
-            margin-bottom: 0px !important;
-        }
-        hr {
-            margin-top: 0.5rem !important;
-            margin-bottom: 0.5rem !important;
-            padding: 0px !important;
-        }
+        /* --- SAFE SPACING --- */
+        div[data-testid="stVerticalBlock"] { gap: 0.6rem !important; }
+        .element-container { margin-bottom: 0px !important; }
+        hr { margin-top: 0.6rem !important; margin-bottom: 0.6rem !important; padding: 0px !important; }
 
-        /* Headers - BOLD */
-        h1 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
-        h2 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 8px !important; line-height: 1.4 !important; margin-top: 10px !important; margin-bottom: 15px !important;}
-        h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
-        h4 { font-size: 22px !important; color: #444 !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 10px !important;}
+        /* Headers - BOLD (放大標題) */
+        h1 { font-size: 38px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        h2 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
+        h3 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        h4 { font-size: 26px !important; color: #444 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
 
-        /* Radio Buttons & Checkbox Labels */
-        div[data-testid="stRadio"] label p, 
-        div[data-testid="stCheckbox"] label p {
-            font-size: 22px !important; 
-            font-weight: 400 !important;
-            color: #000000 !important;
-            line-height: 1.4 !important; 
+        /* Radio Buttons & Checkbox Labels - 放大選項字體 */
+        div[data-testid="stRadio"] label p, div[data-testid="stCheckbox"] label p {
+            font-size: 26px !important; 
+            font-weight: 400 !important; 
+            color: #000000 !important; 
+            line-height: 1.45 !important; 
         }
-        
         .stRadio > div { gap: 0rem !important; } 
         .stCheckbox > div { margin-bottom: 0rem !important; }
 
         /* Standard Text */
         .stMarkdown p {
-            font-size: 20px !important; 
-            color: #000000 !important;
-            font-weight: 400 !important;
-            line-height: 1.4 !important; 
-            margin-bottom: 10px !important; 
+            font-size: 24px !important; 
+            color: #000000 !important; 
+            line-height: 1.45 !important; 
+            margin-bottom: 12px !important; 
         }
 
         /* Input Box Labels */
         label[data-testid="stWidgetLabel"] p {
-            font-size: 22px !important; 
-            font-weight: bold !important;
-            color: #000000 !important;
-            line-height: 1.4 !important;
-            margin-bottom: 5px !important;
+            font-size: 26px !important; 
+            font-weight: bold !important; 
+            color: #000000 !important; 
+            margin-bottom: 6px !important;
         }
 
         /* Combined Result Box Styling */
-        .final-result-box {
-            border: 3px solid #000000;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 15px !important;
-        }
-        .final-thr-part {
-            font-size: 32px !important; 
-            color: #000000 !important;
-            font-weight: bold !important;
-            line-height: 1.4 !important;
-            padding: 15px 20px !important; 
-            background-color: #ffffff;
-        }
-        .final-rec-part {
-            background-color: #f8f9fa;
-            padding: 15px 20px !important; 
-            border-top: 3px dashed #000000;
-        }
-        .final-rec-part p {
-            margin-bottom: 5px !important; 
-            line-height: 1.4 !important; 
-        }
+        .final-result-box { border: 3px solid #000000; border-radius: 10px; overflow: hidden; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px !important; }
+        .final-thr-part { font-size: 36px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; padding: 15px 20px !important; background-color: #ffffff; }
+        .final-rec-part { background-color: #f8f9fa; padding: 15px 20px !important; border-top: 3px dashed #000000; }
+        .final-rec-part p { margin-bottom: 6px !important; line-height: 1.45 !important; }
         
-        .question-text {
-            margin-top: 0px !important; 
-            font-size: 22px !important; 
-            line-height: 1.4 !important; 
-        }
+        .question-text { margin-top: 0px !important; font-size: 26px !important; line-height: 1.45 !important; }
 
-        /* ----- CUSTOM RED BUTTON STYLING ----- */
-        button[kind="primary"], [data-testid="baseButton-primary"],
-        button[kind="secondary"], [data-testid="baseButton-secondary"] {
-            font-size: 22px !important;
-            padding: 8px 16px !important; 
-            font-weight: bold !important;
-            line-height: 1.4 !important;
+        /* ----- CUSTOM RED BUTTON STYLING (放大按鈕) ----- */
+        button[kind="primary"], [data-testid="baseButton-primary"], button[kind="secondary"], [data-testid="baseButton-secondary"] {
+            font-size: 24px !important; 
+            padding: 10px 20px !important; 
+            font-weight: bold !important; 
+            line-height: 1.45 !important;
         }
-        button[kind="primary"], [data-testid="baseButton-primary"] {
-            background-color: #ef5350 !important; 
-            color: white !important;
-            border-color: #ef5350 !important; 
-        }
-        button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover {
-            background-color: #e53935 !important; 
-            border-color: #e53935 !important;
-            color: white !important;
-        }
+        button[kind="primary"], [data-testid="baseButton-primary"] { background-color: #ef5350 !important; color: white !important; border-color: #ef5350 !important; }
+        button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover { background-color: #e53935 !important; border-color: #e53935 !important; color: white !important;}
 
         /* =========================================================
-           📱 MOBILE RESPONSIVE PATCH (iPhone View Only)
-           將斷點從 768px 下修至 600px，釋放平板的螢幕空間
+           📱 MOBILE RESPONSIVE PATCH (iPhone 專屬長者大字版)
            ========================================================= */
         @media (max-width: 600px) {
-            /* 1. Reduce Global Font Sizes */
-            html, body, [data-testid="stMarkdownContainer"] { font-size: 16px !important; }
-            h1 { font-size: 26px !important; }
-            h2 { font-size: 22px !important; }
-            h3 { font-size: 20px !important; }
-            h4 { font-size: 18px !important; }
+            /* 1. Scale down slightly for mobile, but keep it larger than before */
+            html, body, [data-testid="stMarkdownContainer"] { font-size: 20px !important; }
+            h1 { font-size: 30px !important; }
+            h2 { font-size: 26px !important; }
+            h3 { font-size: 24px !important; }
+            h4 { font-size: 22px !important; }
             
-            .stMarkdown p { font-size: 16px !important; margin-bottom: 5px !important;}
-            .question-text { font-size: 18px !important; margin-bottom: 10px !important; }
+            .stMarkdown p { font-size: 20px !important; margin-bottom: 8px !important;}
+            .question-text { font-size: 22px !important; margin-bottom: 8px !important; }
             
-            /* 2. Adjust Radio Buttons for Touch */
-            div[data-testid="stRadio"] label p, 
-            div[data-testid="stCheckbox"] label p {
-                font-size: 18px !important; 
+            /* 2. Stacked elements margin */
+            [data-testid="column"] { margin-bottom: 12px !important; }
+            .element-container { margin-bottom: 12px !important; }
+            
+            /* 3. Fat Finger Friendly Options */
+            div[data-testid="stRadio"] label p, div[data-testid="stCheckbox"] label p {
+                font-size: 22px !important; 
             }
-            .stRadio > div { gap: 1rem !important; padding-bottom: 10px !important;} 
+            .stRadio > div { 
+                gap: 1.5rem !important; 
+                padding-bottom: 15px !important;
+            } 
             
-            /* 3. Make Buttons Mobile Friendly (Wrap text if too long) */
-            button[kind="primary"], [data-testid="baseButton-primary"],
-            button[kind="secondary"], [data-testid="baseButton-secondary"] {
-                font-size: 18px !important;
-                padding: 12px 10px !important; 
+            /* 4. Mobile Buttons (Taller and wrapped) */
+            button[kind="primary"], [data-testid="baseButton-primary"], button[kind="secondary"], [data-testid="baseButton-secondary"] {
+                font-size: 22px !important;
+                padding: 14px 12px !important; 
                 white-space: normal !important; 
                 height: auto !important;
             }
-
-            /* 4. Relax vertical spacing so stacked elements don't crush */
-            div[data-testid="stVerticalBlock"] {
-                gap: 1rem !important; 
-            }
             
-            /* 5. Scale down the final result box */
-            .final-thr-part { font-size: 24px !important; padding: 12px 15px !important; }
+            /* 5. Result Box scaling */
+            .final-thr-part { font-size: 28px !important; padding: 12px 15px !important; }
             .final-rec-part { padding: 12px 15px !important; }
         }
         </style>
@@ -252,7 +208,7 @@ def calculate_thr(age, rhr, risk_level):
     if rhr >= mhr: return None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    details_html = f'<div style="font-size: 18px; font-weight: normal; margin-top: 5px; color: #444;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
+    details_html = f'<div style="font-size: 20px; font-weight: normal; margin-top: 5px; color: #444;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
@@ -300,7 +256,7 @@ def render_inline_question(label, key, options=("否", "有"), check_error=False
     col1, col2 = st.columns([7, 3]) 
     with col1:
         if is_missing:
-            st.markdown(f'<div class="question-text" style="color: #c62828; font-weight: bold; background-color: #ffebee; border-left: 4px solid #c62828; padding-left: 8px;">{label}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="question-text" style="color: #c62828; font-weight: bold; background-color: #ffebee; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
@@ -340,7 +296,7 @@ def tab_b_acsm(b_class, show_all_tabs):
 
     st.markdown("---")
     st.subheader("當前運動習慣")
-    activity_question = "您目前是否定期進行體能活動？<br><span style='font-size: 18px; color: #555;'>(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)</span>"
+    activity_question = "您目前是否定期進行體能活動？<br><span style='font-size: 20px; color: #555;'>(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)</span>"
     
     render_inline_question(activity_question, "is_active", options=("否", "是"), check_error=check_err)
 
@@ -501,7 +457,7 @@ def main():
     
     st.markdown(f"""
     <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 15px;">
-        <span style="margin: 0; color: {theme['text']}; font-size: 26px; font-weight: bold;">Risk Stratification: {display_text}</span>
+        <span style="margin: 0; color: {theme['text']}; font-size: 28px; font-weight: bold;">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
