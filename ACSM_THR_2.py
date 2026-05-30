@@ -1,15 +1,15 @@
 import streamlit as st
 
 # ---------- 1. Initialization & Config ----------
-# 設定 layout="wide" 以使用全螢幕寬度
-st.set_page_config(page_title="運動風險評估", layout="wide")
+# 設定 layout="wide" 以使用全螢幕寬度，並將網頁標籤改為英文
+st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide")
 
 def inject_custom_css():
     st.markdown(
         """
         <style>
         /* =========================================================
-           🖥️ DESKTOP & iPAD VIEW (長者友善大字體排版)
+           🖥️ DESKTOP & iPAD VIEW (長者友善選項 + 精緻標題排版)
            ========================================================= */
         html, body, [data-testid="stMarkdownContainer"] {
             font-size: 24px !important; 
@@ -23,13 +23,13 @@ def inject_custom_css():
         .element-container { margin-bottom: 0px !important; }
         hr { margin-top: 0.6rem !important; margin-bottom: 0.6rem !important; padding: 0px !important; }
 
-        /* Headers - BOLD (放大標題) */
-        h1 { font-size: 38px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
-        h2 { font-size: 34px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
-        h3 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
-        h4 { font-size: 26px !important; color: #444 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        /* Headers - BOLD (等比例微調縮小，適應較長的英文標題) */
+        h1 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        h2 { font-size: 28px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
+        h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        h4 { font-size: 24px !important; color: #444 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
 
-        /* Radio Buttons & Checkbox Labels - 放大選項字體 */
+        /* Radio Buttons & Checkbox Labels - 維持放大選項字體 (長者友善) */
         div[data-testid="stRadio"] label p, div[data-testid="stCheckbox"] label p {
             font-size: 26px !important; 
             font-weight: 400 !important; 
@@ -78,10 +78,10 @@ def inject_custom_css():
            ========================================================= */
         @media (max-width: 767px) {
             html, body, [data-testid="stMarkdownContainer"] { font-size: 20px !important; }
-            h1 { font-size: 30px !important; }
-            h2 { font-size: 26px !important; }
-            h3 { font-size: 24px !important; }
-            h4 { font-size: 22px !important; }
+            h1 { font-size: 24px !important; }
+            h2 { font-size: 22px !important; }
+            h3 { font-size: 20px !important; }
+            h4 { font-size: 18px !important; }
             
             .stMarkdown p { font-size: 20px !important; margin-bottom: 8px !important;}
             .question-text { font-size: 22px !important; margin-bottom: 8px !important; }
@@ -448,11 +448,13 @@ def main():
     
     display_text = "Incomplete" if current_class == "Pending" else current_class
     
-    st.title("🏃‍♂️ 運動風險評估")
+    # 標題換回英文 (含修正錯字 Cardiopulmonary)
+    st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
+    # 保留框內英文 Risk Stratification，並維持縮小字體 (22px) 與內距
     st.markdown(f"""
-    <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 15px;">
-        <span style="margin: 0; color: {theme['text']}; font-size: 28px; font-weight: bold;">運動風險評估: {display_text}</span>
+    <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 8px; text-align: center; margin-bottom: 15px;">
+        <span style="margin: 0; color: {theme['text']}; font-size: 22px; font-weight: bold;">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
