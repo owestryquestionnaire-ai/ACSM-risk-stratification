@@ -11,10 +11,9 @@ def inject_custom_css():
         /* =========================================================
            🖥️ DESKTOP & iPAD VIEW (長者友善選項 + 精緻標題排版)
            ========================================================= */
-        /* 取代寫死的 #000000，使用 var(--text-color) 讓深色/淺色模式自動變換字體顏色 */
         html, body, [data-testid="stMarkdownContainer"] {
             font-size: 24px !important; 
-            color: var(--text-color) !important;
+            color: #000000 !important;
             font-weight: 400 !important;
             line-height: 1.45 !important; 
         }
@@ -24,17 +23,17 @@ def inject_custom_css():
         .element-container { margin-bottom: 0px !important; }
         hr { margin-top: 0.6rem !important; margin-bottom: 0.6rem !important; padding: 0px !important; }
 
-        /* Headers - BOLD (自動適應顏色) */
-        h1 { font-size: 30px !important; color: var(--text-color) !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
-        h2 { font-size: 28px !important; color: var(--text-color) !important; font-weight: bold !important; border-bottom: 2px solid var(--text-color) !important; padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
-        h3 { font-size: 26px !important; color: var(--text-color) !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
-        h4 { font-size: 24px !important; color: var(--text-color) !important; opacity: 0.8 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        /* Headers - BOLD (等比例微調縮小，適應較長的英文標題) */
+        h1 { font-size: 30px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        h2 { font-size: 28px !important; color: #000000 !important; font-weight: bold !important; border-bottom: 2px solid #000; padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
+        h3 { font-size: 26px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        h4 { font-size: 24px !important; color: #444 !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
 
-        /* Radio Buttons & Checkbox Labels - 自動適應顏色 */
+        /* Radio Buttons & Checkbox Labels - 維持放大選項字體 (長者友善) */
         div[data-testid="stRadio"] label p, div[data-testid="stCheckbox"] label p {
             font-size: 26px !important; 
             font-weight: 400 !important; 
-            color: var(--text-color) !important; 
+            color: #000000 !important; 
             line-height: 1.45 !important; 
         }
         .stRadio > div { gap: 0rem !important; } 
@@ -43,7 +42,7 @@ def inject_custom_css():
         /* Standard Text */
         .stMarkdown p {
             font-size: 24px !important; 
-            color: var(--text-color) !important; 
+            color: #000000 !important; 
             line-height: 1.45 !important; 
             margin-bottom: 12px !important; 
         }
@@ -52,19 +51,19 @@ def inject_custom_css():
         label[data-testid="stWidgetLabel"] p {
             font-size: 26px !important; 
             font-weight: bold !important; 
-            color: var(--text-color) !important; 
+            color: #000000 !important; 
             margin-bottom: 6px !important;
         }
 
-        /* Combined Result Box Styling (讓背景與邊框跟著深淺模式變換) */
-        .final-result-box { border: 3px solid var(--text-color); border-radius: 10px; overflow: hidden; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px !important; }
-        .final-thr-part { font-size: 36px !important; color: var(--text-color) !important; font-weight: bold !important; line-height: 1.45 !important; padding: 15px 20px !important; background-color: var(--background-color); }
-        .final-rec-part { background-color: var(--secondary-background-color); padding: 15px 20px !important; border-top: 3px dashed var(--text-color); }
-        .final-rec-part p { margin-bottom: 6px !important; line-height: 1.45 !important; color: var(--text-color) !important; }
+        /* Combined Result Box Styling */
+        .final-result-box { border: 3px solid #000000; border-radius: 10px; overflow: hidden; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px !important; }
+        .final-thr-part { font-size: 36px !important; color: #000000 !important; font-weight: bold !important; line-height: 1.45 !important; padding: 15px 20px !important; background-color: #ffffff; }
+        .final-rec-part { background-color: #f8f9fa; padding: 15px 20px !important; border-top: 3px dashed #000000; }
+        .final-rec-part p { margin-bottom: 6px !important; line-height: 1.45 !important; }
         
-        .question-text { margin-top: 0px !important; font-size: 26px !important; line-height: 1.45 !important; color: var(--text-color) !important; }
+        .question-text { margin-top: 0px !important; font-size: 26px !important; line-height: 1.45 !important; }
 
-        /* ----- CUSTOM RED BUTTON STYLING (紅色按鈕不受影響) ----- */
+        /* ----- CUSTOM RED BUTTON STYLING (放大按鈕) ----- */
         button[kind="primary"], [data-testid="baseButton-primary"], button[kind="secondary"], [data-testid="baseButton-secondary"] {
             font-size: 24px !important; 
             padding: 10px 20px !important; 
@@ -195,6 +194,7 @@ def evaluate_b_only():
 def calculate_current_class():
     b_class = evaluate_b_only()
     
+    # 如果 Form B 已經判定為 Class II, III 或者是未完成，直接返回
     if b_class in ["Class III", "Class II", "Pending"]:
         return b_class
         
@@ -203,12 +203,9 @@ def calculate_current_class():
         return "Pending"
 
     parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
-    is_active = st.session_state.data.get("is_active") == "是"
 
+    # 如果 Form A 任何一項為 "有"，升級為 Class II
     if parq_score > 0:
-        return "Class II"
-        
-    if not is_active:
         return "Class II"
         
     return "Class I"
@@ -218,7 +215,7 @@ def calculate_thr(age, rhr, risk_level):
     if rhr >= mhr: return None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    details_html = f'<div style="font-size: 20px; font-weight: normal; margin-top: 5px; opacity: 0.8;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
+    details_html = f'<div style="font-size: 20px; font-weight: normal; margin-top: 5px; color: #444;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
@@ -266,8 +263,7 @@ def render_inline_question(label, key, options=("否", "有"), check_error=False
     col1, col2 = st.columns([7, 3]) 
     with col1:
         if is_missing:
-            # 紅色提示不受深色模式影響，所以保留寫死顏色
-            st.markdown(f'<div class="question-text" style="color: #c62828 !important; font-weight: bold; background-color: #ffebee !important; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="question-text" style="color: #c62828; font-weight: bold; background-color: #ffebee; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
     with col2:
@@ -307,7 +303,7 @@ def tab_b_acsm(b_class, show_all_tabs):
 
     st.markdown("---")
     st.subheader("當前運動習慣")
-    activity_question = "您目前是否定期進行體能活動？<br><span style='font-size: 20px; opacity: 0.8;'>(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)</span>"
+    activity_question = "您目前是否定期進行體能活動？<br><span style='font-size: 20px; color: #555;'>(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)</span>"
     
     render_inline_question(activity_question, "is_active", options=("否", "是"), check_error=check_err)
 
@@ -430,7 +426,7 @@ def tab_d_thr(current_class):
                         {thr_string}
                     </div>
                     <div class="final-rec-part">
-                        <h3 style="margin-top: 0; border-bottom: 2px solid var(--text-color); padding-bottom: 10px;">📋 {selected_class} Clinical Guidelines</h3>
+                        <h3 style="margin-top: 0; border-bottom: 2px solid #ccc; padding-bottom: 10px;">📋 {selected_class} Clinical Guidelines</h3>
                         <p><b>Recommended Exercise Intensity:</b><br>{rec['intensity']}</p>
                         <p><b>Safe exercise zone:</b> {rec['hrr']}</p>
                         <p><b>RPE during Exercise:</b> {rec['rpe']}</p>
@@ -454,7 +450,6 @@ def main():
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
     
-    # 這個頂部提示框自帶背景色，所以維持明確指定深淺對比色
     class_colors = {
         "Pending": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
         "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
@@ -468,8 +463,8 @@ def main():
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
     st.markdown(f"""
-    <div style="background-color: {theme['bg']} !important; border: 2px solid {theme['border']} !important; border-radius: 8px; padding: 8px; text-align: center; margin-bottom: 15px;">
-        <span style="margin: 0; color: {theme['text']} !important; font-size: 22px; font-weight: bold;">Risk Stratification: {display_text}</span>
+    <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 8px; text-align: center; margin-bottom: 15px;">
+        <span style="margin: 0; color: {theme['text']}; font-size: 22px; font-weight: bold;">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
