@@ -176,15 +176,25 @@ def evaluate_b_only():
     ])
     is_active = st.session_state.data.get("is_active") == "是"
     
+    # 1. 任何嚴重症狀，或是 (有疾病 + 無運動習慣) -> Class III
     if (has_disease and not is_active) or (symptoms > 0):
         return "Class III"
+        
+    # 2. 有疾病，但有規律運動習慣，且無症狀 -> Class II
     if has_disease and is_active and symptoms == 0:
         return "Class II"
+        
+    # 3. 完美健康 (無疾病、無症狀)，但「沒有規律運動習慣」 -> 直接 Class II，跳過 Form A
+    if not is_active:
+        return "Class II"
+        
+    # 4. 只有「完美健康」且「有規律運動習慣」的人，才能繼續去填 Form A (暫定 Class I)
     return "Class I"
 
 def calculate_current_class():
     b_class = evaluate_b_only()
     
+    # 如果 Form B 已經判定為 Class II, III 或者是未完成，直接返回
     if b_class in ["Class III", "Class II", "Pending"]:
         return b_class
         
@@ -193,6 +203,8 @@ def calculate_current_class():
         return "Pending"
 
     parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
+
+    # 如果 Form A 任何一項為 "有"，升級為 Class II
     if parq_score > 0:
         return "Class II"
         
@@ -448,10 +460,8 @@ def main():
     
     display_text = "Incomplete" if current_class == "Pending" else current_class
     
-    # 標題換回英文 (含修正錯字 Cardiopulmonary)
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
-    # 保留框內英文 Risk Stratification，並維持縮小字體 (22px) 與內距
     st.markdown(f"""
     <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 8px; text-align: center; margin-bottom: 15px;">
         <span style="margin: 0; color: {theme['text']}; font-size: 22px; font-weight: bold;">Risk Stratification: {display_text}</span>
