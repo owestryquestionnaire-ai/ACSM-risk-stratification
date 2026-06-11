@@ -455,10 +455,10 @@ def main():
     
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
-    # 恢復為原本乾淨、安全的 inline CSS，移除 !important 防止被 Streamlit 破壞排版
+    # 放大了字體（28px）並增加了框內的留白（padding: 12px）
     st.markdown(f"""
-    <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 8px; text-align: center; margin-bottom: 20px;">
-        <span style="color: {theme['text']}; font-size: 22px; font-weight: bold;">Risk Stratification: {display_text}</span>
+    <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 20px;">
+        <span style="color: {theme['text']}; font-size: 28px; font-weight: bold;">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
