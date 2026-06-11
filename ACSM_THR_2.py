@@ -11,7 +11,6 @@ def inject_custom_css():
         /* =========================================================
            🖥️ DESKTOP & iPAD VIEW (長者友善選項 + 精緻標題排版)
            ========================================================= */
-        /* 取代寫死的 #000000，使用 var(--text-color) 讓深色/淺色模式自動變換字體顏色 */
         html, body, [data-testid="stMarkdownContainer"] {
             font-size: 24px !important; 
             color: var(--text-color) !important;
@@ -454,7 +453,6 @@ def main():
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
     
-    # 這個頂部提示框自帶背景色，所以維持明確指定深淺對比色
     class_colors = {
         "Pending": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
         "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
@@ -467,9 +465,10 @@ def main():
     
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
+    # 這裡加上了絕對鎖定 (!important) 的 CSS 語法，防止深色模式強制把文字變成白色！
     st.markdown(f"""
-    <div style="background-color: {theme['bg']} !important; border: 2px solid {theme['border']} !important; border-radius: 8px; padding: 8px; text-align: center; margin-bottom: 15px;">
-        <span style="margin: 0; color: {theme['text']} !important; font-size: 22px; font-weight: bold;">Risk Stratification: {display_text}</span>
+    <div style="background-color: {theme['bg']} !important; border: 2px solid {theme['border']} !important; border-radius: 8px; padding: 8px !important; text-align: center; margin-bottom: 15px !important;">
+        <span style="margin: 0 !important; color: {theme['text']} !important; font-size: 22px !important; font-weight: bold !important;">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
