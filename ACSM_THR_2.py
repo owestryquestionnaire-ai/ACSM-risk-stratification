@@ -70,6 +70,18 @@ def inject_custom_css():
         button[kind="primary"], [data-testid="baseButton-primary"] { background-color: #ef5350 !important; color: white !important; border-color: #ef5350 !important; }
         button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover { background-color: #e53935 !important; border-color: #e53935 !important; color: white !important;}
 
+        /* --- 頂部狀態提示框 (Desktop/iPad 預設大小) --- */
+        .risk-strat-box {
+            border-radius: 8px; 
+            padding: 12px; 
+            text-align: center; 
+            margin-bottom: 20px;
+        }
+        .risk-strat-text {
+            font-size: 28px; 
+            font-weight: bold;
+        }
+
         /* =========================================================
            📱 MOBILE RESPONSIVE PATCH (iPhone 專屬長者大字版)
            ========================================================= */
@@ -103,6 +115,14 @@ def inject_custom_css():
             
             .final-thr-part { font-size: 28px !important; padding: 12px 15px !important; }
             .final-rec-part { padding: 12px 15px !important; }
+
+            /* 手機版專屬：頂部狀態提示框自動縮小 */
+            .risk-strat-box {
+                padding: 8px !important;
+            }
+            .risk-strat-text {
+                font-size: 20px !important;
+            }
         }
         </style>
         """,
@@ -455,10 +475,10 @@ def main():
     
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
-    # 放大了字體（28px）並增加了框內的留白（padding: 12px）
+    # 這裡將樣式獨立成 class，透過 CSS 響應式控制
     st.markdown(f"""
-    <div style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 20px;">
-        <span style="color: {theme['text']}; font-size: 28px; font-weight: bold;">Risk Stratification: {display_text}</span>
+    <div class="risk-strat-box" style="background-color: {theme['bg']}; border: 2px solid {theme['border']};">
+        <span class="risk-strat-text" style="color: {theme['text']};">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
     
