@@ -1,11 +1,9 @@
 import streamlit as st
 
 # ---------- 1. Initialization & Config ----------
-# 設定 layout="wide" 以使用全螢幕寬度，並將網頁標籤改為英文
 st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide")
 
 def inject_custom_css():
-    # 移除所有強制文字顏色 (color)，讓 Streamlit 原生系統自動完美處理深色/淺色模式的文字轉換！
     st.markdown(
         """
         <style>
@@ -193,14 +191,13 @@ def evaluate_b_only():
     ])
     is_active = st.session_state.data.get("is_active") == "是"
     
-    if (has_disease and not is_active) or (symptoms > 0):
+    # Based strictly on document criteria for Class III and II based on Form B
+    if (has_disease and not is_active) or (symptoms >= 1):
         return "Class III"
     if has_disease and is_active and symptoms == 0:
         return "Class II"
-    if not is_active:
-        return "Class II"
         
-    return "Class I"
+    return "Pending Form A"
 
 def calculate_current_class():
     b_class = evaluate_b_only()
@@ -213,11 +210,18 @@ def calculate_current_class():
         return "Pending"
 
     parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
-    is_active = st.session_state.data.get("is_active") == "是"
+    
+    symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
+    has_disease = any([
+        st.session_state.data.get("d_cardio") == "有", 
+        st.session_state.data.get("d_metabolic") == "有", 
+        st.session_state.data.get("d_renal") == "有"
+    ])
 
-    if parq_score > 0:
-        return "Class II"
-    if not is_active:
+    # Class I: No Known CV, metabolic or renal disease AND Form A & Form B = 0
+    if not has_disease and parq_score == 0 and symptoms == 0:
+        return "Class I"
+    elif parq_score > 0:
         return "Class II"
         
     return "Class I"
@@ -292,12 +296,13 @@ def tab_b_acsm(b_class, show_all_tabs):
     st.header("表格 B：心血管、呼吸系統及代謝性疾病之主要徵狀")
     st.write("請在合適選擇上選擇「有」或「否」：")
     
+    # Updated symptom 5 to match word document
     s_items = [
         "1. 因心臟缺血而引致的胸口、頸、下顎、上臂 或其他部位痛楚或不適",
         "2. 靜止或輕鬆活動時感到氣喘",
         "3. 暈眩或失去知覺",
         "4. 平臥時或晚間不時氣喘",
-        "5. 足踝腫",
+        "5. 足踝腫 (小腿、腳眼、腳面腫)",
         "6. 心悸或心跳過快",
         "7. 間歇肌肉疼痛、抽筋",
         "8. 心雜音",
@@ -412,14 +417,14 @@ def tab_d_thr(current_class):
                         "rpe": "&lt; 17",
                         "medical": "Not necessary",
                         "supervision": "Not required",
-                        "monitor": "Monitor HR in First session (to facilitate teaching but it is not compulsory)"
+                        "monitor": "Monitor HR in First session (optional)"
                     },
                     "Class II": {
                         "intensity": "Moderate: ✔️ Vigorous: ❌",
                         "hrr": "&lt; 60% HRR",
                         "rpe": "&lt; 14",
                         "medical": "Recommended for vigorous intensity exercise",
-                        "supervision": "Not required (unless patient is working for vigorous exercise)",
+                        "supervision": "Not required: light to moderate intensity<br>Required: vigorous intensity",
                         "monitor": "Continuous HR or RPE monitoring"
                     },
                     "Class III": {
@@ -427,7 +432,7 @@ def tab_d_thr(current_class):
                         "hrr": "&lt; 40% HRR",
                         "rpe": "&lt; 12",
                         "medical": "Recommended",
-                        "supervision": "Required (for both moderate and vigorous exercise)",
+                        "supervision": "Required",
                         "monitor": "Continuous HR and RPE monitoring together with close supervision"
                     }
                 }
@@ -465,13 +470,16 @@ def main():
     
     class_colors = {
         "Pending": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
+        "Pending Form A": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
         "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
         "Class II": {"bg": "#fff3e0", "border": "#ef6c00", "text": "#e65100"},
         "Class III": {"bg": "#ffebee", "border": "#c62828", "text": "#b71c1c"}
     }
-    theme = class_colors[current_class]
     
-    display_text = "Incomplete" if current_class == "Pending" else current_class
+    # Handling Pending string split internally
+    theme = class_colors[current_class] if current_class in class_colors else class_colors["Pending"]
+    
+    display_text = "Incomplete" if "Pending" in current_class else current_class
     
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
