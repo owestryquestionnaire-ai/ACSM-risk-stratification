@@ -82,6 +82,25 @@ def inject_custom_css():
         button[kind="primary"], [data-testid="baseButton-primary"] { background-color: #ef5350 !important; color: white !important; border-color: #ef5350 !important; }
         button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover { background-color: #e53935 !important; border-color: #e53935 !important; color: white !important;}
 
+        /* =========================================================
+           🖥️ SIDEBAR NAVIGATION PANEL (Smaller Font)
+           ========================================================= */
+        [data-testid="stSidebar"] p, [data-testid="stSidebar"] div, [data-testid="stSidebar"] span {
+            font-size: 18px !important; 
+        }
+        [data-testid="stSidebar"] h2 {
+            font-size: 22px !important;
+            margin-bottom: 10px !important;
+        }
+        [data-testid="stSidebar"] button[kind="primary"], 
+        [data-testid="stSidebar"] [data-testid="baseButton-primary"], 
+        [data-testid="stSidebar"] button[kind="secondary"], 
+        [data-testid="stSidebar"] [data-testid="baseButton-secondary"] {
+            font-size: 18px !important; 
+            padding: 8px 12px !important; 
+            font-weight: bold !important; 
+        }
+
         /* --- 頂部狀態提示框 (Desktop/iPad 預設大小) --- */
         .risk-strat-box {
             border-radius: 8px; 
@@ -510,7 +529,7 @@ def main():
         
     # --- Navigation Sidebar ---
     with st.sidebar:
-        st.header("📌 導覽菜單")
+        st.header("表單選擇")
         st.markdown("請選擇下方表單：")
         for i, tab_name in enumerate(available_tabs):
             btn_type = "primary" if st.session_state["current_tab"] == tab_name else "secondary"
