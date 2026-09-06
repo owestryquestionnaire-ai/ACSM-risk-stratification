@@ -332,6 +332,9 @@ def render_inline_question(label, key, options=("否", "有"), check_error=False
         saved_val = st.session_state.data.get(key)
         idx = options.index(saved_val) if saved_val in options else None
         st.radio("", options, key=key, index=idx, horizontal=True, label_visibility="collapsed", on_change=update_val, args=(key,))
+        
+    # --- FIX FOR iPAD WRAPPING Overlap: Add explicit spacer after every question row ---
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
 
 # ---------- 4. Tab Functions ----------
