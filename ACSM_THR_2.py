@@ -1,185 +1,11 @@
 import streamlit as st
 
 # ---------- 1. Initialization & Config ----------
-# Initial_sidebar_state="collapsed" ensures it starts hidden and only expands when pressed
-st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide", initial_sidebar_state="collapsed")
-
-def inject_custom_css():
-    st.markdown(
-        """
-        <style>
-        /* =========================================================
-           🖥️ REDUCE TOP MARGIN
-           ========================================================= */
-        .block-container {
-            padding-top: 1.5rem !important;
-            padding-bottom: 1.5rem !important;
-        }
-        
-        /* 隱藏頂部預設的裝飾性 header 空間 */
-        header[data-testid="stHeader"] {
-            height: 0px !important;
-        }
-
-        /* =========================================================
-           🖥️ DESKTOP & iPAD VIEW (長者友善選項 + 精緻標題排版)
-           ========================================================= */
-        html, body, [data-testid="stMarkdownContainer"] {
-            font-size: 24px !important; 
-            font-weight: 400 !important;
-            line-height: 1.45 !important; 
-        }
-
-        /* --- SAFE SPACING --- */
-        div[data-testid="stVerticalBlock"] { gap: 0.6rem !important; }
-        .element-container { margin-bottom: 0px !important; }
-        hr { margin-top: 0.6rem !important; margin-bottom: 0.6rem !important; padding: 0px !important; }
-
-        /* Headers - BOLD */
-        h1 { font-size: 30px !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
-        h2 { font-size: 28px !important; font-weight: bold !important; border-bottom: 2px solid var(--text-color); padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
-        h3 { font-size: 26px !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
-        h4 { font-size: 24px !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important; opacity: 0.8;}
-
-        /* Radio Buttons & Checkbox Labels */
-        div[data-testid="stRadio"] label p, div[data-testid="stCheckbox"] label p {
-            font-size: 26px !important; 
-            font-weight: 400 !important; 
-            line-height: 1.45 !important; 
-        }
-        
-        /* 確保選項絕對不會換行 (Force single line for radio buttons) */
-        .stRadio > div { 
-            gap: 0rem !important; 
-            flex-wrap: nowrap !important;
-        } 
-        
-        .stCheckbox > div { margin-bottom: 0rem !important; }
-
-        /* Standard Text */
-        .stMarkdown p {
-            font-size: 24px !important; 
-            line-height: 1.45 !important; 
-            margin-bottom: 12px !important; 
-        }
-
-        /* Input Box Labels */
-        label[data-testid="stWidgetLabel"] p {
-            font-size: 26px !important; 
-            font-weight: bold !important; 
-            margin-bottom: 6px !important;
-        }
-
-        /* Combined Result Box Styling */
-        .final-result-box { border: 3px solid var(--text-color); border-radius: 10px; overflow: hidden; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px !important; }
-        .final-thr-part { font-size: 36px !important; font-weight: bold !important; line-height: 1.45 !important; padding: 15px 20px !important; background-color: var(--background-color); }
-        .final-rec-part { background-color: var(--secondary-background-color); padding: 15px 20px !important; border-top: 3px dashed var(--text-color); }
-        .final-rec-part p { margin-bottom: 6px !important; line-height: 1.45 !important; }
-        
-        .question-text { margin-top: 0px !important; font-size: 26px !important; line-height: 1.45 !important; }
-
-        /* ----- CUSTOM RED BUTTON STYLING ----- */
-        button[kind="primary"], [data-testid="baseButton-primary"], button[kind="secondary"], [data-testid="baseButton-secondary"] {
-            font-size: 24px !important; 
-            padding: 10px 20px !important; 
-            font-weight: bold !important; 
-            line-height: 1.45 !important;
-        }
-        button[kind="primary"], [data-testid="baseButton-primary"] { background-color: #ef5350 !important; color: white !important; border-color: #ef5350 !important; }
-        button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover { background-color: #e53935 !important; border-color: #e53935 !important; color: white !important;}
-
-        /* =========================================================
-           🖥️ SIDEBAR NAVIGATION PANEL (Smaller Font, Left Aligned, Multiline)
-           ========================================================= */
-        [data-testid="stSidebar"] p, [data-testid="stSidebar"] div, [data-testid="stSidebar"] span {
-            font-size: 18px !important; 
-        }
-        [data-testid="stSidebar"] h2 {
-            font-size: 22px !important;
-            margin-bottom: 10px !important;
-        }
-        [data-testid="stSidebar"] button[kind="primary"], 
-        [data-testid="stSidebar"] [data-testid="baseButton-primary"], 
-        [data-testid="stSidebar"] button[kind="secondary"], 
-        [data-testid="stSidebar"] [data-testid="baseButton-secondary"] {
-            font-size: 18px !important; 
-            padding: 12px 12px !important; 
-            font-weight: bold !important; 
-            height: auto !important; /* Allow height to expand for multiline */
-            text-align: left !important;
-        }
-        
-        /* 讓按鈕內的內容靠左對齊 */
-        [data-testid="stSidebar"] button div {
-            justify-content: flex-start !important; 
-            width: 100%;
-        }
-        
-        /* 確保可以換行並靠左 */
-        [data-testid="stSidebar"] button p {
-            white-space: pre-wrap !important; 
-            text-align: left !important;
-            line-height: 1.3 !important;
-        }
-
-        /* --- 頂部狀態提示框 (Desktop/iPad 預設大小) --- */
-        .risk-strat-box {
-            border-radius: 8px; 
-            padding: 12px; 
-            text-align: center; 
-            margin-bottom: 20px;
-        }
-        .risk-strat-text {
-            font-size: 28px; 
-            font-weight: bold;
-        }
-
-        /* =========================================================
-           📱 MOBILE RESPONSIVE PATCH (iPhone 專屬長者大字版)
-           ========================================================= */
-        @media (max-width: 767px) {
-            html, body, [data-testid="stMarkdownContainer"] { font-size: 20px !important; }
-            h1 { font-size: 24px !important; }
-            h2 { font-size: 22px !important; }
-            h3 { font-size: 20px !important; }
-            h4 { font-size: 18px !important; }
-            
-            .stMarkdown p { font-size: 20px !important; margin-bottom: 8px !important;}
-            .question-text { font-size: 22px !important; margin-bottom: 8px !important; }
-            
-            [data-testid="column"] { margin-bottom: 12px !important; }
-            .element-container { margin-bottom: 12px !important; }
-            
-            div[data-testid="stRadio"] label p, div[data-testid="stCheckbox"] label p {
-                font-size: 22px !important; 
-            }
-            .stRadio > div { 
-                gap: 1.5rem !important; 
-                padding-bottom: 15px !important;
-            } 
-            
-            button[kind="primary"], [data-testid="baseButton-primary"], button[kind="secondary"], [data-testid="baseButton-secondary"] {
-                font-size: 22px !important;
-                padding: 14px 12px !important; 
-                white-space: normal !important; 
-                height: auto !important;
-            }
-            
-            .final-thr-part { font-size: 28px !important; padding: 12px 15px !important; }
-            .final-rec-part { padding: 12px 15px !important; }
-
-            /* 手機版專屬：頂部狀態提示框自動縮小 */
-            .risk-strat-box {
-                padding: 8px !important;
-            }
-            .risk-strat-text {
-                font-size: 20px !important;
-            }
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+st.set_page_config(
+    page_title="Risk Stratification of Cardiopulmonary Fitness Training", 
+    layout="wide", 
+    initial_sidebar_state="collapsed"
+)
 
 def init_session_states():
     if "data" not in st.session_state:
@@ -204,7 +30,6 @@ def update_val(key):
 
 init_session_states()
 
-
 # ---------- 2. Logic Functions ----------
 b_key_names = {
     "s_1": "徵狀 1 (胸口/頸/下顎痛楚)", "s_2": "徵狀 2 (靜止氣喘)", "s_3": "徵狀 3 (暈眩)",
@@ -214,27 +39,16 @@ b_key_names = {
     "is_active": "當前運動習慣"
 }
 
-a_key_names = {
-    f"parq_{i}": f"問題 {i}" for i in range(1, 8)
-}
+a_key_names = {f"parq_{i}": f"問題 {i}" for i in range(1, 8)}
 
 def get_missing_b():
-    missing = []
-    for k, name in b_key_names.items():
-        if st.session_state.data.get(k) is None:
-            missing.append(name)
-    return missing
+    return [name for k, name in b_key_names.items() if st.session_state.data.get(k) is None]
 
 def get_missing_a():
-    missing = []
-    for k, name in a_key_names.items():
-        if st.session_state.data.get(k) is None:
-            missing.append(name)
-    return missing
+    return [name for k, name in a_key_names.items() if st.session_state.data.get(k) is None]
 
 def evaluate_b_only():
-    missing_b = get_missing_b()
-    if missing_b:
+    if get_missing_b():
         return "Pending"
 
     symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
@@ -254,16 +68,13 @@ def evaluate_b_only():
 
 def calculate_current_class():
     b_class = evaluate_b_only()
-    
     if b_class in ["Class III", "Class II", "Pending"]:
         return b_class
         
-    missing_a = get_missing_a()
-    if missing_a:
+    if get_missing_a():
         return "Pending"
 
     parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
-    
     symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
     has_disease = any([
         st.session_state.data.get("d_cardio") == "有", 
@@ -280,24 +91,21 @@ def calculate_current_class():
 
 def calculate_thr(age, rhr, risk_level):
     mhr = 220 - age
-    if rhr >= mhr: return None, "Abnormal Resting Heart Rate (>= Maximum HR)"
+    if rhr >= mhr: 
+        return None, None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    details_html = f'<div style="font-size: 20px; font-weight: normal; margin-top: 5px; opacity: 0.8;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
+    details_str = f"Maximum HR: {mhr} bpm | Standing HR at rest: {rhr} bpm | HR Reserve: {hrr} bpm"
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
-        thr_main = f"Training HR: &lt; {limit} bpm"
-        return thr_main + details_html, None
+        return f"Training HR: < {limit} bpm", details_str, None
     elif risk_level == "Class II":
         limit = int((hrr * 0.60) + rhr)
-        thr_main = f"Training HR: &lt; {limit} bpm"
-        return thr_main + details_html, None
+        return f"Training HR: < {limit} bpm", details_str, None
     else:
         upper = int((hrr * 0.84) + rhr)
-        thr_main = f"Training HR: ≤ {upper} bpm"
-        return thr_main + details_html, None
-
+        return f"Training HR: ≤ {upper} bpm", details_str, None
 
 # ---------- 3. Callbacks & Helpers ----------
 def go_to_tab(tab_name):
@@ -310,16 +118,14 @@ def enable_all_tabs_and_go():
     go_to_tab("2. 體能活動適應能力問卷\n(表格 A)")
 
 def try_complete_b(target_tab):
-    missing = get_missing_b()
-    if missing:
+    if get_missing_b():
         st.session_state["show_b_errors"] = True
     else:
         st.session_state["show_b_errors"] = False
         go_to_tab(target_tab)
 
 def try_complete_a(target_tab):
-    missing = get_missing_a()
-    if missing:
+    if get_missing_a():
         st.session_state["show_a_errors"] = True
     else:
         st.session_state["show_a_errors"] = False
@@ -328,17 +134,16 @@ def try_complete_a(target_tab):
 def render_inline_question(label, key, options=("否", "有"), check_error=False):
     is_missing = check_error and st.session_state.data.get(key) is None
     
-    col1, col2 = st.columns([8.2, 1.8]) 
+    col1, col2 = st.columns([3, 1]) 
     with col1:
         if is_missing:
-            st.markdown(f'<div class="question-text" style="color: #c62828 !important; font-weight: bold; background-color: #ffebee !important; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
+            st.error(f"請回答: {label}")
         else:
-            st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
+            st.markdown(f"**{label}**")
     with col2:
         saved_val = st.session_state.data.get(key)
         idx = options.index(saved_val) if saved_val in options else None
-        st.radio("", options, key=key, index=idx, horizontal=True, label_visibility="collapsed", on_change=update_val, args=(key,))
-
+        st.radio(" ", options, key=key, index=idx, horizontal=True, label_visibility="collapsed", on_change=update_val, args=(key,))
 
 # ---------- 4. Tab Functions ----------
 def tab_b_acsm(b_class, show_all_tabs):
@@ -360,34 +165,23 @@ def tab_b_acsm(b_class, show_all_tabs):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}", check_error=check_err)
-        # Targeted spacer ONLY after Question 1 for wrapped text spacing
-        if i == 1:
-            st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
+    st.divider()
     
-    st.markdown("---")
     st.subheader("已知醫療狀況 (Known Diseases)")
     render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio", check_error=check_err)
-    
-    # Targeted spacer after the first known disease question for wrapped text spacing
-    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
-    
     render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic", check_error=check_err)
     render_inline_question("已知腎臟疾病", "d_renal", check_error=check_err)
+    st.divider()
 
-    st.markdown("---")
     st.subheader("當前運動習慣")
-    activity_question = "您目前是否定期進行體能活動？<br><span style='font-size: 20px; opacity: 0.8;'>(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)</span>"
-    
+    activity_question = "您目前是否定期進行體能活動？(過去 3 個月內，每週至少 3 天，每次 30 分鐘中等強度活動)"
     render_inline_question(activity_question, "is_active", options=("否", "是"), check_error=check_err)
-
-    st.markdown("---")
+    st.divider()
     
-    if check_err:
-        missing = get_missing_b()
-        if missing:
-            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
+    if check_err and get_missing_b():
+        st.error(f"⚠️ 還有 **{len(get_missing_b())}** 個問題尚未填寫。")
 
     if b_class == "Pending":
         st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR &\nClinical Guidelines",))
@@ -400,7 +194,6 @@ def tab_b_acsm(b_class, show_all_tabs):
             with c2:
                 st.button("📝 顯示隱藏的表單 (前往表格 A)", use_container_width=True, on_click=enable_all_tabs_and_go)
         else:
-            st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。您選擇繼續填寫表格 A。")
             st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
     else:
         st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
@@ -427,27 +220,20 @@ def tab_a_parq():
     render_inline_question("6. 做運動有否可能加重你骨骼，關節或軟組織的痛楚？", "parq_6", check_error=check_err)
     render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7", check_error=check_err)
 
-    st.markdown("---")
+    st.divider()
     
-    if check_err:
-        missing = get_missing_a()
-        if missing:
-            st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
+    if check_err and get_missing_a():
+        st.error(f"⚠️ 還有 **{len(get_missing_a())}** 個問題尚未填寫。")
 
     st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_a, args=("3. Target HR &\nClinical Guidelines",))
 
 
 def tab_d_thr(current_class):
-    st.header("Target Heart Rate & Clinical Recommendations")
-    
-    st.subheader("⚙️ Select Risk Class")
+    st.header("Target Heart Rate Calculator")
     
     if current_class == "Pending":
-        st.markdown("💡 The system evaluation is currently **Incomplete**. Please manually select the Risk Class below:")
+        st.info("💡 The system evaluation is currently **Incomplete**. Please manually select the Risk Class below:")
     else:
-        st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
-        
-        # --- NEW FEATURE: Dynamic Justification Summary for ALL Classes ---
         if current_class in ["Class I", "Class II", "Class III"]:
             reasons = []
             symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
@@ -460,70 +246,59 @@ def tab_d_thr(current_class):
             parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
 
             if current_class == "Class III":
-                if symptoms >= 1:
-                    reasons.append("Form B ≥ 1")
-                if has_disease and not is_active:
-                    reasons.append("Known disease without regular exercise")
+                if symptoms >= 1: reasons.append("Form B ≥ 1")
+                if has_disease and not is_active: reasons.append("Known disease without regular exercise")
             elif current_class == "Class II":
-                if has_disease and is_active and symptoms == 0:
-                    reasons.append("Known disease with regular exercise & Form B = 0")
-                if parq_score > 0:
-                    reasons.append("Form A (PAR-Q) ≥ 1")
+                if has_disease and is_active and symptoms == 0: reasons.append("Known disease with regular exercise & Form B = 0")
+                if parq_score > 0: reasons.append("Form A (PAR-Q) ≥ 1")
             elif current_class == "Class I":
                 reasons.append("No known disease & Form A = 0 & Form B = 0")
                 
             if reasons:
                 reason_str = " AND/OR ".join(reasons) if current_class != "Class I" else reasons[0]
                 
-                # Visual distinction based on class severity
-                if current_class == "Class I":
-                    st.success(f"✅ **Reason for {current_class}:** {reason_str}")
-                elif current_class == "Class II":
-                    st.warning(f"⚠️ **Reason for {current_class}:** {reason_str}")
-                elif current_class == "Class III":
-                    st.error(f"🚨 **Reason for {current_class}:** {reason_str}")
+                if current_class == "Class I": st.success(f"✅ **Reason for {current_class}:** {reason_str}")
+                elif current_class == "Class II": st.warning(f"⚠️ **Reason for {current_class}:** {reason_str}")
+                elif current_class == "Class III": st.error(f"🚨 **Reason for {current_class}:** {reason_str}")
     
     options = ["Class I", "Class II", "Class III"]
     default_idx = options.index(current_class) if current_class in options else None
-    selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
+    selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True)
     
-    result_container = st.container()
-    
-    st.markdown("---")
-    st.subheader("🎯 Training Heart Rate Calculator")
+    st.divider()
 
     c1, c2 = st.columns(2)
-    age = c1.number_input("Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
-    rhr = c2.number_input("Standing Resting HR", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
+    age = c1.number_input("2. Patient Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
+    rhr = c2.number_input("3. Standing Resting Heart Rate (bpm)", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
 
-    if st.button("Calculate", type="primary", use_container_width=True):
+    if st.button("Calculate Guidelines", type="primary", use_container_width=True):
         if selected_class is None:
-            result_container.warning("⚠️ Please select a Risk Class before calculating.")
+            st.warning("⚠️ Please select a Risk Class before calculating.")
         elif age is not None and rhr is not None:
-            thr_string, err = calculate_thr(int(age), int(rhr), selected_class)
+            thr_main, thr_details, err = calculate_thr(int(age), int(rhr), selected_class)
             
             if not err:
                 recs = {
                     "Class I": {
                         "intensity": "Moderate: ✔️ Vigorous: ✔️",
                         "hrr": "≤ 84% HRR",
-                        "rpe": "&lt; 17",
+                        "rpe": "< 17",
                         "medical": "Not necessary",
                         "supervision": "Not required",
                         "monitor": "Monitor HR in First session (optional)"
                     },
                     "Class II": {
                         "intensity": "Moderate: ✔️ Vigorous: ❌",
-                        "hrr": "&lt; 60% HRR",
-                        "rpe": "&lt; 14",
+                        "hrr": "< 60% HRR",
+                        "rpe": "< 14",
                         "medical": "Recommended for vigorous intensity exercise",
-                        "supervision": "Not required: light to moderate intensity<br>Required: vigorous intensity",
+                        "supervision": "Not required: light to moderate intensity | Required: vigorous intensity",
                         "monitor": "Continuous HR or RPE monitoring"
                     },
                     "Class III": {
                         "intensity": "Moderate: ❌ Vigorous: ❌",
-                        "hrr": "&lt; 40% HRR",
-                        "rpe": "&lt; 12",
+                        "hrr": "< 40% HRR",
+                        "rpe": "< 12",
                         "medical": "Recommended",
                         "supervision": "Required",
                         "monitor": "Continuous HR and RPE monitoring together with close supervision"
@@ -531,54 +306,36 @@ def tab_d_thr(current_class):
                 }
                 rec = recs[selected_class]
                 
-                result_container.markdown(f"""
-                <div class="final-result-box">
-                    <div class="final-thr-part">
-                        {thr_string}
-                    </div>
-                    <div class="final-rec-part">
-                        <h3 style="margin-top: 0; border-bottom: 2px solid var(--text-color); padding-bottom: 10px;">📋 {selected_class} Clinical Guidelines</h3>
-                        <p><b>Recommended Exercise Intensity:</b><br>{rec['intensity']}</p>
-                        <p><b>Safe exercise zone:</b> {rec['hrr']}</p>
-                        <p><b>RPE during Exercise:</b> {rec['rpe']}</p>
-                        <p><b>Medical Clearance:</b><br>{rec['medical']}</p>
-                        <p><b>Supervision:</b><br>{rec['supervision']}</p>
-                        <p><b>Monitoring:</b><br>{rec['monitor']}</p>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                # --- PURE NATIVE STREAMLIT RESULT BOX ---
+                with st.container(border=True):
+                    st.subheader(thr_main)
+                    st.caption(thr_details)
+                    st.divider()
+                    st.subheader(f"📋 {selected_class} Clinical Guidelines")
+                    st.markdown(f"**Recommended Intensity:** {rec['intensity']}")
+                    st.markdown(f"**Safe exercise zone:** {rec['hrr']}")
+                    st.markdown(f"**RPE during Exercise:** {rec['rpe']}")
+                    st.markdown(f"**Medical clearance:** {rec['medical']}")
+                    st.markdown(f"**Supervision:** {rec['supervision']}")
+                    st.markdown(f"**Monitoring:** {rec['monitor']}")
+                    st.write("")
+                    st.caption("_#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)_")
             else:
-                result_container.error(err)
+                st.error(err)
         else:
-            result_container.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
+            st.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
     else:
-        result_container.info("💡 Please input the patient's **Age** and **Standing Resting HR** above, then click 'Calculate' to generate the report.")
+        st.info("💡 Please input the patient's **Age** and **Standing Resting HR** above, then click 'Calculate Guidelines' to generate the report.")
 
-
+# ---------- 5. Main Application ----------
 def main():
-    inject_custom_css()
-    
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
     
-    class_colors = {
-        "Pending": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
-        "Pending Form A": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
-        "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
-        "Class II": {"bg": "#fff3e0", "border": "#ef6c00", "text": "#e65100"},
-        "Class III": {"bg": "#ffebee", "border": "#c62828", "text": "#b71c1c"}
-    }
-    
-    theme = class_colors[current_class] if current_class in class_colors else class_colors["Pending"]
     display_text = "Incomplete" if "Pending" in current_class else current_class
     
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
-    
-    st.markdown(f"""
-    <div class="risk-strat-box" style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; margin-bottom: 20px;">
-        <span class="risk-strat-text" style="color: {theme['text']};">Risk Stratification: {display_text}</span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.info(f"**Risk Stratification: {display_text}**")
     
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
@@ -601,6 +358,7 @@ def main():
                 go_to_tab(tab_name)
                 st.rerun()
 
+    # --- Render Selected Tab ---
     if st.session_state["current_tab"] == "1. 運動風險評估\n(表格 B)":
         tab_b_acsm(b_class_only, show_all_tabs)
     elif st.session_state["current_tab"] == "2. 體能活動適應能力問卷\n(表格 A)":
@@ -608,8 +366,5 @@ def main():
     elif st.session_state["current_tab"] == "3. Target HR &\nClinical Guidelines":
         tab_d_thr(current_class)
         
-    st.markdown("---")
-    st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
-
 if __name__ == "__main__":
     main()
