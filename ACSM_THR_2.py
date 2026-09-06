@@ -516,20 +516,20 @@ def tab_d_thr(current_class):
                 rec = recs[selected_class]
                 
                 with result_container:
-                    # Light grey box (#f0f2f6), larger dark text (64px), smaller padding (5px 10px)
+                    # Smaller overall box with 48px header and 12px secondary details
                     st.markdown(f"""
-                    <div style="background-color: #f0f2f6; padding: 5px 10px; border-radius: 8px 8px 0 0; text-align: center; margin-bottom: -15px; border: 1px solid #ddd; border-bottom: none;">
-                        <h2 style="color: #333333 !important; margin: 0; font-size: 64px; font-weight: bold; line-height: 1.1;">{thr_main}</h2>
-                        <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 4px auto; width: 95%;">
-                        <p style="color: #555555 !important; margin: 0; font-size: 14px; line-height: 1.2; padding-bottom: 2px;">{thr_details}</p>
+                    <div style="background-color: #f0f2f6; padding: 2px 8px; border-radius: 8px 8px 0 0; text-align: center; margin-bottom: -15px; border: 1px solid #ddd; border-bottom: none;">
+                        <h2 style="color: #333333 !important; margin: 0; font-size: 48px; font-weight: bold; line-height: 1.1;">{thr_main}</h2>
+                        <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 2px auto; width: 95%;">
+                        <p style="color: #555555 !important; margin: 0; font-size: 12px; line-height: 1.2; padding-bottom: 2px;">{thr_details}</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     with st.container(border=True):
-                        # Minimal spacing on title (margin 0) and horizontal rule
+                        # Narrow title spacing using line-height: 1 and !important 0 margins
                         st.markdown(f"""
-                        <h3 style="margin: 0px 0px 0px 0px; font-size: 26px; font-weight: bold; color: var(--text-color);">📋 {selected_class} Clinical Guidelines</h3>
-                        <hr style="margin: 2px 0px 15px 0px; border: 0; border-top: 2px solid #eee;" />
+                        <h3 style="margin: 0 !important; padding: 0 !important; font-size: 26px; font-weight: bold; color: var(--text-color); line-height: 1;">📋 {selected_class} Clinical Guidelines</h3>
+                        <hr style="margin: 0px 0px 12px 0px !important; border: 0; border-top: 2px solid #eee;" />
                         """, unsafe_allow_html=True)
                         
                         r_col1, r_col2 = st.columns([1.5, 2.5])
