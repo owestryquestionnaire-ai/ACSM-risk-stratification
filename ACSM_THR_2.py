@@ -1,7 +1,6 @@
 import streamlit as st
 
 # ---------- 1. Initialization & Config ----------
-# Initial_sidebar_state="collapsed" ensures it starts hidden and only expands when pressed
 st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide", initial_sidebar_state="collapsed")
 
 def inject_custom_css():
@@ -9,29 +8,31 @@ def inject_custom_css():
         """
         <style>
         /* =========================================================
-           🖥️ HEADER FIX: Explicit iPad navigation button
+           🖥️ HEADER FIX: Creates a distinct Top Nav Bar for iPad
            ========================================================= */
-        .block-container {
-            padding-top: 3.5rem !important; /* Extra padding so the menu button doesn't block text */
-            padding-bottom: 1.5rem !important;
-        }
-        
-        /* Style the native Streamlit sidebar toggle (Hamburger Menu) so it's impossible to miss */
-        [data-testid="collapsedControl"] {
-            background-color: #2c3e50 !important; /* Dark blue background */
-            border-radius: 8px !important;
-            padding: 5px !important;
-            margin-top: 10px !important;
-            margin-left: 15px !important;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.2) !important;
+        /* Turn the transparent Streamlit header into a solid dark blue navigation bar */
+        header[data-testid="stHeader"] {
+            background-color: #2c3e50 !important;
+            height: 65px !important;
+            border-bottom: 4px solid #ef5350 !important; /* Red accent line */
             z-index: 999999 !important;
-            transition: all 0.2s ease-in-out;
         }
         
-        [data-testid="collapsedControl"] svg {
-            fill: #ffffff !important; /* White icon */
+        /* Force the menu icon inside it to be massive and bright white */
+        header[data-testid="stHeader"] button {
+            background-color: transparent !important;
+        }
+        header[data-testid="stHeader"] svg {
+            fill: #ffffff !important;
+            color: #ffffff !important;
             width: 35px !important;
             height: 35px !important;
+            margin-top: 5px !important;
+        }
+
+        .block-container {
+            padding-top: 6rem !important; /* Push content down safely below the new blue navbar */
+            padding-bottom: 1.5rem !important;
         }
 
         /* =========================================================
@@ -96,7 +97,7 @@ def inject_custom_css():
         button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover { background-color: #e53935 !important; border-color: #e53935 !important; color: white !important;}
 
         /* =========================================================
-           🖥️ SIDEBAR NAVIGATION PANEL (Smaller Font, Left Aligned, Multiline)
+           🖥️ SIDEBAR NAVIGATION PANEL
            ========================================================= */
         [data-testid="stSidebar"] p, [data-testid="stSidebar"] div, [data-testid="stSidebar"] span {
             font-size: 18px !important; 
@@ -112,17 +113,14 @@ def inject_custom_css():
             font-size: 18px !important; 
             padding: 12px 12px !important; 
             font-weight: bold !important; 
-            height: auto !important; /* Allow height to expand for multiline */
+            height: auto !important; 
             text-align: left !important;
         }
         
-        /* 讓按鈕內的內容靠左對齊 */
         [data-testid="stSidebar"] button div {
             justify-content: flex-start !important; 
             width: 100%;
         }
-        
-        /* 確保可以換行並靠左 */
         [data-testid="stSidebar"] button p {
             white-space: pre-wrap !important; 
             text-align: left !important;
@@ -161,6 +159,7 @@ def inject_custom_css():
             margin: 0 !important;
             padding: 0 !important;
             border-bottom: none !important;
+            white-space: nowrap !important; /* FORCES TEXT ONTO ONE SINGLE LINE */
         }
         .thr-calc-banner p {
             color: #555555 !important;
@@ -231,14 +230,12 @@ def inject_custom_css():
             .risk-strat-box { padding: 8px !important; }
             .risk-strat-text { font-size: 20px !important; }
             
-            /* Responsive shrink for Training HR - FIXED TO NOT WRAP! */
             .thr-calc-banner h2 { 
-                font-size: 24px !important; 
-                white-space: nowrap !important; /* Forces it to stay on one line */
+                font-size: 26px !important; /* Smaller size explicitly for mobile phones to prevent wrapping */
+                white-space: nowrap !important;
             }
-            .thr-calc-banner p { font-size: 12px !important; }
+            .thr-calc-banner p { font-size: 10px !important; }
 
-            /* Ensure the table fits properly on mobile */
             .guidelines-table td { font-size: 18px !important; }
             .guidelines-label { width: 50% !important; }
         }
@@ -349,7 +346,6 @@ def calculate_thr(age, rhr, risk_level):
     if rhr >= mhr: return None, None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    # Using non-breaking spaces for a cleaner look in HTML
     details_str = f"Maximum HR: {mhr} bpm &nbsp;|&nbsp; Standing HR at rest: {rhr} bpm &nbsp;|&nbsp; HR Reserve: {hrr} bpm"
 
     if risk_level == "Class III":
@@ -503,7 +499,6 @@ def tab_a_parq():
 def tab_d_thr(current_class):
     st.header("Target Heart Rate Calculator")
     
-    # 1. Radio Button Title
     st.markdown("<div style='font-size: 22px; font-weight: normal; margin-bottom: 8px;'>1. Select Risk Class</div>", unsafe_allow_html=True)
     
     if current_class == "Pending":
@@ -511,12 +506,10 @@ def tab_d_thr(current_class):
     else:
         st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
         
-    # 1. Radio Button Select
     options = ["Class I", "Class II", "Class III"]
     default_idx = options.index(current_class) if current_class in options else None
     selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
     
-    # Reason Box
     if current_class in ["Class I", "Class II", "Class III"]:
         reasons = []
         symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
