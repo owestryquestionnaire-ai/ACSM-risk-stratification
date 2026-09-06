@@ -9,11 +9,33 @@ def inject_custom_css():
         """
         <style>
         /* =========================================================
-           🖥️ HEADER FIX: Make sure the iPad navigation button is visible!
+           🖥️ HEADER FIX: Explicit iPad navigation button on Right Upper Corner
            ========================================================= */
         .block-container {
-            padding-top: 2rem !important; 
+            padding-top: 2.5rem !important; 
             padding-bottom: 1.5rem !important;
+        }
+        
+        /* Force the hamburger menu button to the top right corner and make it very obvious */
+        [data-testid="collapsedControl"] {
+            position: fixed !important;
+            left: auto !important;
+            right: 15px !important;
+            top: 15px !important;
+            z-index: 999999 !important;
+            background-color: #2c3e50 !important; /* Dark blue background */
+            border-radius: 8px !important;
+            padding: 8px !important;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        [data-testid="collapsedControl"] svg {
+            fill: #ffffff !important; /* White icon */
+            width: 32px !important;
+            height: 32px !important;
         }
 
         /* =========================================================
@@ -133,19 +155,17 @@ def inject_custom_css():
             text-align: center !important;
             border: 1px solid #ddd !important;
             border-bottom: none !important;
-            margin-bottom: 0px !important; /* No negative margins to prevent overlap! */
+            margin-bottom: 0px !important;
         }
-        /* Forces Training HR text to be massive and bold */
         .thr-calc-banner h2 {
             color: #333333 !important;
-            font-size: 42px !important;  /* Reduced from 60px */
+            font-size: 42px !important;  
             font-weight: 900 !important;
             line-height: 1.1 !important;
             margin: 0 !important;
             padding: 0 !important;
             border-bottom: none !important;
         }
-        /* Forces Maximum HR details to be tiny */
         .thr-calc-banner p {
             color: #555555 !important;
             font-size: 14px !important; 
@@ -195,7 +215,6 @@ def inject_custom_css():
             .risk-strat-box { padding: 8px !important; }
             .risk-strat-text { font-size: 20px !important; }
             
-            /* Responsive shrink for Training HR */
             .thr-calc-banner h2 { font-size: 32px !important; }
             .thr-calc-banner p { font-size: 12px !important; }
         }
@@ -460,61 +479,68 @@ def tab_a_parq():
 def tab_d_thr(current_class):
     st.header("Target Heart Rate Calculator")
     
-    # Custom HTML for smaller, normal-weight label
-    st.markdown("<div style='font-size: 20px; font-weight: normal; margin-bottom: 8px;'>1. Select Risk Class</div>", unsafe_allow_html=True)
+    # 1. Radio Button Title
+    # Re-sized slightly to 22px
+    st.markdown("<div style='font-size: 22px; font-weight: normal; margin-bottom: 8px;'>1. Select Risk Class</div>", unsafe_allow_html=True)
     
     if current_class == "Pending":
         st.markdown("💡 The system evaluation is currently **Incomplete**. Please manually select the Risk Class below:")
     else:
-        if current_class in ["Class I", "Class II", "Class III"]:
-            reasons = []
-            symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
-            has_disease = any([
-                st.session_state.data.get("d_cardio") == "有", 
-                st.session_state.data.get("d_metabolic") == "有", 
-                st.session_state.data.get("d_renal") == "有"
-            ])
-            is_active = st.session_state.data.get("is_active") == "是"
-            parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
-
-            if current_class == "Class III":
-                if symptoms >= 1:
-                    reasons.append("Form B ≥ 1")
-                if has_disease and not is_active:
-                    reasons.append("Known disease without regular exercise")
-            elif current_class == "Class II":
-                if has_disease and is_active and symptoms == 0:
-                    reasons.append("Known disease with regular exercise & Form B = 0")
-                if parq_score > 0:
-                    reasons.append("Form A (PAR-Q) ≥ 1")
-            elif current_class == "Class I":
-                reasons.append("No known disease & Form A = 0 & Form B = 0")
-                
-            if reasons:
-                reason_str = " AND/OR ".join(reasons) if current_class != "Class I" else reasons[0]
-                
-                if current_class == "Class I":
-                    st.success(f"✅ **Reason for {current_class}:** {reason_str}")
-                elif current_class == "Class II":
-                    st.warning(f"⚠️ **Reason for {current_class}:** {reason_str}")
-                elif current_class == "Class III":
-                    st.error(f"🚨 **Reason for {current_class}:** {reason_str}")
-    
+        st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
+        
+    # 1. Radio Button Select
     options = ["Class I", "Class II", "Class III"]
     default_idx = options.index(current_class) if current_class in options else None
     selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
     
+    # MOVED: The "Reason" box now appears below the radio buttons!
+    if current_class in ["Class I", "Class II", "Class III"]:
+        reasons = []
+        symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
+        has_disease = any([
+            st.session_state.data.get("d_cardio") == "有", 
+            st.session_state.data.get("d_metabolic") == "有", 
+            st.session_state.data.get("d_renal") == "有"
+        ])
+        is_active = st.session_state.data.get("is_active") == "是"
+        parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
+
+        if current_class == "Class III":
+            if symptoms >= 1:
+                reasons.append("Form B ≥ 1")
+            if has_disease and not is_active:
+                reasons.append("Known disease without regular exercise")
+        elif current_class == "Class II":
+            if has_disease and is_active and symptoms == 0:
+                reasons.append("Known disease with regular exercise & Form B = 0")
+            if parq_score > 0:
+                reasons.append("Form A (PAR-Q) ≥ 1")
+        elif current_class == "Class I":
+            reasons.append("No known disease & Form A = 0 & Form B = 0")
+            
+        if reasons:
+            reason_str = " AND/OR ".join(reasons) if current_class != "Class I" else reasons[0]
+            
+            # Spacer
+            st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+            if current_class == "Class I":
+                st.success(f"✅ **Reason for {current_class}:** {reason_str}")
+            elif current_class == "Class II":
+                st.warning(f"⚠️ **Reason for {current_class}:** {reason_str}")
+            elif current_class == "Class III":
+                st.error(f"🚨 **Reason for {current_class}:** {reason_str}")
+
     st.markdown("---")
 
     c1, c2 = st.columns(2)
     with c1:
-        # Custom HTML label for Patient Age
-        st.markdown("<div style='font-size: 20px; font-weight: normal; margin-bottom: 5px;'>2. Patient Age</div>", unsafe_allow_html=True)
+        # Re-sized slightly to 22px
+        st.markdown("<div style='font-size: 22px; font-weight: normal; margin-bottom: 5px;'>2. Patient Age</div>", unsafe_allow_html=True)
         age = st.number_input("Age", min_value=10, max_value=120, value=None, step=1, key="thr_age", label_visibility="collapsed")
     
     with c2:
-        # Custom HTML label for Standing Resting Heart Rate
-        st.markdown("<div style='font-size: 20px; font-weight: normal; margin-bottom: 5px;'>3. Standing Resting Heart Rate (bpm)</div>", unsafe_allow_html=True)
+        # Re-sized slightly to 22px
+        st.markdown("<div style='font-size: 22px; font-weight: normal; margin-bottom: 5px;'>3. Standing Resting Heart Rate (bpm)</div>", unsafe_allow_html=True)
         rhr = st.number_input("Standing Resting HR", min_value=30, max_value=220, value=None, step=1, key="thr_rhr", label_visibility="collapsed")
 
     result_container = st.container()
@@ -555,7 +581,7 @@ def tab_d_thr(current_class):
                 rec = recs[selected_class]
                 
                 with result_container:
-                    # Using the dedicated CSS classes created in the CSS block at the top
+                    # Target HR UI output based on CSS overrides
                     st.markdown(f"""
                     <div class="thr-calc-banner">
                         <h2>{thr_main}</h2>
@@ -565,7 +591,6 @@ def tab_d_thr(current_class):
                     """, unsafe_allow_html=True)
                     
                     with st.container(border=True):
-                        # Title strictly styled, HR divider pulled tight
                         st.markdown(f"""
                         <div style="font-size: 26px !important; font-weight: bold !important; color: var(--text-color) !important; margin-bottom: 5px !important;">📋 {selected_class} Clinical Guidelines</div>
                         <hr style="margin: 0px 0px 15px 0px !important; border: 0; border-top: 2px solid #eee;" />
