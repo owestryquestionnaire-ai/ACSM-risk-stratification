@@ -471,11 +471,9 @@ def tab_d_thr(current_class):
     st.markdown("---")
 
     c1, c2 = st.columns(2)
-    # Reverting to value=None so inputs default empty, but safely handled.
     age = c1.number_input("2. Patient Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
     rhr = c2.number_input("3. Standing Resting Heart Rate (bpm)", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
 
-    # --- BUTTON RESTORED ---
     if st.button("Calculate Guidelines", type="primary", use_container_width=True):
         if selected_class is None:
             st.warning("⚠️ Please select a Risk Class before calculating.")
@@ -511,12 +509,13 @@ def tab_d_thr(current_class):
                 }
                 rec = recs[selected_class]
                 
-                # Using pure <div> to completely bypass global Streamlit CSS rules
+                # Removed negative bottom margin to fix overlap
+                # Increased HR font to 60px, Decreased details font to 10px
                 st.markdown(f"""
-                <div style="background-color: #f0f2f6; padding: 5px 10px; border-radius: 8px 8px 0 0; text-align: center; border: 1px solid #ddd; border-bottom: none; margin-bottom: -15px;">
-                    <div style="color: #333333 !important; font-size: 48px !important; font-weight: bold !important; line-height: 1.1 !important; margin: 0 !important; padding: 0 !important;">{thr_main}</div>
+                <div style="background-color: #f0f2f6; padding: 5px 10px; border-radius: 8px 8px 0 0; text-align: center; border: 1px solid #ddd; border-bottom: none; margin-bottom: 0px;">
+                    <div style="color: #333333 !important; font-size: 60px !important; font-weight: 900 !important; line-height: 1.1 !important; margin: 0 !important; padding: 0 !important;">{thr_main}</div>
                     <div style="height: 1px; background-color: rgba(0,0,0,0.1); margin: 6px auto; width: 95%;"></div>
-                    <div style="color: #555555 !important; font-size: 12px !important; line-height: 1.2 !important; margin: 0 !important; padding: 0 !important; padding-bottom: 4px !important;">{thr_details}</div>
+                    <div style="color: #555555 !important; font-size: 10px !important; line-height: 1.2 !important; margin: 0 !important; padding: 0 !important; padding-bottom: 4px !important;">{thr_details}</div>
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -546,10 +545,7 @@ def tab_d_thr(current_class):
                     r_col1.markdown("**Monitoring:**")
                     r_col2.markdown(rec['monitor'])
                     
-                    st.markdown(f"""
-                    <div style="height: 1px; background-color: #eee; margin-top: 15px !important; margin-bottom: 10px !important; width: 100%;"></div>
-                    <div style="font-size: 12px !important; font-style: italic !important; color: #6c757d !important; line-height: 1.3 !important; margin: 0 !important;">#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)</div>
-                    """, unsafe_allow_html=True)
+                    # Deleted the redundant #Adjustment text that used to be inside this box
         else:
             st.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
 
