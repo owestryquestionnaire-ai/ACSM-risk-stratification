@@ -158,7 +158,7 @@ def inject_custom_css():
                 white-space: normal !important; 
                 height: auto !important;
             }
-            
+
             /* 手機版專屬：頂部狀態提示框自動縮小 */
             .risk-strat-box {
                 padding: 8px !important;
@@ -274,19 +274,20 @@ def calculate_thr(age, rhr, risk_level):
     if rhr >= mhr: return None, None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    details_str = f"Maximum HR: {mhr} bpm | Standing HR at rest: {rhr} bpm | HR Reserve: {hrr} bpm"
+    # Using non-breaking spaces for a cleaner look in HTML
+    details_str = f"Maximum HR: {mhr} bpm &nbsp;|&nbsp; Standing HR at rest: {rhr} bpm &nbsp;|&nbsp; HR Reserve: {hrr} bpm"
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
-        thr_main = f"Training HR: < {limit} bpm"
+        thr_main = f"Training HR: &lt; {limit} bpm"
         return thr_main, details_str, None
     elif risk_level == "Class II":
         limit = int((hrr * 0.60) + rhr)
-        thr_main = f"Training HR: < {limit} bpm"
+        thr_main = f"Training HR: &lt; {limit} bpm"
         return thr_main, details_str, None
     else:
         upper = int((hrr * 0.84) + rhr)
-        thr_main = f"Training HR: ≤ {upper} bpm"
+        thr_main = f"Training HR: &le; {upper} bpm"
         return thr_main, details_str, None
 
 
@@ -319,7 +320,7 @@ def try_complete_a(target_tab):
 def render_inline_question(label, key, options=("否", "有"), check_error=False):
     is_missing = check_error and st.session_state.data.get(key) is None
     
-    col1, col2 = st.columns([8.8, 1.2]) 
+    col1, col2 = st.columns([8.2, 1.8]) 
     with col1:
         if is_missing:
             st.markdown(f'<div class="question-text" style="color: #c62828 !important; font-weight: bold; background-color: #ffebee !important; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
@@ -351,12 +352,19 @@ def tab_b_acsm(b_class, show_all_tabs):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}", check_error=check_err)
+        # Targeted spacer ONLY after Question 1 for wrapped text spacing
+        if i == 1:
+            st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
     
     st.markdown("---")
     st.subheader("已知醫療狀況 (Known Diseases)")
     render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio", check_error=check_err)
+    
+    # Targeted spacer after the first known disease question for wrapped text spacing
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    
     render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic", check_error=check_err)
     render_inline_question("已知腎臟疾病", "d_renal", check_error=check_err)
 
@@ -512,19 +520,19 @@ def tab_d_thr(current_class):
                 }
                 rec = recs[selected_class]
                 
-                # --- PURE NATIVE STREAMLIT LAYOUT FOR RESULTS ---
                 with result_container:
-                    # Top Blue Banner (Kept small safe HTML for the colored banner block)
+                    # Tighter Banner Box, Larger White Font, Line separator
                     st.markdown(f"""
-                    <div style="background-color: #2c3e50; padding: 25px 20px; border-radius: 8px 8px 0 0; text-align: center;">
-                        <h2 style="color: #ffffff !important; margin: 0; font-size: 38px;">{thr_main}</h2>
-                        <p style="color: #ffffff !important; margin: 10px 0 0 0; opacity: 0.9; font-size: 18px;">{thr_details}</p>
+                    <div style="background-color: #2c3e50; padding: 15px 20px; border-radius: 8px 8px 0 0; text-align: center;">
+                        <h2 style="color: #ffffff !important; margin: 0; font-size: 42px; font-weight: bold;">{thr_main}</h2>
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.4); margin: 12px auto; width: 90%;">
+                        <p style="color: #ffffff !important; margin: 0; opacity: 0.85; font-size: 16px;">{thr_details}</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Bottom Content Box (Pure Python columns)
                     with st.container(border=True):
                         st.subheader(f"📋 {selected_class} Clinical Guidelines")
+                        st.markdown("<hr style='margin: 0px 0px 15px 0px;'/>", unsafe_allow_html=True) # Line strictly under Title
                         
                         r_col1, r_col2 = st.columns([1.5, 2.5])
                         
@@ -541,13 +549,14 @@ def tab_d_thr(current_class):
                         r_col2.markdown(rec['medical'])
                         
                         r_col1.markdown("**Supervision:**")
-                        r_col2.markdown(rec['supervision'], unsafe_allow_html=True) # Allows the <br> line break
+                        r_col2.markdown(rec['supervision'], unsafe_allow_html=True) 
                         
                         r_col1.markdown("**Monitoring:**")
                         r_col2.markdown(rec['monitor'])
                         
-                        st.divider()
-                        st.caption("_#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)_")
+                        st.markdown("<hr style='margin: 15px 0px;'/>", unsafe_allow_html=True) # Line above Remarks
+                        # Smaller Remarks
+                        st.markdown("<p style='font-size: 14px; font-style: italic; color: #6c757d; margin: 0;'>#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)</p>", unsafe_allow_html=True)
             else:
                 result_container.error(err)
         else:
@@ -608,6 +617,9 @@ def main():
         tab_a_parq()
     elif st.session_state["current_tab"] == "3. Target HR &\nClinical Guidelines":
         tab_d_thr(current_class)
+        
+    st.markdown("---")
+    st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
 
 if __name__ == "__main__":
     main()
