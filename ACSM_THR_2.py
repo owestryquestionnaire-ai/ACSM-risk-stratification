@@ -70,73 +70,11 @@ def inject_custom_css():
             margin-bottom: 6px !important;
         }
 
-        /* =========================================================
-           📋 GUIDELINE RESULT BOX STYLING (MATCHING IMAGE)
-           ========================================================= */
-        .guideline-result-container {
-            border: 2px solid #2c3e50;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .guideline-header {
-            background-color: #2c3e50;
-            color: #ffffff !important;
-            text-align: center;
-            padding: 25px 20px;
-        }
-        .guideline-header h2 {
-            color: #ffffff !important;
-            font-size: 38px !important;
-            font-weight: bold !important;
-            margin: 0 0 10px 0 !important;
-            border-bottom: none !important;
-            padding-bottom: 0 !important;
-        }
-        .guideline-header .details {
-            font-size: 18px !important;
-            color: #ffffff !important;
-            opacity: 0.9;
-            margin: 0;
-        }
-        .guideline-body {
-            background-color: #ffffff;
-            padding: 25px;
-            color: #333333;
-        }
-        .guideline-body h3 {
-            margin-top: 0 !important;
-            border-bottom: 2px solid #eee !important;
-            padding-bottom: 12px !important;
-            color: #2c3e50 !important;
-            font-size: 24px !important;
-        }
-        .guideline-row {
-            display: flex;
-            margin-bottom: 15px;
-            font-size: 20px !important;
-            line-height: 1.5 !important;
-        }
-        .guideline-label {
-            font-weight: bold;
-            width: 280px;
-            flex-shrink: 0;
-            color: #2c3e50;
-        }
-        .guideline-value {
-            flex-grow: 1;
-            color: #333333;
-        }
-        .guideline-footer {
-            margin-top: 25px;
-            font-size: 16px !important;
-            color: #6c757d;
-            font-style: italic;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            line-height: 1.4 !important;
-        }
+        /* Combined Result Box Styling */
+        .final-result-box { border: 3px solid var(--text-color); border-radius: 10px; overflow: hidden; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px !important; }
+        .final-thr-part { font-size: 36px !important; font-weight: bold !important; line-height: 1.45 !important; padding: 15px 20px !important; background-color: var(--background-color); }
+        .final-rec-part { background-color: var(--secondary-background-color); padding: 15px 20px !important; border-top: 3px dashed var(--text-color); }
+        .final-rec-part p { margin-bottom: 6px !important; line-height: 1.45 !important; }
         
         .question-text { margin-top: 0px !important; font-size: 26px !important; line-height: 1.45 !important; }
 
@@ -227,10 +165,8 @@ def inject_custom_css():
                 height: auto !important;
             }
             
-            .guideline-row { flex-direction: column; margin-bottom: 18px; }
-            .guideline-label { width: 100%; margin-bottom: 4px; }
-            .guideline-header h2 { font-size: 30px !important; }
-            .guideline-header .details { font-size: 16px !important; }
+            .final-thr-part { font-size: 28px !important; padding: 12px 15px !important; }
+            .final-rec-part { padding: 12px 15px !important; }
 
             /* 手機版專屬：頂部狀態提示框自動縮小 */
             .risk-strat-box {
@@ -344,23 +280,23 @@ def calculate_current_class():
 
 def calculate_thr(age, rhr, risk_level):
     mhr = 220 - age
-    if rhr >= mhr: return None, None, "Abnormal Resting Heart Rate (>= Maximum HR)"
+    if rhr >= mhr: return None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    details_str = f"Maximum HR: {mhr} bpm | Standing HR at rest: {rhr} bpm | HR Reserve: {hrr} bpm"
+    details_html = f'<div style="font-size: 20px; font-weight: normal; margin-top: 5px; opacity: 0.8;">Maximum HR: {mhr} | Standing HR at rest: {rhr} | HR Reserve: {hrr}</div>'
 
     if risk_level == "Class III":
         limit = int((hrr * 0.40) + rhr)
         thr_main = f"Training HR: &lt; {limit} bpm"
-        return thr_main, details_str, None
+        return thr_main + details_html, None
     elif risk_level == "Class II":
         limit = int((hrr * 0.60) + rhr)
         thr_main = f"Training HR: &lt; {limit} bpm"
-        return thr_main, details_str, None
+        return thr_main + details_html, None
     else:
         upper = int((hrr * 0.84) + rhr)
         thr_main = f"Training HR: ≤ {upper} bpm"
-        return thr_main, details_str, None
+        return thr_main + details_html, None
 
 
 # ---------- 3. Callbacks & Helpers ----------
@@ -392,7 +328,7 @@ def try_complete_a(target_tab):
 def render_inline_question(label, key, options=("否", "有"), check_error=False):
     is_missing = check_error and st.session_state.data.get(key) is None
     
-    col1, col2 = st.columns([8.8, 1.2]) 
+    col1, col2 = st.columns([8.2, 1.8]) 
     with col1:
         if is_missing:
             st.markdown(f'<div class="question-text" style="color: #c62828 !important; font-weight: bold; background-color: #ffebee !important; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
@@ -424,12 +360,19 @@ def tab_b_acsm(b_class, show_all_tabs):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}", check_error=check_err)
+        # Targeted spacer ONLY after Question 1 for wrapped text spacing
+        if i == 1:
+            st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
     
     st.markdown("---")
     st.subheader("已知醫療狀況 (Known Diseases)")
     render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio", check_error=check_err)
+    
+    # Targeted spacer after the first known disease question for wrapped text spacing
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    
     render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic", check_error=check_err)
     render_inline_question("已知腎臟疾病", "d_renal", check_error=check_err)
 
@@ -495,7 +438,7 @@ def tab_a_parq():
 
 
 def tab_d_thr(current_class):
-    st.header("Target Heart Rate Calculator")
+    st.header("Target Heart Rate & Clinical Recommendations")
     
     st.subheader("⚙️ Select Risk Class")
     
@@ -504,6 +447,7 @@ def tab_d_thr(current_class):
     else:
         st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
         
+        # --- NEW FEATURE: Dynamic Justification Summary for ALL Classes ---
         if current_class in ["Class I", "Class II", "Class III"]:
             reasons = []
             symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
@@ -531,6 +475,7 @@ def tab_d_thr(current_class):
             if reasons:
                 reason_str = " AND/OR ".join(reasons) if current_class != "Class I" else reasons[0]
                 
+                # Visual distinction based on class severity
                 if current_class == "Class I":
                     st.success(f"✅ **Reason for {current_class}:** {reason_str}")
                 elif current_class == "Class II":
@@ -545,16 +490,17 @@ def tab_d_thr(current_class):
     result_container = st.container()
     
     st.markdown("---")
+    st.subheader("🎯 Training Heart Rate Calculator")
 
     c1, c2 = st.columns(2)
-    age = c1.number_input("2. Patient Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
-    rhr = c2.number_input("3. Standing Resting Heart Rate (bpm)", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
+    age = c1.number_input("Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
+    rhr = c2.number_input("Standing Resting HR", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
 
-    if st.button("Calculate Guidelines", type="primary", use_container_width=True):
+    if st.button("Calculate", type="primary", use_container_width=True):
         if selected_class is None:
             result_container.warning("⚠️ Please select a Risk Class before calculating.")
         elif age is not None and rhr is not None:
-            thr_main, thr_details, err = calculate_thr(int(age), int(rhr), selected_class)
+            thr_string, err = calculate_thr(int(age), int(rhr), selected_class)
             
             if not err:
                 recs = {
@@ -585,44 +531,19 @@ def tab_d_thr(current_class):
                 }
                 rec = recs[selected_class]
                 
-                # Replaced format with Flexbox layout mimicking the screenshot
                 result_container.markdown(f"""
-                <div class="guideline-result-container">
-                    <div class="guideline-header">
-                        <h2>{thr_main}</h2>
-                        <p class="details">{thr_details}</p>
+                <div class="final-result-box">
+                    <div class="final-thr-part">
+                        {thr_string}
                     </div>
-                    <div class="guideline-body">
-                        <h3>📋 {selected_class} Clinical Guidelines</h3>
-                        
-                        <div class="guideline-row">
-                            <div class="guideline-label">Recommended Intensity:</div>
-                            <div class="guideline-value">{rec['intensity']}</div>
-                        </div>
-                        <div class="guideline-row">
-                            <div class="guideline-label">Safe exercise zone:</div>
-                            <div class="guideline-value">{rec['hrr']}</div>
-                        </div>
-                        <div class="guideline-row">
-                            <div class="guideline-label">RPE during Exercise:</div>
-                            <div class="guideline-value">{rec['rpe']}</div>
-                        </div>
-                        <div class="guideline-row">
-                            <div class="guideline-label">Medical clearance:</div>
-                            <div class="guideline-value">{rec['medical']}</div>
-                        </div>
-                        <div class="guideline-row">
-                            <div class="guideline-label">Supervision:</div>
-                            <div class="guideline-value">{rec['supervision']}</div>
-                        </div>
-                        <div class="guideline-row">
-                            <div class="guideline-label">Monitoring:</div>
-                            <div class="guideline-value">{rec['monitor']}</div>
-                        </div>
-                        
-                        <div class="guideline-footer">
-                            #Adjustment to target HR zone should be made on individual basis (keep increment of progress &le; 5%HRR per week)
-                        </div>
+                    <div class="final-rec-part">
+                        <h3 style="margin-top: 0; border-bottom: 2px solid var(--text-color); padding-bottom: 10px;">📋 {selected_class} Clinical Guidelines</h3>
+                        <p><b>Recommended Exercise Intensity:</b><br>{rec['intensity']}</p>
+                        <p><b>Safe exercise zone:</b> {rec['hrr']}</p>
+                        <p><b>RPE during Exercise:</b> {rec['rpe']}</p>
+                        <p><b>Medical Clearance:</b><br>{rec['medical']}</p>
+                        <p><b>Supervision:</b><br>{rec['supervision']}</p>
+                        <p><b>Monitoring:</b><br>{rec['monitor']}</p>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -631,7 +552,7 @@ def tab_d_thr(current_class):
         else:
             result_container.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
     else:
-        result_container.info("💡 Please input the patient's **Age** and **Standing Resting HR** above, then click 'Calculate Guidelines' to generate the report.")
+        result_container.info("💡 Please input the patient's **Age** and **Standing Resting HR** above, then click 'Calculate' to generate the report.")
 
 
 def main():
@@ -686,6 +607,9 @@ def main():
         tab_a_parq()
     elif st.session_state["current_tab"] == "3. Target HR &\nClinical Guidelines":
         tab_d_thr(current_class)
+        
+    st.markdown("---")
+    st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
 
 if __name__ == "__main__":
     main()
