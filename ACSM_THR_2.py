@@ -10,9 +10,9 @@ def inject_custom_css():
         /* =========================================================
            🖥️ HEADER & SPACING FIX
            ========================================================= */
-        /* Reduce top padding drastically to bring the title up */
+        /* Increased padding-top to 3.5rem to clear the header without hiding the title */
         .block-container {
-            padding-top: 1.5rem !important; 
+            padding-top: 3.5rem !important; 
             padding-bottom: 1.5rem !important;
         }
         
@@ -43,7 +43,7 @@ def inject_custom_css():
         .element-container { margin-bottom: 0px !important; }
         hr { margin-top: 0.6rem !important; margin-bottom: 0.6rem !important; padding: 0px !important; }
 
-        /* Headers - BOLD (Removed top margin to tighten space) */
+        /* Headers - BOLD (Removed top margin to keep it tight under the header) */
         h1 { font-size: 30px !important; font-weight: bold !important; line-height: 1.45 !important; margin-top: 0px !important; padding-top: 0px !important; margin-bottom: 12px !important;}
         h2 { font-size: 28px !important; font-weight: bold !important; border-bottom: 2px solid var(--text-color); padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
         h3 { font-size: 26px !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
@@ -591,6 +591,7 @@ def tab_d_thr(current_class):
                         <hr style="margin: 0px 0px 15px 0px !important; border: 0; border-top: 2px solid #eee;" />
                         """, unsafe_allow_html=True)
                         
+                        # INVISIBLE TABLE TO FIX MOBILE STACKING
                         guidelines_table = f"""
                         <table class="guidelines-table">
                             <tr>
