@@ -516,20 +516,20 @@ def tab_d_thr(current_class):
                 rec = recs[selected_class]
                 
                 with result_container:
-                    # Smaller overall box with 48px header and 12px secondary details
+                    # Light grey box, tiny 9px details text
                     st.markdown(f"""
                     <div style="background-color: #f0f2f6; padding: 2px 8px; border-radius: 8px 8px 0 0; text-align: center; margin-bottom: -15px; border: 1px solid #ddd; border-bottom: none;">
                         <h2 style="color: #333333 !important; margin: 0; font-size: 48px; font-weight: bold; line-height: 1.1;">{thr_main}</h2>
                         <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 2px auto; width: 95%;">
-                        <p style="color: #555555 !important; margin: 0; font-size: 12px; line-height: 1.2; padding-bottom: 2px;">{thr_details}</p>
+                        <p style="color: #555555 !important; margin: 0; font-size: 9px; line-height: 1.2; padding-bottom: 2px;">{thr_details}</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     with st.container(border=True):
-                        # Narrow title spacing using line-height: 1 and !important 0 margins
+                        # Ultra narrow title spacing using negative margin on horizontal rule
                         st.markdown(f"""
                         <h3 style="margin: 0 !important; padding: 0 !important; font-size: 26px; font-weight: bold; color: var(--text-color); line-height: 1;">📋 {selected_class} Clinical Guidelines</h3>
-                        <hr style="margin: 0px 0px 12px 0px !important; border: 0; border-top: 2px solid #eee;" />
+                        <hr style="margin: -5px 0px 8px 0px !important; border: 0; border-top: 2px solid #eee;" />
                         """, unsafe_allow_html=True)
                         
                         r_col1, r_col2 = st.columns([1.5, 2.5])
@@ -553,8 +553,8 @@ def tab_d_thr(current_class):
                         r_col2.markdown(rec['monitor'])
                         
                         st.markdown("<hr style='margin: 15px 0px;'/>", unsafe_allow_html=True) # Line above Remarks
-                        # Smaller Remarks (14px)
-                        st.markdown("<p style='font-size: 14px; font-style: italic; color: #6c757d; margin: 0;'>#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)</p>", unsafe_allow_html=True)
+                        # Ultra small Remarks (10px)
+                        st.markdown("<p style='font-size: 10px; font-style: italic; color: #6c757d; margin: 0;'>#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)</p>", unsafe_allow_html=True)
             else:
                 result_container.error(err)
         else:
