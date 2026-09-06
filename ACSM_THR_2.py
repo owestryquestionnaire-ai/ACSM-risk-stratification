@@ -490,7 +490,7 @@ def tab_d_thr(current_class):
     result_container = st.container()
     
     st.markdown("---")
-    st.subheader("🎯 Input Data")
+    st.subheader("🎯 Training Heart Rate Calculator")
 
     c1, c2 = st.columns(2)
     age = c1.number_input("Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
