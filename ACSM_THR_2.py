@@ -446,6 +446,26 @@ def tab_d_thr(current_class):
         st.markdown("💡 The system evaluation is currently **Incomplete**. Please manually select the Risk Class below:")
     else:
         st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
+        
+        # --- NEW FEATURE: Class III Justification Summary moved here ---
+        if current_class == "Class III":
+            reasons = []
+            symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
+            has_disease = any([
+                st.session_state.data.get("d_cardio") == "有", 
+                st.session_state.data.get("d_metabolic") == "有", 
+                st.session_state.data.get("d_renal") == "有"
+            ])
+            is_active = st.session_state.data.get("is_active") == "是"
+
+            if symptoms >= 1:
+                reasons.append("Form B ≥ 1")
+            if has_disease and not is_active:
+                reasons.append("Known disease without regular exercise")
+                
+            if reasons:
+                reason_str = " & ".join(reasons)
+                st.error(f"**Reason for Class III:** {reason_str}")
     
     options = ["Class I", "Class II", "Class III"]
     default_idx = options.index(current_class) if current_class in options else None
@@ -543,34 +563,6 @@ def main():
         <span class="risk-strat-text" style="color: {theme['text']};">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
-    
-    # --- NEW FEATURE: Class III Justification Summary ---
-    if current_class == "Class III":
-        reasons = []
-        symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
-        has_disease = any([
-            st.session_state.data.get("d_cardio") == "有", 
-            st.session_state.data.get("d_metabolic") == "有", 
-            st.session_state.data.get("d_renal") == "有"
-        ])
-        is_active = st.session_state.data.get("is_active") == "是"
-
-        # Explicitly checking criteria from the document
-        if symptoms >= 1:
-            reasons.append("表格 B 顯示 1 項或以上主要徵狀 (Form B ≥ 1)")
-        if has_disease and not is_active:
-            reasons.append("已知患病且無定期運動 (Known disease without regular exercise)")
-            
-        if reasons:
-            reason_str = " 及 ".join(reasons)
-            st.markdown(f"""
-            <div style='text-align: center; color: #c62828; font-size: 20px; font-weight: 500; margin-top: -15px; margin-bottom: 20px;'>
-                ⚠️ <b>分類原因 / Reason:</b><br>{reason_str}
-            </div>
-            """, unsafe_allow_html=True)
-    else:
-        # Provide spacing if the summary is not shown so layout doesn't shift drastically
-        st.write("")
     
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
