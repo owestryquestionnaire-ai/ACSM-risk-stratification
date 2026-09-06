@@ -1,12 +1,26 @@
 import streamlit as st
 
 # ---------- 1. Initialization & Config ----------
-st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide")
+# Initial_sidebar_state="collapsed" ensures it starts hidden and only expands when pressed
+st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide", initial_sidebar_state="collapsed")
 
 def inject_custom_css():
     st.markdown(
         """
         <style>
+        /* =========================================================
+           🖥️ REDUCE TOP MARGIN
+           ========================================================= */
+        .block-container {
+            padding-top: 1.5rem !important;
+            padding-bottom: 1.5rem !important;
+        }
+        
+        /* 隱藏頂部預設的裝飾性 header 空間 */
+        header[data-testid="stHeader"] {
+            height: 0px !important;
+        }
+
         /* =========================================================
            🖥️ DESKTOP & iPAD VIEW (長者友善選項 + 精緻標題排版)
            ========================================================= */
@@ -191,7 +205,6 @@ def evaluate_b_only():
     ])
     is_active = st.session_state.data.get("is_active") == "是"
     
-    # Based strictly on document criteria for Class III and II based on Form B
     if (has_disease and not is_active) or (symptoms >= 1):
         return "Class III"
     if has_disease and is_active and symptoms == 0:
@@ -218,7 +231,6 @@ def calculate_current_class():
         st.session_state.data.get("d_renal") == "有"
     ])
 
-    # Class I: No Known CV, metabolic or renal disease AND Form A & Form B = 0
     if not has_disease and parq_score == 0 and symptoms == 0:
         return "Class I"
     elif parq_score > 0:
@@ -279,7 +291,6 @@ def render_inline_question(label, key, options=("否", "有"), check_error=False
     col1, col2 = st.columns([7, 3]) 
     with col1:
         if is_missing:
-            # 這裡的錯誤標示紅色屬於特殊提醒，不受深淺模式影響
             st.markdown(f'<div class="question-text" style="color: #c62828 !important; font-weight: bold; background-color: #ffebee !important; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="question-text">{label}</div>', unsafe_allow_html=True)
@@ -296,7 +307,6 @@ def tab_b_acsm(b_class, show_all_tabs):
     st.header("表格 B：心血管、呼吸系統及代謝性疾病之主要徵狀")
     st.write("請在合適選擇上選擇「有」或「否」：")
     
-    # Updated symptom 5 to match word document
     s_items = [
         "1. 因心臟缺血而引致的胸口、頸、下顎、上臂 或其他部位痛楚或不適",
         "2. 靜止或輕鬆活動時感到氣喘",
@@ -476,22 +486,16 @@ def main():
         "Class III": {"bg": "#ffebee", "border": "#c62828", "text": "#b71c1c"}
     }
     
-    # Handling Pending string split internally
     theme = class_colors[current_class] if current_class in class_colors else class_colors["Pending"]
-    
     display_text = "Incomplete" if "Pending" in current_class else current_class
     
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
-    # 這裡將樣式獨立成 class，透過 CSS 響應式控制
     st.markdown(f"""
     <div class="risk-strat-box" style="background-color: {theme['bg']}; border: 2px solid {theme['border']};">
         <span class="risk-strat-text" style="color: {theme['text']};">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
-    
-    # 加入一個微小的空白確保與下方分頁按鈕絕對不會黏在一起
-    st.write("")
     
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
@@ -504,14 +508,15 @@ def main():
     if st.session_state["current_tab"] not in available_tabs:
         st.session_state["current_tab"] = available_tabs[0]
         
-    cols = st.columns(len(available_tabs))
-    for i, tab_name in enumerate(available_tabs):
-        btn_type = "primary" if st.session_state["current_tab"] == tab_name else "secondary"
-        if cols[i].button(tab_name, type=btn_type, key=f"nav_{i}", use_container_width=True):
-            go_to_tab(tab_name)
-            st.rerun()
-
-    st.markdown("---")
+    # --- Navigation Sidebar ---
+    with st.sidebar:
+        st.header("📌 導覽菜單")
+        st.markdown("請選擇下方表單：")
+        for i, tab_name in enumerate(available_tabs):
+            btn_type = "primary" if st.session_state["current_tab"] == tab_name else "secondary"
+            if st.button(tab_name, type=btn_type, key=f"nav_{i}", use_container_width=True):
+                go_to_tab(tab_name)
+                st.rerun()
 
     if st.session_state["current_tab"] == "1. 運動風險評估 (表格 B)":
         tab_b_acsm(b_class_only, show_all_tabs)
