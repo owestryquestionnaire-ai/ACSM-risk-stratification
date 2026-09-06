@@ -370,7 +370,7 @@ def tab_b_acsm(b_class, show_all_tabs):
     st.subheader("已知醫療狀況 (Known Diseases)")
     render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio", check_error=check_err)
     
-    # NEW: Targeted spacer after the first known disease question for wrapped text spacing
+    # Targeted spacer after the first known disease question for wrapped text spacing
     st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
     
     render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic", check_error=check_err)
@@ -539,10 +539,38 @@ def main():
     st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
     
     st.markdown(f"""
-    <div class="risk-strat-box" style="background-color: {theme['bg']}; border: 2px solid {theme['border']};">
+    <div class="risk-strat-box" style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; margin-bottom: 20px;">
         <span class="risk-strat-text" style="color: {theme['text']};">Risk Stratification: {display_text}</span>
     </div>
     """, unsafe_allow_html=True)
+    
+    # --- NEW FEATURE: Class III Justification Summary ---
+    if current_class == "Class III":
+        reasons = []
+        symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
+        has_disease = any([
+            st.session_state.data.get("d_cardio") == "有", 
+            st.session_state.data.get("d_metabolic") == "有", 
+            st.session_state.data.get("d_renal") == "有"
+        ])
+        is_active = st.session_state.data.get("is_active") == "是"
+
+        # Explicitly checking criteria from the document
+        if symptoms >= 1:
+            reasons.append("表格 B 顯示 1 項或以上主要徵狀 (Form B ≥ 1)")
+        if has_disease and not is_active:
+            reasons.append("已知患病且無定期運動 (Known disease without regular exercise)")
+            
+        if reasons:
+            reason_str = " 及 ".join(reasons)
+            st.markdown(f"""
+            <div style='text-align: center; color: #c62828; font-size: 20px; font-weight: 500; margin-top: -15px; margin-bottom: 20px;'>
+                ⚠️ <b>分類原因 / Reason:</b><br>{reason_str}
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        # Provide spacing if the summary is not shown so layout doesn't shift drastically
+        st.write("")
     
     show_all_tabs = st.session_state.get("force_show_all", False)
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
