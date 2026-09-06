@@ -12,7 +12,7 @@ def inject_custom_css():
            🖥️ REDUCE TOP MARGIN
            ========================================================= */
         .block-container {
-            padding-top: 2.5rem !important; /* Preserves the header button but shrinks empty space */
+            padding-top: 2.5rem !important; 
             padding-bottom: 1.5rem !important;
         }
 
@@ -269,7 +269,6 @@ def calculate_thr(age, rhr, risk_level):
     if rhr >= mhr: return None, None, "Abnormal Resting Heart Rate (>= Maximum HR)"
     hrr = mhr - rhr
 
-    # Using non-breaking spaces for a cleaner look in HTML
     details_str = f"Maximum HR: {mhr} bpm &nbsp;|&nbsp; Standing HR at rest: {rhr} bpm &nbsp;|&nbsp; HR Reserve: {hrr} bpm"
 
     if risk_level == "Class III":
@@ -484,140 +483,4 @@ def tab_d_thr(current_class):
         if selected_class is None:
             result_container.warning("⚠️ Please select a Risk Class before calculating.")
         elif age is not None and rhr is not None:
-            thr_main, thr_details, err = calculate_thr(int(age), int(rhr), selected_class)
-            
-            if not err:
-                recs = {
-                    "Class I": {
-                        "intensity": "Moderate: ✔️ Vigorous: ✔️",
-                        "hrr": "≤ 84% HRR",
-                        "rpe": "< 17",
-                        "medical": "Not necessary",
-                        "supervision": "Not required",
-                        "monitor": "Monitor HR in First session (optional)"
-                    },
-                    "Class II": {
-                        "intensity": "Moderate: ✔️ Vigorous: ❌",
-                        "hrr": "< 60% HRR",
-                        "rpe": "< 14",
-                        "medical": "Recommended for vigorous intensity exercise",
-                        "supervision": "Not required: light to moderate intensity<br>Required: vigorous intensity",
-                        "monitor": "Continuous HR or RPE monitoring"
-                    },
-                    "Class III": {
-                        "intensity": "Moderate: ❌ Vigorous: ❌",
-                        "hrr": "< 40% HRR",
-                        "rpe": "< 12",
-                        "medical": "Recommended",
-                        "supervision": "Required",
-                        "monitor": "Continuous HR and RPE monitoring together with close supervision"
-                    }
-                }
-                rec = recs[selected_class]
-                
-                with result_container:
-                    # Light grey box, tiny 9px details text
-                    st.markdown(f"""
-                    <div style="background-color: #f0f2f6; padding: 2px 8px; border-radius: 8px 8px 0 0; text-align: center; margin-bottom: -15px; border: 1px solid #ddd; border-bottom: none;">
-                        <h2 style="color: #333333 !important; margin: 0; font-size: 48px; font-weight: bold; line-height: 1.1;">{thr_main}</h2>
-                        <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 2px auto; width: 95%;">
-                        <p style="color: #555555 !important; margin: 0; font-size: 9px; line-height: 1.2; padding-bottom: 2px;">{thr_details}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    with st.container(border=True):
-                        # Ultra narrow title spacing using negative margin on horizontal rule
-                        st.markdown(f"""
-                        <h3 style="margin: 0 !important; padding: 0 !important; font-size: 26px; font-weight: bold; color: var(--text-color); line-height: 1;">📋 {selected_class} Clinical Guidelines</h3>
-                        <hr style="margin: -5px 0px 8px 0px !important; border: 0; border-top: 2px solid #eee;" />
-                        """, unsafe_allow_html=True)
-                        
-                        r_col1, r_col2 = st.columns([1.5, 2.5])
-                        
-                        r_col1.markdown("**Recommended Intensity:**")
-                        r_col2.markdown(rec['intensity'])
-                        
-                        r_col1.markdown("**Safe exercise zone:**")
-                        r_col2.markdown(rec['hrr'])
-                        
-                        r_col1.markdown("**RPE during Exercise:**")
-                        r_col2.markdown(rec['rpe'])
-                        
-                        r_col1.markdown("**Medical clearance:**")
-                        r_col2.markdown(rec['medical'])
-                        
-                        r_col1.markdown("**Supervision:**")
-                        r_col2.markdown(rec['supervision'], unsafe_allow_html=True) 
-                        
-                        r_col1.markdown("**Monitoring:**")
-                        r_col2.markdown(rec['monitor'])
-                        
-                        st.markdown("<hr style='margin: 15px 0px;'/>", unsafe_allow_html=True) # Line above Remarks
-                        # Ultra small Remarks (10px)
-                        st.markdown("<p style='font-size: 10px; font-style: italic; color: #6c757d; margin: 0;'>#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)</p>", unsafe_allow_html=True)
-            else:
-                result_container.error(err)
-        else:
-            result_container.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
-    else:
-        result_container.info("💡 Please input the patient's **Age** and **Standing Resting HR** above, then click 'Calculate Guidelines' to generate the report.")
-
-
-def main():
-    inject_custom_css()
-    
-    current_class = calculate_current_class()
-    b_class_only = evaluate_b_only()
-    
-    class_colors = {
-        "Pending": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
-        "Pending Form A": {"bg": "#f8f9fa", "border": "#6c757d", "text": "#495057"},
-        "Class I": {"bg": "#e8f5e9", "border": "#2e7d32", "text": "#1b5e20"},
-        "Class II": {"bg": "#fff3e0", "border": "#ef6c00", "text": "#e65100"},
-        "Class III": {"bg": "#ffebee", "border": "#c62828", "text": "#b71c1c"}
-    }
-    
-    theme = class_colors[current_class] if current_class in class_colors else class_colors["Pending"]
-    display_text = "Incomplete" if "Pending" in current_class else current_class
-    
-    st.title("🏃‍♂️ Risk Stratification of Cardiopulmonary Fitness Training")
-    
-    st.markdown(f"""
-    <div class="risk-strat-box" style="background-color: {theme['bg']}; border: 2px solid {theme['border']}; margin-bottom: 20px;">
-        <span class="risk-strat-text" style="color: {theme['text']};">Risk Stratification: {display_text}</span>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    show_all_tabs = st.session_state.get("force_show_all", False)
-    should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
-    
-    if should_hide_a:
-        available_tabs = ["1. 運動風險評估\n(表格 B)", "3. Target HR &\nClinical Guidelines"]
-    else:
-        available_tabs = ["1. 運動風險評估\n(表格 B)", "2. 體能活動適應能力問卷\n(表格 A)", "3. Target HR &\nClinical Guidelines"]
-        
-    if st.session_state["current_tab"] not in available_tabs:
-        st.session_state["current_tab"] = available_tabs[0]
-        
-    # --- Navigation Sidebar ---
-    with st.sidebar:
-        st.header("表單選擇")
-        st.markdown("請選擇下方表單：")
-        for i, tab_name in enumerate(available_tabs):
-            btn_type = "primary" if st.session_state["current_tab"] == tab_name else "secondary"
-            if st.button(tab_name, type=btn_type, key=f"nav_{i}", use_container_width=True):
-                go_to_tab(tab_name)
-                st.rerun()
-
-    if st.session_state["current_tab"] == "1. 運動風險評估\n(表格 B)":
-        tab_b_acsm(b_class_only, show_all_tabs)
-    elif st.session_state["current_tab"] == "2. 體能活動適應能力問卷\n(表格 A)":
-        tab_a_parq()
-    elif st.session_state["current_tab"] == "3. Target HR &\nClinical Guidelines":
-        tab_d_thr(current_class)
-        
-    st.markdown("---")
-    st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
-
-if __name__ == "__main__":
-    main()
+            thr_main, thr_details, err
