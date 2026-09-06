@@ -138,7 +138,7 @@ def inject_custom_css():
         /* Forces Training HR text to be massive and bold */
         .thr-calc-banner h2 {
             color: #333333 !important;
-            font-size: 60px !important; 
+            font-size: 42px !important;  /* Reduced from 60px */
             font-weight: 900 !important;
             line-height: 1.1 !important;
             margin: 0 !important;
@@ -196,7 +196,7 @@ def inject_custom_css():
             .risk-strat-text { font-size: 20px !important; }
             
             /* Responsive shrink for Training HR */
-            .thr-calc-banner h2 { font-size: 40px !important; }
+            .thr-calc-banner h2 { font-size: 32px !important; }
             .thr-calc-banner p { font-size: 12px !important; }
         }
         </style>
@@ -460,13 +460,12 @@ def tab_a_parq():
 def tab_d_thr(current_class):
     st.header("Target Heart Rate Calculator")
     
-    st.subheader("⚙️ Select Risk Class")
+    # Custom HTML for smaller, normal-weight label
+    st.markdown("<div style='font-size: 20px; font-weight: normal; margin-bottom: 8px;'>1. Select Risk Class</div>", unsafe_allow_html=True)
     
     if current_class == "Pending":
         st.markdown("💡 The system evaluation is currently **Incomplete**. Please manually select the Risk Class below:")
     else:
-        st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
-        
         if current_class in ["Class I", "Class II", "Class III"]:
             reasons = []
             symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
@@ -505,13 +504,20 @@ def tab_d_thr(current_class):
     default_idx = options.index(current_class) if current_class in options else None
     selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
     
-    result_container = st.container()
-    
     st.markdown("---")
 
     c1, c2 = st.columns(2)
-    age = c1.number_input("2. Patient Age", min_value=10, max_value=120, value=None, step=1, key="thr_age")
-    rhr = c2.number_input("3. Standing Resting Heart Rate (bpm)", min_value=30, max_value=220, value=None, step=1, key="thr_rhr")
+    with c1:
+        # Custom HTML label for Patient Age
+        st.markdown("<div style='font-size: 20px; font-weight: normal; margin-bottom: 5px;'>2. Patient Age</div>", unsafe_allow_html=True)
+        age = st.number_input("Age", min_value=10, max_value=120, value=None, step=1, key="thr_age", label_visibility="collapsed")
+    
+    with c2:
+        # Custom HTML label for Standing Resting Heart Rate
+        st.markdown("<div style='font-size: 20px; font-weight: normal; margin-bottom: 5px;'>3. Standing Resting Heart Rate (bpm)</div>", unsafe_allow_html=True)
+        rhr = st.number_input("Standing Resting HR", min_value=30, max_value=220, value=None, step=1, key="thr_rhr", label_visibility="collapsed")
+
+    result_container = st.container()
 
     if st.button("Calculate Guidelines", type="primary", use_container_width=True):
         if selected_class is None:
