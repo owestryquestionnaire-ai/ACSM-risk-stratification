@@ -519,7 +519,12 @@ def tab_d_thr(current_class):
             reasons.append("No known disease & Form A = 0 & Form B = 0")
             
         if reasons:
-            reason_str = " AND/OR ".join(reasons) if current_class != "Class I" else reasons[0]
+            if current_class == "Class III":
+                reason_str = " AND ".join(reasons)
+            elif current_class == "Class II":
+                reason_str = " AND/OR ".join(reasons)
+            else:
+                reason_str = reasons[0]
             st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
             if current_class == "Class I":
                 st.success(f"✅ **Reason for {current_class}:** {reason_str}")
