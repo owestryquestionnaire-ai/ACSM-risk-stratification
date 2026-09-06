@@ -12,13 +12,8 @@ def inject_custom_css():
            🖥️ REDUCE TOP MARGIN
            ========================================================= */
         .block-container {
-            padding-top: 1.5rem !important;
+            padding-top: 2.5rem !important; /* Preserves the header button but shrinks empty space */
             padding-bottom: 1.5rem !important;
-        }
-        
-        /* 隱藏頂部預設的裝飾性 header 空間 */
-        header[data-testid="stHeader"] {
-            height: 0px !important;
         }
 
         /* =========================================================
@@ -521,18 +516,21 @@ def tab_d_thr(current_class):
                 rec = recs[selected_class]
                 
                 with result_container:
-                    # Tighter Banner Box, Larger White Font, Line separator
+                    # Tighter Banner Box, Larger White Font (54px), Smaller Detail Font (14px)
                     st.markdown(f"""
-                    <div style="background-color: #2c3e50; padding: 15px 20px; border-radius: 8px 8px 0 0; text-align: center;">
-                        <h2 style="color: #ffffff !important; margin: 0; font-size: 42px; font-weight: bold;">{thr_main}</h2>
-                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.4); margin: 12px auto; width: 90%;">
-                        <p style="color: #ffffff !important; margin: 0; opacity: 0.85; font-size: 16px;">{thr_details}</p>
+                    <div style="background-color: #2c3e50; padding: 10px 15px; border-radius: 8px 8px 0 0; text-align: center; margin-bottom: -15px;">
+                        <h2 style="color: #ffffff !important; margin: 0; font-size: 54px; font-weight: bold; line-height: 1.2;">{thr_main}</h2>
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.4); margin: 6px auto; width: 95%;">
+                        <p style="color: #ffffff !important; margin: 0; opacity: 0.85; font-size: 14px; line-height: 1.2; padding-bottom: 5px;">{thr_details}</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     with st.container(border=True):
-                        st.subheader(f"📋 {selected_class} Clinical Guidelines")
-                        st.markdown("<hr style='margin: 0px 0px 15px 0px;'/>", unsafe_allow_html=True) # Line strictly under Title
+                        # Replaced st.subheader with custom HTML for tighter bottom gap
+                        st.markdown(f"""
+                        <h3 style="margin: 0px 0px 4px 0px; font-size: 26px; font-weight: bold; color: var(--text-color);">📋 {selected_class} Clinical Guidelines</h3>
+                        <hr style="margin: 0px 0px 15px 0px; border: 0; border-top: 2px solid #eee;" />
+                        """, unsafe_allow_html=True)
                         
                         r_col1, r_col2 = st.columns([1.5, 2.5])
                         
@@ -555,7 +553,7 @@ def tab_d_thr(current_class):
                         r_col2.markdown(rec['monitor'])
                         
                         st.markdown("<hr style='margin: 15px 0px;'/>", unsafe_allow_html=True) # Line above Remarks
-                        # Smaller Remarks
+                        # Smaller Remarks (14px)
                         st.markdown("<p style='font-size: 14px; font-style: italic; color: #6c757d; margin: 0;'>#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)</p>", unsafe_allow_html=True)
             else:
                 result_container.error(err)
