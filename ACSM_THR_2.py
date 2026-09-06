@@ -146,7 +146,7 @@ def inject_custom_css():
         }
 
         /* =========================================================
-           🎯 TARGET HR RESULT BOX (Dedicated overrides to fix bugs)
+           🎯 TARGET HR RESULT BOX & GUIDELINES TABLE
            ========================================================= */
         .thr-calc-banner {
             background-color: #f0f2f6 !important;
@@ -179,6 +179,26 @@ def inject_custom_css():
             border-top: 1px solid rgba(0,0,0,0.1) !important;
             margin: 10px auto !important;
             width: 95% !important;
+        }
+
+        /* Invisible Table to prevent Streamlit columns from breaking on mobile */
+        .guidelines-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            border: none !important;
+        }
+        .guidelines-table tr { border: none !important; }
+        .guidelines-table td {
+            border: none !important;
+            padding: 6px 0px !important;
+            vertical-align: top !important;
+            font-size: 24px !important;
+            line-height: 1.45 !important;
+            color: var(--text-color) !important;
+        }
+        .guidelines-label {
+            width: 42% !important;
+            font-weight: bold !important;
         }
 
         /* =========================================================
@@ -217,6 +237,10 @@ def inject_custom_css():
             
             .thr-calc-banner h2 { font-size: 32px !important; }
             .thr-calc-banner p { font-size: 12px !important; }
+
+            /* Ensure the table fits properly on mobile */
+            .guidelines-table td { font-size: 18px !important; }
+            .guidelines-label { width: 50% !important; }
         }
         </style>
         """,
@@ -480,7 +504,6 @@ def tab_d_thr(current_class):
     st.header("Target Heart Rate Calculator")
     
     # 1. Radio Button Title
-    # Re-sized slightly to 22px
     st.markdown("<div style='font-size: 22px; font-weight: normal; margin-bottom: 8px;'>1. Select Risk Class</div>", unsafe_allow_html=True)
     
     if current_class == "Pending":
@@ -493,7 +516,7 @@ def tab_d_thr(current_class):
     default_idx = options.index(current_class) if current_class in options else None
     selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
     
-    # MOVED: The "Reason" box now appears below the radio buttons!
+    # Reason Box
     if current_class in ["Class I", "Class II", "Class III"]:
         reasons = []
         symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
@@ -520,8 +543,6 @@ def tab_d_thr(current_class):
             
         if reasons:
             reason_str = " AND/OR ".join(reasons) if current_class != "Class I" else reasons[0]
-            
-            # Spacer
             st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
             if current_class == "Class I":
                 st.success(f"✅ **Reason for {current_class}:** {reason_str}")
@@ -534,12 +555,10 @@ def tab_d_thr(current_class):
 
     c1, c2 = st.columns(2)
     with c1:
-        # Re-sized slightly to 22px
         st.markdown("<div style='font-size: 22px; font-weight: normal; margin-bottom: 5px;'>2. Patient Age</div>", unsafe_allow_html=True)
         age = st.number_input("Age", min_value=10, max_value=120, value=None, step=1, key="thr_age", label_visibility="collapsed")
     
     with c2:
-        # Re-sized slightly to 22px
         st.markdown("<div style='font-size: 22px; font-weight: normal; margin-bottom: 5px;'>3. Standing Resting Heart Rate (bpm)</div>", unsafe_allow_html=True)
         rhr = st.number_input("Standing Resting HR", min_value=30, max_value=220, value=None, step=1, key="thr_rhr", label_visibility="collapsed")
 
@@ -556,23 +575,23 @@ def tab_d_thr(current_class):
                     "Class I": {
                         "intensity": "Moderate: ✔️ Vigorous: ✔️",
                         "hrr": "≤ 84% HRR",
-                        "rpe": "< 17",
+                        "rpe": "&lt; 17",
                         "medical": "Not necessary",
                         "supervision": "Not required",
                         "monitor": "Monitor HR in First session (optional)"
                     },
                     "Class II": {
                         "intensity": "Moderate: ✔️ Vigorous: ❌",
-                        "hrr": "< 60% HRR",
-                        "rpe": "< 14",
+                        "hrr": "&lt; 60% HRR",
+                        "rpe": "&lt; 14",
                         "medical": "Recommended for vigorous intensity exercise",
                         "supervision": "Not required: light to moderate intensity<br>Required: vigorous intensity",
                         "monitor": "Continuous HR or RPE monitoring"
                     },
                     "Class III": {
                         "intensity": "Moderate: ❌ Vigorous: ❌",
-                        "hrr": "< 40% HRR",
-                        "rpe": "< 12",
+                        "hrr": "&lt; 40% HRR",
+                        "rpe": "&lt; 12",
                         "medical": "Recommended",
                         "supervision": "Required",
                         "monitor": "Continuous HR and RPE monitoring together with close supervision"
@@ -581,7 +600,6 @@ def tab_d_thr(current_class):
                 rec = recs[selected_class]
                 
                 with result_container:
-                    # Target HR UI output based on CSS overrides
                     st.markdown(f"""
                     <div class="thr-calc-banner">
                         <h2>{thr_main}</h2>
@@ -596,25 +614,36 @@ def tab_d_thr(current_class):
                         <hr style="margin: 0px 0px 15px 0px !important; border: 0; border-top: 2px solid #eee;" />
                         """, unsafe_allow_html=True)
                         
-                        r_col1, r_col2 = st.columns([1.5, 2.5])
-                        
-                        r_col1.markdown("**Recommended Intensity:**")
-                        r_col2.markdown(rec['intensity'])
-                        
-                        r_col1.markdown("**Safe exercise zone:**")
-                        r_col2.markdown(rec['hrr'])
-                        
-                        r_col1.markdown("**RPE during Exercise:**")
-                        r_col2.markdown(rec['rpe'])
-                        
-                        r_col1.markdown("**Medical clearance:**")
-                        r_col2.markdown(rec['medical'])
-                        
-                        r_col1.markdown("**Supervision:**")
-                        r_col2.markdown(rec['supervision'], unsafe_allow_html=True) 
-                        
-                        r_col1.markdown("**Monitoring:**")
-                        r_col2.markdown(rec['monitor'])
+                        # INVISIBLE TABLE TO FIX MOBILE STACKING
+                        guidelines_table = f"""
+                        <table class="guidelines-table">
+                            <tr>
+                                <td class="guidelines-label">Recommended Intensity:</td>
+                                <td>{rec['intensity']}</td>
+                            </tr>
+                            <tr>
+                                <td class="guidelines-label">Safe exercise zone:</td>
+                                <td>{rec['hrr']}</td>
+                            </tr>
+                            <tr>
+                                <td class="guidelines-label">RPE during Exercise:</td>
+                                <td>{rec['rpe']}</td>
+                            </tr>
+                            <tr>
+                                <td class="guidelines-label">Medical clearance:</td>
+                                <td>{rec['medical']}</td>
+                            </tr>
+                            <tr>
+                                <td class="guidelines-label">Supervision:</td>
+                                <td>{rec['supervision']}</td>
+                            </tr>
+                            <tr>
+                                <td class="guidelines-label">Monitoring:</td>
+                                <td>{rec['monitor']}</td>
+                            </tr>
+                        </table>
+                        """
+                        st.markdown(guidelines_table, unsafe_allow_html=True)
                         
             else:
                 result_container.error(err)
