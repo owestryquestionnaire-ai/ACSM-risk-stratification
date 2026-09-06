@@ -47,7 +47,13 @@ def inject_custom_css():
             font-weight: 400 !important; 
             line-height: 1.45 !important; 
         }
-        .stRadio > div { gap: 0rem !important; } 
+        
+        /* 確保選項絕對不會換行 (Force single line for radio buttons) */
+        .stRadio > div { 
+            gap: 0rem !important; 
+            flex-wrap: nowrap !important;
+        } 
+        
         .stCheckbox > div { margin-bottom: 0rem !important; }
 
         /* Standard Text */
@@ -322,8 +328,8 @@ def try_complete_a(target_tab):
 def render_inline_question(label, key, options=("否", "有"), check_error=False):
     is_missing = check_error and st.session_state.data.get(key) is None
     
-    # Widened text column to push radio buttons further right
-    col1, col2 = st.columns([8.8, 1.2]) 
+    # Reverted to the 8.2 / 1.8 layout
+    col1, col2 = st.columns([8.2, 1.8]) 
     with col1:
         if is_missing:
             st.markdown(f'<div class="question-text" style="color: #c62828 !important; font-weight: bold; background-color: #ffebee !important; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
@@ -355,6 +361,9 @@ def tab_b_acsm(b_class, show_all_tabs):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}", check_error=check_err)
+        # Reverted: Targeted spacer ONLY after Question 1 for wrapped text spacing
+        if i == 1:
+            st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
     
