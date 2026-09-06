@@ -442,10 +442,17 @@ def tab_b_acsm(b_class):
         if missing:
             st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
 
-    if b_class in ["Class II", "Class III"]:
-        st.warning(f"🚨 根據表格 B，初步運動風險類別為 **{b_class}**。")
-        
-    st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
+    if b_class == "Pending":
+        st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
+    elif b_class in ["Class II", "Class III"]:
+        st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。系統已自動跳過表格 A。")
+        c1, c2 = st.columns(2)
+        with c1:
+            st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR &\nClinical Guidelines",))
+        with c2:
+            st.button("📝 顯示跳過的表單 (前往表格 A)", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
+    else:
+        st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
 
 
 def tab_a_parq():
@@ -651,7 +658,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    # ALL TABS ALWAYS SHOWN
+    # Form A is ALWAYS available in the navigation
     available_tabs = ["1. 運動風險評估\n(表格 B)", "2. 體能活動適應能力問卷\n(表格 A)", "3. Target HR &\nClinical Guidelines"]
         
     if st.session_state["current_tab"] not in available_tabs:
