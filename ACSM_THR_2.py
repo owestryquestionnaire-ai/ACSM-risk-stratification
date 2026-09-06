@@ -8,30 +8,10 @@ def inject_custom_css():
         """
         <style>
         /* =========================================================
-           🖥️ HEADER FIX: Creates a distinct Top Nav Bar for iPad
+           🖥️ SAFE TOP MARGIN (Leaves native Streamlit header alone!)
            ========================================================= */
-        /* Turn the transparent Streamlit header into a solid dark blue navigation bar */
-        header[data-testid="stHeader"] {
-            background-color: #2c3e50 !important;
-            height: 65px !important;
-            border-bottom: 4px solid #ef5350 !important; /* Red accent line */
-            z-index: 999999 !important;
-        }
-        
-        /* Force the menu icon inside it to be massive and bright white */
-        header[data-testid="stHeader"] button {
-            background-color: transparent !important;
-        }
-        header[data-testid="stHeader"] svg {
-            fill: #ffffff !important;
-            color: #ffffff !important;
-            width: 35px !important;
-            height: 35px !important;
-            margin-top: 5px !important;
-        }
-
         .block-container {
-            padding-top: 6rem !important; /* Push content down safely below the new blue navbar */
+            padding-top: 3rem !important; 
             padding-bottom: 1.5rem !important;
         }
 
@@ -231,7 +211,7 @@ def inject_custom_css():
             .risk-strat-text { font-size: 20px !important; }
             
             .thr-calc-banner h2 { 
-                font-size: 26px !important; /* Smaller size explicitly for mobile phones to prevent wrapping */
+                font-size: 26px !important; 
                 white-space: nowrap !important;
             }
             .thr-calc-banner p { font-size: 10px !important; }
