@@ -447,8 +447,8 @@ def tab_d_thr(current_class):
     else:
         st.markdown(f"💡 The system evaluates the patient as **{current_class}**. You can manually override this below:")
         
-        # --- NEW FEATURE: Class III Justification Summary moved here ---
-        if current_class == "Class III":
+        # --- NEW FEATURE: Dynamic Justification Summary for ALL Classes ---
+        if current_class in ["Class I", "Class II", "Class III"]:
             reasons = []
             symptoms = sum(1 for i in range(1, 10) if st.session_state.data.get(f"s_{i}") == "有")
             has_disease = any([
@@ -457,15 +457,31 @@ def tab_d_thr(current_class):
                 st.session_state.data.get("d_renal") == "有"
             ])
             is_active = st.session_state.data.get("is_active") == "是"
+            parq_score = sum(1 for i in range(1, 8) if st.session_state.data.get(f"parq_{i}") == "有")
 
-            if symptoms >= 1:
-                reasons.append("Form B ≥ 1")
-            if has_disease and not is_active:
-                reasons.append("Known disease without regular exercise")
+            if current_class == "Class III":
+                if symptoms >= 1:
+                    reasons.append("Form B ≥ 1")
+                if has_disease and not is_active:
+                    reasons.append("Known disease without regular exercise")
+            elif current_class == "Class II":
+                if has_disease and is_active and symptoms == 0:
+                    reasons.append("Known disease with regular exercise & Form B = 0")
+                if parq_score > 0:
+                    reasons.append("Form A (PAR-Q) ≥ 1")
+            elif current_class == "Class I":
+                reasons.append("No known disease & Form A = 0 & Form B = 0")
                 
             if reasons:
-                reason_str = " & ".join(reasons)
-                st.error(f"**Reason for Class III:** {reason_str}")
+                reason_str = " AND/OR ".join(reasons) if current_class != "Class I" else reasons[0]
+                
+                # Visual distinction based on class severity
+                if current_class == "Class I":
+                    st.success(f"✅ **Reason for {current_class}:** {reason_str}")
+                elif current_class == "Class II":
+                    st.warning(f"⚠️ **Reason for {current_class}:** {reason_str}")
+                elif current_class == "Class III":
+                    st.error(f"🚨 **Reason for {current_class}:** {reason_str}")
     
     options = ["Class I", "Class II", "Class III"]
     default_idx = options.index(current_class) if current_class in options else None
