@@ -328,7 +328,6 @@ def try_complete_a(target_tab):
 def render_inline_question(label, key, options=("否", "有"), check_error=False):
     is_missing = check_error and st.session_state.data.get(key) is None
     
-    # Reverted to the 8.2 / 1.8 layout
     col1, col2 = st.columns([8.2, 1.8]) 
     with col1:
         if is_missing:
@@ -361,7 +360,7 @@ def tab_b_acsm(b_class, show_all_tabs):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}", check_error=check_err)
-        # Reverted: Targeted spacer ONLY after Question 1 for wrapped text spacing
+        # Targeted spacer ONLY after Question 1 for wrapped text spacing
         if i == 1:
             st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
@@ -370,6 +369,10 @@ def tab_b_acsm(b_class, show_all_tabs):
     st.markdown("---")
     st.subheader("已知醫療狀況 (Known Diseases)")
     render_inline_question("已知心血管疾病 (例如：冠心病、心臟病、中風、心臟衰竭、心律不正)", "d_cardio", check_error=check_err)
+    
+    # NEW: Targeted spacer after the first known disease question for wrapped text spacing
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    
     render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic", check_error=check_err)
     render_inline_question("已知腎臟疾病", "d_renal", check_error=check_err)
 
