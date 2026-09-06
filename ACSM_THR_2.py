@@ -83,7 +83,7 @@ def inject_custom_css():
         button[kind="primary"]:hover, [data-testid="baseButton-primary"]:hover { background-color: #e53935 !important; border-color: #e53935 !important; color: white !important;}
 
         /* =========================================================
-           🖥️ SIDEBAR NAVIGATION PANEL (Smaller Font)
+           🖥️ SIDEBAR NAVIGATION PANEL (Smaller Font, Left Aligned, Multiline)
            ========================================================= */
         [data-testid="stSidebar"] p, [data-testid="stSidebar"] div, [data-testid="stSidebar"] span {
             font-size: 18px !important; 
@@ -97,8 +97,23 @@ def inject_custom_css():
         [data-testid="stSidebar"] button[kind="secondary"], 
         [data-testid="stSidebar"] [data-testid="baseButton-secondary"] {
             font-size: 18px !important; 
-            padding: 8px 12px !important; 
+            padding: 12px 12px !important; 
             font-weight: bold !important; 
+            height: auto !important; /* Allow height to expand for multiline */
+            text-align: left !important;
+        }
+        
+        /* 讓按鈕內的內容靠左對齊 */
+        [data-testid="stSidebar"] button div {
+            justify-content: flex-start !important; 
+            width: 100%;
+        }
+        
+        /* 確保可以換行並靠左 */
+        [data-testid="stSidebar"] button p {
+            white-space: pre-wrap !important; 
+            text-align: left !important;
+            line-height: 1.3 !important;
         }
 
         /* --- 頂部狀態提示框 (Desktop/iPad 預設大小) --- */
@@ -172,7 +187,7 @@ def init_session_states():
     if "force_show_all" not in st.session_state:
         st.session_state["force_show_all"] = False
     if "current_tab" not in st.session_state:
-        st.session_state["current_tab"] = "1. 運動風險評估 (表格 B)"
+        st.session_state["current_tab"] = "1. 運動風險評估\n(表格 B)"
     if "show_b_errors" not in st.session_state:
         st.session_state["show_b_errors"] = False
     if "show_a_errors" not in st.session_state:
@@ -286,7 +301,7 @@ def go_to_tab(tab_name):
 
 def enable_all_tabs_and_go():
     st.session_state["force_show_all"] = True
-    go_to_tab("2. 體能活動準備問卷 (表格 A)")
+    go_to_tab("2. 體能活動適應能力問卷\n(表格 A)")
 
 def try_complete_b(target_tab):
     missing = get_missing_b()
@@ -362,20 +377,20 @@ def tab_b_acsm(b_class, show_all_tabs):
             st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
 
     if b_class == "Pending":
-        st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR & Clinical Guidelines",))
+        st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR &\nClinical Guidelines",))
     elif b_class in ["Class II", "Class III"]:
         if not show_all_tabs:
             st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。系統已自動隱藏表格 A。")
             c1, c2 = st.columns(2)
             with c1:
-                st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR & Clinical Guidelines",))
+                st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR &\nClinical Guidelines",))
             with c2:
                 st.button("📝 顯示隱藏的表單 (前往表格 A)", use_container_width=True, on_click=enable_all_tabs_and_go)
         else:
             st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。您選擇繼續填寫表格 A。")
-            st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動準備問卷 (表格 A)",))
+            st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
     else:
-        st.button("➡️ 儲存並前往「2. 體能活動準備問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動準備問卷 (表格 A)",))
+        st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
 
 
 def tab_a_parq():
@@ -406,7 +421,7 @@ def tab_a_parq():
         if missing:
             st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
 
-    st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_a, args=("3. Target HR & Clinical Guidelines",))
+    st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_a, args=("3. Target HR &\nClinical Guidelines",))
 
 
 def tab_d_thr(current_class):
@@ -520,9 +535,9 @@ def main():
     should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
     
     if should_hide_a:
-        available_tabs = ["1. 運動風險評估 (表格 B)", "3. Target HR & Clinical Guidelines"]
+        available_tabs = ["1. 運動風險評估\n(表格 B)", "3. Target HR &\nClinical Guidelines"]
     else:
-        available_tabs = ["1. 運動風險評估 (表格 B)", "2. 體能活動準備問卷 (表格 A)", "3. Target HR & Clinical Guidelines"]
+        available_tabs = ["1. 運動風險評估\n(表格 B)", "2. 體能活動適應能力問卷\n(表格 A)", "3. Target HR &\nClinical Guidelines"]
         
     if st.session_state["current_tab"] not in available_tabs:
         st.session_state["current_tab"] = available_tabs[0]
@@ -537,11 +552,11 @@ def main():
                 go_to_tab(tab_name)
                 st.rerun()
 
-    if st.session_state["current_tab"] == "1. 運動風險評估 (表格 B)":
+    if st.session_state["current_tab"] == "1. 運動風險評估\n(表格 B)":
         tab_b_acsm(b_class_only, show_all_tabs)
-    elif st.session_state["current_tab"] == "2. 體能活動準備問卷 (表格 A)":
+    elif st.session_state["current_tab"] == "2. 體能活動適應能力問卷\n(表格 A)":
         tab_a_parq()
-    elif st.session_state["current_tab"] == "3. Target HR & Clinical Guidelines":
+    elif st.session_state["current_tab"] == "3. Target HR &\nClinical Guidelines":
         tab_d_thr(current_class)
         
     st.markdown("---")
