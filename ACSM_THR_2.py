@@ -8,10 +8,30 @@ def inject_custom_css():
         """
         <style>
         /* =========================================================
-           🖥️ SAFE TOP MARGIN (Leaves native Streamlit header alone!)
+           🖥️ HEADER FIX: Creates a distinct Top Nav Bar for iPad
            ========================================================= */
+        /* Turn the transparent Streamlit header into a solid dark blue navigation bar */
+        header[data-testid="stHeader"] {
+            background-color: #2c3e50 !important;
+            height: 65px !important;
+            border-bottom: 4px solid #ef5350 !important; /* Red accent line */
+            z-index: 999999 !important;
+        }
+        
+        /* Force the menu icon inside it to be massive and bright white */
+        header[data-testid="stHeader"] button {
+            background-color: transparent !important;
+        }
+        header[data-testid="stHeader"] svg {
+            fill: #ffffff !important;
+            color: #ffffff !important;
+            width: 35px !important;
+            height: 35px !important;
+            margin-top: 5px !important;
+        }
+
         .block-container {
-            padding-top: 3rem !important; 
+            padding-top: 6rem !important; /* Push content down safely below the new blue navbar */
             padding-bottom: 1.5rem !important;
         }
 
@@ -233,8 +253,6 @@ def init_session_states():
         st.session_state.data["parq_4_text"] = ""
         st.session_state.data["parq_5_text"] = ""
 
-    if "force_show_all" not in st.session_state:
-        st.session_state["force_show_all"] = False
     if "current_tab" not in st.session_state:
         st.session_state["current_tab"] = "1. 運動風險評估\n(表格 B)"
     if "show_b_errors" not in st.session_state:
@@ -348,10 +366,6 @@ def go_to_tab(tab_name):
     st.session_state["show_b_errors"] = False
     st.session_state["show_a_errors"] = False
 
-def enable_all_tabs_and_go():
-    st.session_state["force_show_all"] = True
-    go_to_tab("2. 體能活動適應能力問卷\n(表格 A)")
-
 def try_complete_b(target_tab):
     missing = get_missing_b()
     if missing:
@@ -384,7 +398,7 @@ def render_inline_question(label, key, options=("否", "有"), check_error=False
 
 
 # ---------- 4. Tab Functions ----------
-def tab_b_acsm(b_class, show_all_tabs):
+def tab_b_acsm(b_class):
     check_err = st.session_state.get("show_b_errors", False)
     
     st.header("表格 B：心血管、呼吸系統及代謝性疾病之主要徵狀")
@@ -428,21 +442,10 @@ def tab_b_acsm(b_class, show_all_tabs):
         if missing:
             st.error(f"⚠️ 還有 **{len(missing)}** 個問題尚未填寫，請檢查上方標示為紅色的項目。")
 
-    if b_class == "Pending":
-        st.button("➡️ 儲存並前往下一步", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR &\nClinical Guidelines",))
-    elif b_class in ["Class II", "Class III"]:
-        if not show_all_tabs:
-            st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。系統已自動隱藏表格 A。")
-            c1, c2 = st.columns(2)
-            with c1:
-                st.button("✅ 完成運動風險判別（請交給職員）", type="primary", use_container_width=True, on_click=try_complete_b, args=("3. Target HR &\nClinical Guidelines",))
-            with c2:
-                st.button("📝 顯示隱藏的表單 (前往表格 A)", use_container_width=True, on_click=enable_all_tabs_and_go)
-        else:
-            st.warning(f"🚨 根據表格 B，運動風險類別為 **{b_class}**。您選擇繼續填寫表格 A。")
-            st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
-    else:
-        st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
+    if b_class in ["Class II", "Class III"]:
+        st.warning(f"🚨 根據表格 B，初步運動風險類別為 **{b_class}**。")
+        
+    st.button("➡️ 儲存並前往「2. 體能活動適應能力問卷」", type="primary", use_container_width=True, on_click=try_complete_b, args=("2. 體能活動適應能力問卷\n(表格 A)",))
 
 
 def tab_a_parq():
@@ -587,7 +590,6 @@ def tab_d_thr(current_class):
                         <hr style="margin: 0px 0px 15px 0px !important; border: 0; border-top: 2px solid #eee;" />
                         """, unsafe_allow_html=True)
                         
-                        # INVISIBLE TABLE TO FIX MOBILE STACKING
                         guidelines_table = f"""
                         <table class="guidelines-table">
                             <tr>
@@ -649,13 +651,8 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    show_all_tabs = st.session_state.get("force_show_all", False)
-    should_hide_a = (b_class_only in ["Class II", "Class III"]) and not show_all_tabs
-    
-    if should_hide_a:
-        available_tabs = ["1. 運動風險評估\n(表格 B)", "3. Target HR &\nClinical Guidelines"]
-    else:
-        available_tabs = ["1. 運動風險評估\n(表格 B)", "2. 體能活動適應能力問卷\n(表格 A)", "3. Target HR &\nClinical Guidelines"]
+    # ALL TABS ALWAYS SHOWN
+    available_tabs = ["1. 運動風險評估\n(表格 B)", "2. 體能活動適應能力問卷\n(表格 A)", "3. Target HR &\nClinical Guidelines"]
         
     if st.session_state["current_tab"] not in available_tabs:
         st.session_state["current_tab"] = available_tabs[0]
@@ -671,7 +668,7 @@ def main():
                 st.rerun()
 
     if st.session_state["current_tab"] == "1. 運動風險評估\n(表格 B)":
-        tab_b_acsm(b_class_only, show_all_tabs)
+        tab_b_acsm(b_class_only)
     elif st.session_state["current_tab"] == "2. 體能活動適應能力問卷\n(表格 A)":
         tab_a_parq()
     elif st.session_state["current_tab"] == "3. Target HR &\nClinical Guidelines":
