@@ -322,7 +322,8 @@ def try_complete_a(target_tab):
 def render_inline_question(label, key, options=("否", "有"), check_error=False):
     is_missing = check_error and st.session_state.data.get(key) is None
     
-    col1, col2 = st.columns([7, 3]) 
+    # Adjusted column ratio to widen text column and push radio buttons tighter to the right
+    col1, col2 = st.columns([8.2, 1.8]) 
     with col1:
         if is_missing:
             st.markdown(f'<div class="question-text" style="color: #c62828 !important; font-weight: bold; background-color: #ffebee !important; border-left: 5px solid #c62828; padding-left: 10px;">{label}</div>', unsafe_allow_html=True)
@@ -332,9 +333,6 @@ def render_inline_question(label, key, options=("否", "有"), check_error=False
         saved_val = st.session_state.data.get(key)
         idx = options.index(saved_val) if saved_val in options else None
         st.radio("", options, key=key, index=idx, horizontal=True, label_visibility="collapsed", on_change=update_val, args=(key,))
-        
-    # --- FIX FOR iPAD WRAPPING Overlap: Add explicit spacer after every question row ---
-    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
 
 # ---------- 4. Tab Functions ----------
@@ -357,6 +355,9 @@ def tab_b_acsm(b_class, show_all_tabs):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}", check_error=check_err)
+        # Targeted spacer ONLY after Question 1 for wrapped text spacing
+        if i == 1:
+            st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
     
