@@ -9,33 +9,29 @@ def inject_custom_css():
         """
         <style>
         /* =========================================================
-           🖥️ HEADER FIX: Explicit iPad navigation button on Right Upper Corner
+           🖥️ HEADER FIX: Explicit iPad navigation button
            ========================================================= */
         .block-container {
-            padding-top: 2.5rem !important; 
+            padding-top: 3.5rem !important; /* Extra padding so the menu button doesn't block text */
             padding-bottom: 1.5rem !important;
         }
         
-        /* Force the hamburger menu button to the top right corner and make it very obvious */
+        /* Style the native Streamlit sidebar toggle (Hamburger Menu) so it's impossible to miss */
         [data-testid="collapsedControl"] {
-            position: fixed !important;
-            left: auto !important;
-            right: 15px !important;
-            top: 15px !important;
-            z-index: 999999 !important;
             background-color: #2c3e50 !important; /* Dark blue background */
             border-radius: 8px !important;
-            padding: 8px !important;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.3) !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            padding: 5px !important;
+            margin-top: 10px !important;
+            margin-left: 15px !important;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2) !important;
+            z-index: 999999 !important;
+            transition: all 0.2s ease-in-out;
         }
         
         [data-testid="collapsedControl"] svg {
             fill: #ffffff !important; /* White icon */
-            width: 32px !important;
-            height: 32px !important;
+            width: 35px !important;
+            height: 35px !important;
         }
 
         /* =========================================================
@@ -235,7 +231,11 @@ def inject_custom_css():
             .risk-strat-box { padding: 8px !important; }
             .risk-strat-text { font-size: 20px !important; }
             
-            .thr-calc-banner h2 { font-size: 32px !important; }
+            /* Responsive shrink for Training HR - FIXED TO NOT WRAP! */
+            .thr-calc-banner h2 { 
+                font-size: 24px !important; 
+                white-space: nowrap !important; /* Forces it to stay on one line */
+            }
             .thr-calc-banner p { font-size: 12px !important; }
 
             /* Ensure the table fits properly on mobile */
