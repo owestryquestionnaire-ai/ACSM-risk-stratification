@@ -8,31 +8,25 @@ def inject_custom_css():
         """
         <style>
         /* =========================================================
-           🖥️ HEADER FIX: Creates a distinct Top Nav Bar for iPad
+           🖥️ HEADER & SPACING FIX
            ========================================================= */
-        /* Turn the transparent Streamlit header into a solid dark blue navigation bar */
-        header[data-testid="stHeader"] {
-            background-color: #2c3e50 !important;
-            height: 65px !important;
-            border-bottom: 4px solid #ef5350 !important; /* Red accent line */
-            z-index: 999999 !important;
+        /* Reduce top padding drastically to bring the title up */
+        .block-container {
+            padding-top: 1.5rem !important; 
+            padding-bottom: 1.5rem !important;
         }
         
-        /* Force the menu icon inside it to be massive and bright white */
-        header[data-testid="stHeader"] button {
-            background-color: transparent !important;
+        /* Make the native Streamlit menu button highly visible but let the header auto-hide normally */
+        [data-testid="collapsedControl"] {
+            background-color: #2c3e50 !important;
+            border-radius: 8px !important;
+            padding: 5px !important;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2) !important;
         }
-        header[data-testid="stHeader"] svg {
+        [data-testid="collapsedControl"] svg {
             fill: #ffffff !important;
-            color: #ffffff !important;
-            width: 35px !important;
-            height: 35px !important;
-            margin-top: 5px !important;
-        }
-
-        .block-container {
-            padding-top: 6rem !important; /* Push content down safely below the new blue navbar */
-            padding-bottom: 1.5rem !important;
+            width: 30px !important;
+            height: 30px !important;
         }
 
         /* =========================================================
@@ -49,8 +43,8 @@ def inject_custom_css():
         .element-container { margin-bottom: 0px !important; }
         hr { margin-top: 0.6rem !important; margin-bottom: 0.6rem !important; padding: 0px !important; }
 
-        /* Headers - BOLD */
-        h1 { font-size: 30px !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
+        /* Headers - BOLD (Removed top margin to tighten space) */
+        h1 { font-size: 30px !important; font-weight: bold !important; line-height: 1.45 !important; margin-top: 0px !important; padding-top: 0px !important; margin-bottom: 12px !important;}
         h2 { font-size: 28px !important; font-weight: bold !important; border-bottom: 2px solid var(--text-color); padding-bottom: 8px !important; line-height: 1.45 !important; margin-top: 12px !important; margin-bottom: 15px !important;}
         h3 { font-size: 26px !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important;}
         h4 { font-size: 24px !important; font-weight: bold !important; line-height: 1.45 !important; margin-bottom: 12px !important; opacity: 0.8;}
