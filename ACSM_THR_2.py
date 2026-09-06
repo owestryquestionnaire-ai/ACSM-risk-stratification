@@ -9,10 +9,10 @@ def inject_custom_css():
         """
         <style>
         /* =========================================================
-           🖥️ REDUCE TOP MARGIN
+           🖥️ HEADER FIX: Make sure the iPad navigation button is visible!
            ========================================================= */
         .block-container {
-            padding-top: 2.5rem !important; 
+            padding-top: 2rem !important; 
             padding-bottom: 1.5rem !important;
         }
 
@@ -111,7 +111,7 @@ def inject_custom_css():
             line-height: 1.3 !important;
         }
 
-        /* --- 頂部狀態提示框 (Desktop/iPad 預設大小) --- */
+        /* --- 頂部狀態提示框 --- */
         .risk-strat-box {
             border-radius: 8px; 
             padding: 12px; 
@@ -121,6 +121,44 @@ def inject_custom_css():
         .risk-strat-text {
             font-size: 28px; 
             font-weight: bold;
+        }
+
+        /* =========================================================
+           🎯 TARGET HR RESULT BOX (Dedicated overrides to fix bugs)
+           ========================================================= */
+        .thr-calc-banner {
+            background-color: #f0f2f6 !important;
+            padding: 15px 10px !important;
+            border-radius: 8px 8px 0 0 !important;
+            text-align: center !important;
+            border: 1px solid #ddd !important;
+            border-bottom: none !important;
+            margin-bottom: 0px !important; /* No negative margins to prevent overlap! */
+        }
+        /* Forces Training HR text to be massive and bold */
+        .thr-calc-banner h2 {
+            color: #333333 !important;
+            font-size: 60px !important; 
+            font-weight: 900 !important;
+            line-height: 1.1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-bottom: none !important;
+        }
+        /* Forces Maximum HR details to be tiny */
+        .thr-calc-banner p {
+            color: #555555 !important;
+            font-size: 14px !important; 
+            line-height: 1.2 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            padding-bottom: 5px !important;
+        }
+        .thr-calc-banner hr {
+            border: 0 !important;
+            border-top: 1px solid rgba(0,0,0,0.1) !important;
+            margin: 10px auto !important;
+            width: 95% !important;
         }
 
         /* =========================================================
@@ -154,13 +192,12 @@ def inject_custom_css():
                 height: auto !important;
             }
 
-            /* 手機版專屬：頂部狀態提示框自動縮小 */
-            .risk-strat-box {
-                padding: 8px !important;
-            }
-            .risk-strat-text {
-                font-size: 20px !important;
-            }
+            .risk-strat-box { padding: 8px !important; }
+            .risk-strat-text { font-size: 20px !important; }
+            
+            /* Responsive shrink for Training HR */
+            .thr-calc-banner h2 { font-size: 40px !important; }
+            .thr-calc-banner p { font-size: 12px !important; }
         }
         </style>
         """,
@@ -468,6 +505,8 @@ def tab_d_thr(current_class):
     default_idx = options.index(current_class) if current_class in options else None
     selected_class = st.radio("Manual Override", options, index=default_idx, horizontal=True, label_visibility="collapsed")
     
+    result_container = st.container()
+    
     st.markdown("---")
 
     c1, c2 = st.columns(2)
@@ -476,7 +515,7 @@ def tab_d_thr(current_class):
 
     if st.button("Calculate Guidelines", type="primary", use_container_width=True):
         if selected_class is None:
-            st.warning("⚠️ Please select a Risk Class before calculating.")
+            result_container.warning("⚠️ Please select a Risk Class before calculating.")
         elif age is not None and rhr is not None:
             thr_main, thr_details, err = calculate_thr(int(age), int(rhr), selected_class)
             
@@ -509,45 +548,47 @@ def tab_d_thr(current_class):
                 }
                 rec = recs[selected_class]
                 
-                # Removed negative bottom margin to fix overlap
-                # Increased HR font to 60px, Decreased details font to 10px
-                st.markdown(f"""
-                <div style="background-color: #f0f2f6; padding: 5px 10px; border-radius: 8px 8px 0 0; text-align: center; border: 1px solid #ddd; border-bottom: none; margin-bottom: 0px;">
-                    <div style="color: #333333 !important; font-size: 60px !important; font-weight: 900 !important; line-height: 1.1 !important; margin: 0 !important; padding: 0 !important;">{thr_main}</div>
-                    <div style="height: 1px; background-color: rgba(0,0,0,0.1); margin: 6px auto; width: 95%;"></div>
-                    <div style="color: #555555 !important; font-size: 10px !important; line-height: 1.2 !important; margin: 0 !important; padding: 0 !important; padding-bottom: 4px !important;">{thr_details}</div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                with st.container(border=True):
+                with result_container:
+                    # Using the dedicated CSS classes created in the CSS block at the top
                     st.markdown(f"""
-                    <div style="font-size: 26px !important; font-weight: bold !important; color: var(--text-color) !important; line-height: 1 !important; margin-bottom: 6px !important;">📋 {selected_class} Clinical Guidelines</div>
-                    <div style="height: 2px; background-color: #eee; margin-bottom: 12px !important; width: 100%;"></div>
+                    <div class="thr-calc-banner">
+                        <h2>{thr_main}</h2>
+                        <hr>
+                        <p>{thr_details}</p>
+                    </div>
                     """, unsafe_allow_html=True)
                     
-                    r_col1, r_col2 = st.columns([1.5, 2.5])
-                    
-                    r_col1.markdown("**Recommended Intensity:**")
-                    r_col2.markdown(rec['intensity'])
-                    
-                    r_col1.markdown("**Safe exercise zone:**")
-                    r_col2.markdown(rec['hrr'])
-                    
-                    r_col1.markdown("**RPE during Exercise:**")
-                    r_col2.markdown(rec['rpe'])
-                    
-                    r_col1.markdown("**Medical clearance:**")
-                    r_col2.markdown(rec['medical'])
-                    
-                    r_col1.markdown("**Supervision:**")
-                    r_col2.markdown(rec['supervision'], unsafe_allow_html=True) 
-                    
-                    r_col1.markdown("**Monitoring:**")
-                    r_col2.markdown(rec['monitor'])
-                    
-                    # Deleted the redundant #Adjustment text that used to be inside this box
+                    with st.container(border=True):
+                        # Title strictly styled, HR divider pulled tight
+                        st.markdown(f"""
+                        <div style="font-size: 26px !important; font-weight: bold !important; color: var(--text-color) !important; margin-bottom: 5px !important;">📋 {selected_class} Clinical Guidelines</div>
+                        <hr style="margin: 0px 0px 15px 0px !important; border: 0; border-top: 2px solid #eee;" />
+                        """, unsafe_allow_html=True)
+                        
+                        r_col1, r_col2 = st.columns([1.5, 2.5])
+                        
+                        r_col1.markdown("**Recommended Intensity:**")
+                        r_col2.markdown(rec['intensity'])
+                        
+                        r_col1.markdown("**Safe exercise zone:**")
+                        r_col2.markdown(rec['hrr'])
+                        
+                        r_col1.markdown("**RPE during Exercise:**")
+                        r_col2.markdown(rec['rpe'])
+                        
+                        r_col1.markdown("**Medical clearance:**")
+                        r_col2.markdown(rec['medical'])
+                        
+                        r_col1.markdown("**Supervision:**")
+                        r_col2.markdown(rec['supervision'], unsafe_allow_html=True) 
+                        
+                        r_col1.markdown("**Monitoring:**")
+                        r_col2.markdown(rec['monitor'])
+                        
+            else:
+                result_container.error(err)
         else:
-            st.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
+            result_container.warning("⚠️ Please input valid Age and Standing Resting HR values before calculating.")
 
 
 def main():
