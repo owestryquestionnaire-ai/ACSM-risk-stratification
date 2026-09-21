@@ -656,38 +656,6 @@ def tab_d_thr(current_class):
 def main():
     inject_custom_css()
     
-    # ---------------------------------------------------------
-    # LAYERED SCROLL TO TOP SCRIPT ON TAB CHANGE (MOBILE FIX)
-    # INJECTING TIMESTAMP TO PREVENT STREAMLIT CACHING
-    # ---------------------------------------------------------
-    if st.session_state.get("scroll_to_top", False):
-        scroll_js = f"""
-        <script>
-            /* Unique ID to force Streamlit to re-run: {time.time()} */
-            function jumpToTop() {{
-                const parent = window.parent;
-                if (parent) {{
-                    parent.scrollTo(0, 0);
-                    const doc = parent.document;
-                    if (doc) {{
-                        doc.documentElement.scrollTop = 0;
-                        doc.body.scrollTop = 0;
-                        const main = doc.querySelector('.main');
-                        if (main) main.scrollTop = 0;
-                        const app = doc.querySelector('[data-testid="stAppViewContainer"]');
-                        if (app) app.scrollTop = 0;
-                    }}
-                }}
-            }}
-            jumpToTop();
-            setTimeout(jumpToTop, 100);
-            setTimeout(jumpToTop, 400);
-        </script>
-        """
-        components.html(scroll_js, height=0, width=0)
-        st.session_state["scroll_to_top"] = False
-    # ---------------------------------------------------------
-    
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
     
@@ -735,6 +703,37 @@ def main():
         
     st.markdown("---")
     st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
+
+    # ---------------------------------------------------------
+    # AGGRESSIVE SCROLL TO TOP SCRIPT (PLACED AT THE BOTTOM)
+    # INJECTING TIMESTAMP TO PREVENT STREAMLIT CACHING
+    # ---------------------------------------------------------
+    if st.session_state.get("scroll_to_top", False):
+        scroll_js = f"""
+        <script>
+            /* Unique ID to force Streamlit to re-run: {time.time()} */
+            function jumpToTop() {{
+                const parent = window.parent;
+                if (parent) {{
+                    parent.scrollTo(0, 0);
+                    const doc = parent.document;
+                    if (doc) {{
+                        const main = doc.querySelector('.main');
+                        if (main) main.scrollTop = 0;
+                        const app = doc.querySelector('[data-testid="stAppViewContainer"]');
+                        if (app) app.scrollTop = 0;
+                    }}
+                }}
+            }}
+            jumpToTop();
+            setTimeout(jumpToTop, 200);
+            setTimeout(jumpToTop, 600);
+            setTimeout(jumpToTop, 1200);
+        </script>
+        """
+        components.html(scroll_js, height=0, width=0)
+        st.session_state["scroll_to_top"] = False
+    # ---------------------------------------------------------
 
 if __name__ == "__main__":
     main()
