@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 # ---------- 1. Initialization & Config ----------
 st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide", initial_sidebar_state="collapsed")
@@ -253,6 +254,10 @@ def init_session_states():
         st.session_state["show_b_errors"] = False
     if "show_a_errors" not in st.session_state:
         st.session_state["show_a_errors"] = False
+        
+    # SCROLL STATE INITIALIZATION
+    if "scroll_to_top" not in st.session_state:
+        st.session_state["scroll_to_top"] = False
 
 def update_val(key):
     st.session_state.data[key] = st.session_state[key]
@@ -359,6 +364,8 @@ def go_to_tab(tab_name):
     st.session_state["current_tab"] = tab_name
     st.session_state["show_b_errors"] = False
     st.session_state["show_a_errors"] = False
+    # TRIGGER SCROLL TO TOP WHEN CHANGING TABS
+    st.session_state["scroll_to_top"] = True
 
 def try_complete_b(target_tab):
     missing = get_missing_b()
@@ -411,8 +418,7 @@ def tab_b_acsm(b_class):
     ]
     for i, q in enumerate(s_items, 1):
         render_inline_question(q, f"s_{i}", check_error=check_err)
-        if i == 1:
-            st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     st.info("*注意：如有以上徵狀，可能不適合進行強度中度或以上的心肺體能訓練。詳情請向醫生或物理治療師查詢")
     
@@ -422,7 +428,10 @@ def tab_b_acsm(b_class):
     st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
     
     render_inline_question("已知代謝疾病 (例如：糖尿病、甲狀腺疾病)", "d_metabolic", check_error=check_err)
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    
     render_inline_question("已知腎臟疾病", "d_renal", check_error=check_err)
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
     st.markdown("---")
     st.subheader("當前運動習慣")
@@ -456,19 +465,29 @@ def tab_a_parq():
     st.write("請在合適選擇上選擇「有」或「否」：")
     
     render_inline_question("1. 過往醫生有否說你有心臟病或高血壓?", "parq_1", check_error=check_err)
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    
     render_inline_question("2. 當你靜止或做運動時有否感覺胸口痛？", "parq_2", check_error=check_err)
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    
     render_inline_question("3. 在過去十二個月內，你有否因頭暈而跌倒或失去知覺？", "parq_3", check_error=check_err)
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
     
     render_inline_question("4. 您是否曾被診斷出患有慢性疾病？", "parq_4", check_error=check_err)
     if st.session_state.data.get("parq_4") == "有":
         st.text_input("如有，請列出：", value=st.session_state.data.get("parq_4_text", ""), key="parq_4_text", on_change=update_val, args=("parq_4_text",))
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     render_inline_question("5. 你是否正在服用治療慢性疾病的處方藥？", "parq_5", check_error=check_err)
     if st.session_state.data.get("parq_5") == "有":
         st.text_input("如有，請列出：", value=st.session_state.data.get("parq_5_text", ""), key="parq_5_text", on_change=update_val, args=("parq_5_text",))
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         
     render_inline_question("6. 做運動有否可能加重你骨骼，關節或軟組織的痛楚？", "parq_6", check_error=check_err)
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    
     render_inline_question("7. 過往醫生有否說你只應進行醫生建議或監察的運動？", "parq_7", check_error=check_err)
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
     st.markdown("---")
     
@@ -635,6 +654,29 @@ def tab_d_thr(current_class):
 
 def main():
     inject_custom_css()
+    
+    # ---------------------------------------------------------
+    # TRIGGER SCROLL TO TOP SCRIPT ON TAB CHANGE
+    # ---------------------------------------------------------
+    if st.session_state.get("scroll_to_top", False):
+        scroll_js = """
+        <script>
+            var containers = [
+                window.parent.document.querySelector(".main"),
+                window.parent.document.querySelector("[data-testid='stAppViewContainer']"),
+                window.parent.document.querySelector("[data-testid='stAppViewBlockContainer']")
+            ];
+            for (var i = 0; i < containers.length; i++) {
+                if (containers[i]) {
+                    containers[i].scrollTo(0, 0);
+                }
+            }
+            window.parent.scrollTo(0, 0);
+        </script>
+        """
+        components.html(scroll_js, height=0, width=0)
+        st.session_state["scroll_to_top"] = False
+    # ---------------------------------------------------------
     
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
