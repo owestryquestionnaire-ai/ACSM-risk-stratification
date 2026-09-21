@@ -656,6 +656,49 @@ def tab_d_thr(current_class):
 def main():
     inject_custom_css()
     
+    # ---------------------------------------------------------
+    # AGGRESSIVE SCROLL TO TOP SCRIPT (MOVED TO TOP OF APP FOR EARLY EXECUTION)
+    # ---------------------------------------------------------
+    if st.session_state.get("scroll_to_top", False):
+        scroll_js = f"""
+        <script>
+            /* Unique ID: {time.time()} */
+            function forceScroll() {{
+                try {{
+                    const parent = window.parent;
+                    if (parent) {{
+                        parent.scrollTo(0, 0);
+                        const doc = parent.document;
+                        if (doc) {{
+                            doc.documentElement.scrollTop = 0;
+                            doc.body.scrollTop = 0;
+                            const mainContainer = doc.querySelector('.main');
+                            if (mainContainer) mainContainer.scrollTop = 0;
+                            const appView = doc.querySelector('[data-testid="stAppViewContainer"]');
+                            if (appView) appView.scrollTop = 0;
+                        }}
+                    }}
+                }} catch (e) {{}}
+            }}
+            
+            // Fire continuously for 1.5 seconds to overpower React's scroll restoration
+            let ticks = 0;
+            const scrollInterval = setInterval(function() {{
+                forceScroll();
+                ticks++;
+                if (ticks > 15) {{
+                    clearInterval(scrollInterval);
+                }}
+            }}, 100);
+            
+            // Initial fires
+            forceScroll();
+        </script>
+        """
+        components.html(scroll_js, height=0, width=0)
+        st.session_state["scroll_to_top"] = False
+    # ---------------------------------------------------------
+    
     current_class = calculate_current_class()
     b_class_only = evaluate_b_only()
     
@@ -703,37 +746,6 @@ def main():
         
     st.markdown("---")
     st.caption("#Adjustment to target HR zone should be made on individual basis (keep increment of progress ≤ 5%HRR per week)")
-
-    # ---------------------------------------------------------
-    # AGGRESSIVE SCROLL TO TOP SCRIPT (PLACED AT THE BOTTOM)
-    # INJECTING TIMESTAMP TO PREVENT STREAMLIT CACHING
-    # ---------------------------------------------------------
-    if st.session_state.get("scroll_to_top", False):
-        scroll_js = f"""
-        <script>
-            /* Unique ID to force Streamlit to re-run: {time.time()} */
-            function jumpToTop() {{
-                const parent = window.parent;
-                if (parent) {{
-                    parent.scrollTo(0, 0);
-                    const doc = parent.document;
-                    if (doc) {{
-                        const main = doc.querySelector('.main');
-                        if (main) main.scrollTop = 0;
-                        const app = doc.querySelector('[data-testid="stAppViewContainer"]');
-                        if (app) app.scrollTop = 0;
-                    }}
-                }}
-            }}
-            jumpToTop();
-            setTimeout(jumpToTop, 200);
-            setTimeout(jumpToTop, 600);
-            setTimeout(jumpToTop, 1200);
-        </script>
-        """
-        components.html(scroll_js, height=0, width=0)
-        st.session_state["scroll_to_top"] = False
-    # ---------------------------------------------------------
 
 if __name__ == "__main__":
     main()
