@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import time
 
 # ---------- 1. Initialization & Config ----------
 st.set_page_config(page_title="Risk Stratification of Cardiopulmonary Fitness Training", layout="wide", initial_sidebar_state="collapsed")
@@ -364,7 +365,7 @@ def go_to_tab(tab_name):
     st.session_state["current_tab"] = tab_name
     st.session_state["show_b_errors"] = False
     st.session_state["show_a_errors"] = False
-    # TRIGGER SCROLL TO TOP WHEN CHANGING TABS
+    # SET SCROLL TO TOP TRIGGER
     st.session_state["scroll_to_top"] = True
 
 def try_complete_b(target_tab):
@@ -657,23 +658,30 @@ def main():
     
     # ---------------------------------------------------------
     # LAYERED SCROLL TO TOP SCRIPT ON TAB CHANGE (MOBILE FIX)
+    # INJECTING TIMESTAMP TO PREVENT STREAMLIT CACHING
     # ---------------------------------------------------------
     if st.session_state.get("scroll_to_top", False):
-        scroll_js = """
+        scroll_js = f"""
         <script>
-            function scrollToTop() {
-                var parentDoc = window.parent.document;
-                parentDoc.documentElement.scrollTop = 0;
-                parentDoc.body.scrollTop = 0;
-                window.parent.scrollTo(0, 0);
-                var containers = parentDoc.querySelectorAll('.main, [data-testid="stAppViewContainer"], .stApp');
-                for (var i = 0; i < containers.length; i++) {
-                    containers[i].scrollTop = 0;
-                }
-            }
-            scrollToTop(); // Try instantly
-            setTimeout(scrollToTop, 150); // Try again after render
-            setTimeout(scrollToTop, 500); // Final aggressive snap
+            /* Unique ID to force Streamlit to re-run: {time.time()} */
+            function jumpToTop() {{
+                const parent = window.parent;
+                if (parent) {{
+                    parent.scrollTo(0, 0);
+                    const doc = parent.document;
+                    if (doc) {{
+                        doc.documentElement.scrollTop = 0;
+                        doc.body.scrollTop = 0;
+                        const main = doc.querySelector('.main');
+                        if (main) main.scrollTop = 0;
+                        const app = doc.querySelector('[data-testid="stAppViewContainer"]');
+                        if (app) app.scrollTop = 0;
+                    }}
+                }}
+            }}
+            jumpToTop();
+            setTimeout(jumpToTop, 100);
+            setTimeout(jumpToTop, 400);
         </script>
         """
         components.html(scroll_js, height=0, width=0)
