@@ -657,42 +657,50 @@ def main():
     inject_custom_css()
     
     # ---------------------------------------------------------
-    # AGGRESSIVE SCROLL TO TOP SCRIPT (MOVED TO TOP OF APP FOR EARLY EXECUTION)
+    # INVISIBLE ANCHOR FOR SCROLL FIX
+    # ---------------------------------------------------------
+    st.markdown("<div id='top-anchor'></div>", unsafe_allow_html=True)
+    
+    # ---------------------------------------------------------
+    # ANCHOR-BASED SCROLL SCRIPT (Mobile Fix)
     # ---------------------------------------------------------
     if st.session_state.get("scroll_to_top", False):
         scroll_js = f"""
         <script>
-            /* Unique ID: {time.time()} */
-            function forceScroll() {{
+            /* Unique ID to force Streamlit to re-run: {time.time()} */
+            function forceTop() {{
                 try {{
-                    const parent = window.parent;
-                    if (parent) {{
-                        parent.scrollTo(0, 0);
-                        const doc = parent.document;
-                        if (doc) {{
-                            doc.documentElement.scrollTop = 0;
-                            doc.body.scrollTop = 0;
-                            const mainContainer = doc.querySelector('.main');
-                            if (mainContainer) mainContainer.scrollTop = 0;
-                            const appView = doc.querySelector('[data-testid="stAppViewContainer"]');
-                            if (appView) appView.scrollTop = 0;
-                        }}
+                    const parentDoc = window.parent.document;
+                    
+                    // 1. The most reliable mobile fix: scroll into view
+                    const anchor = parentDoc.getElementById('top-anchor');
+                    if (anchor) {{
+                        anchor.scrollIntoView({{behavior: 'instant', block: 'start'}});
                     }}
+                    
+                    // 2. Fallback direct scrolls
+                    window.parent.scrollTo(0, 0);
+                    parentDoc.documentElement.scrollTop = 0;
+                    parentDoc.body.scrollTop = 0;
+                    
+                    // 3. Fallback container scrolls
+                    const appView = parentDoc.querySelector('[data-testid="stAppViewContainer"]');
+                    if (appView) appView.scrollTop = 0;
+                    const main = parentDoc.querySelector('.main');
+                    if (main) main.scrollTop = 0;
                 }} catch (e) {{}}
             }}
             
-            // Fire continuously for 1.5 seconds to overpower React's scroll restoration
+            // Fire immediately and poll to overpower React's scroll restoration
+            forceTop();
             let ticks = 0;
             const scrollInterval = setInterval(function() {{
-                forceScroll();
+                forceTop();
                 ticks++;
-                if (ticks > 15) {{
+                if (ticks > 20) {{ // Polls for 2 seconds
                     clearInterval(scrollInterval);
                 }}
             }}, 100);
-            
-            // Initial fires
-            forceScroll();
         </script>
         """
         components.html(scroll_js, height=0, width=0)
