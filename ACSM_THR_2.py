@@ -656,22 +656,24 @@ def main():
     inject_custom_css()
     
     # ---------------------------------------------------------
-    # TRIGGER SCROLL TO TOP SCRIPT ON TAB CHANGE
+    # LAYERED SCROLL TO TOP SCRIPT ON TAB CHANGE (MOBILE FIX)
     # ---------------------------------------------------------
     if st.session_state.get("scroll_to_top", False):
         scroll_js = """
         <script>
-            var containers = [
-                window.parent.document.querySelector(".main"),
-                window.parent.document.querySelector("[data-testid='stAppViewContainer']"),
-                window.parent.document.querySelector("[data-testid='stAppViewBlockContainer']")
-            ];
-            for (var i = 0; i < containers.length; i++) {
-                if (containers[i]) {
-                    containers[i].scrollTo(0, 0);
+            function scrollToTop() {
+                var parentDoc = window.parent.document;
+                parentDoc.documentElement.scrollTop = 0;
+                parentDoc.body.scrollTop = 0;
+                window.parent.scrollTo(0, 0);
+                var containers = parentDoc.querySelectorAll('.main, [data-testid="stAppViewContainer"], .stApp');
+                for (var i = 0; i < containers.length; i++) {
+                    containers[i].scrollTop = 0;
                 }
             }
-            window.parent.scrollTo(0, 0);
+            scrollToTop(); // Try instantly
+            setTimeout(scrollToTop, 150); // Try again after render
+            setTimeout(scrollToTop, 500); // Final aggressive snap
         </script>
         """
         components.html(scroll_js, height=0, width=0)
